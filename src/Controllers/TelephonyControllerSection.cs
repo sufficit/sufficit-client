@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using Sufficit.APIClient.Controllers.Telephony;
+using Sufficit.APIClient.Extensions;
+using Sufficit.Telephony;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -19,11 +22,27 @@ namespace Sufficit.APIClient.Controllers
         {
             _httpClient = httpClient;
             _logger = logger;
+
+            Balance = new TelephonyBalanceControllerSection(_httpClient, _logger);
         }
 
         public async Task<Guid> WebRTCKey()
         {
             return await _httpClient.GetFromJsonAsync<Guid>($"{Controller}/webrtckey");           
+        }
+
+        public TelephonyBalanceControllerSection Balance { get; }
+
+        public async Task<IEnumerable<ICallRecordBasic>> CallSearchAsync(CallSearchParameters parameters, CancellationToken cancellationToken = default)
+        {            
+            string requestEndpoint = "/telephony/calls";
+            string requestParams = parameters.ToUriQuery();
+            _logger.LogTrace($"CallSearchAsync: {requestParams}");
+
+            string requestUri = $"{requestEndpoint}?{requestParams}";
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<CallRecord>>(requestUri, cancellationToken);
+            if (response != null) return response;
+            else return new CallRecord[] { };
         }
     }
 }

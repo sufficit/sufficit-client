@@ -25,11 +25,12 @@ namespace Sufficit.APIClient
             _logger = logger;
 
             _httpClient = _factory.CreateClient(_options.Value.ClientId);
+            _httpClient.BaseAddress = new Uri(options.Value.BaseUrl);
 
             // Definindo controllers sections
             Telephony = new TelephonyControllerSection(_httpClient, _logger);
 
-            _logger.LogTrace("Sufficit API Client Service instantiated");
+            _logger.LogTrace($"Sufficit API Client Service instantiated with base address: {options.Value.BaseUrl}");
         }
 
         public async Task<WeatherForecast[]?> WeatherForeacast()
