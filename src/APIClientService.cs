@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Sufficit.APIClient.Controllers;
+using Sufficit.Client.Controllers;
 using Sufficit.EndPoints.Configuration;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sufficit.APIClient
+namespace Sufficit.Client
 {
     public class APIClientService
     {
@@ -31,6 +31,11 @@ namespace Sufficit.APIClient
             Telephony = new TelephonyControllerSection(_httpClient, _logger);
 
             _logger.LogTrace($"Sufficit API Client Service instantiated with base address: {options.Value.BaseUrl}");
+        }
+
+        public async Task<HealthResponse?> Health()
+        {
+            return await _httpClient.GetFromJsonAsync<HealthResponse>("/health");
         }
 
         public async Task<WeatherForecast[]?> WeatherForeacast()

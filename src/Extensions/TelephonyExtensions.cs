@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sufficit.APIClient.Extensions
+namespace Sufficit.Client.Extensions
 {
     public static class TelephonyExtensions
     {

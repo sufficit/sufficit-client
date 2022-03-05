@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sufficit.APIClient.Controllers.Telephony
+namespace Sufficit.Client.Controllers.Telephony
 {
     public sealed class TelephonyBalanceControllerSection
     {
-        private string Controller => TelephonyControllerSection.Controller;
+        private static string Controller => TelephonyControllerSection.Controller;
         private readonly ILogger _logger;
         private readonly HttpClient _httpClient;
 
@@ -21,6 +21,8 @@ namespace Sufficit.APIClient.Controllers.Telephony
 
         public async Task Notify(Guid idcontext, bool force, CancellationToken cancellationToken)
         {
+            _logger.LogTrace("notifying: {idcontext} => {force}", idcontext, force);
+
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["idcontext"] = idcontext.ToString();
             query["force"] = force.ToString();

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.Web;
 
-namespace Sufficit.APIClient
+namespace Sufficit.Client
 {
     public static class Utils
     {

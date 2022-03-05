@@ -5,12 +5,12 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Sufficit.EndPoints.Configuration;
 using System;
 
-namespace Sufficit.APIClient.Extensions
+namespace Sufficit.Client
 {
     /// <summary>
     /// Classe que controla os metodos referentes a API de Endpoints da Sufficit
     /// </summary>
-    public static class EndPointsExtensions
+    public static class ServiceCollectionExtensions
     {
         /// <summary>
         /// Inclui toda a configuração para sincronia com a API de EndPoints da Sufficit
@@ -39,7 +39,7 @@ namespace Sufficit.APIClient.Extensions
             services.Configure<EndPointsAPIOptions>(options => configuration.GetSection(EndPointsAPIOptions.SECTIONNAME));
 
             // Capturando para uso local
-            var endpointApiOptions = configuration.GetSection(EndPointsAPIOptions.SECTIONNAME).Get<EndPointsAPIOptions>();
+            var endpointApiOptions = configuration.GetSection(EndPointsAPIOptions.SECTIONNAME).Get<EndPointsAPIOptions>() ?? new EndPointsAPIOptions();
             var builder = services.AddHttpClient(endpointApiOptions.ClientId, client => client.BaseAddress = new Uri(endpointApiOptions.BaseUrl));
             var handler = provider.GetService<AuthorizationMessageHandler>();
             if (handler != null) {

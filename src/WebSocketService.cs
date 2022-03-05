@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sufficit.APIClient
+namespace Sufficit.Client
 {
     public class WebSocketService : IWebSocketService
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using Sufficit.APIClient.Controllers.Telephony;
-using Sufficit.APIClient.Extensions;
+using Sufficit.Client.Controllers.Telephony;
+using Sufficit.Client.Extensions;
 using Sufficit.Telephony;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sufficit.APIClient.Controllers
+namespace Sufficit.Client.Controllers
 {
     public sealed class TelephonyControllerSection
     {
