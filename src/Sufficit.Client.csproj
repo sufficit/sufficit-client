@@ -32,9 +32,9 @@
         <Name>Sufficit.Client</Name>
         <PackageId>Sufficit.Client</PackageId>
         <PackageDescription>Endpoints API Client</PackageDescription>
-        <RepositoryUrl>https://github.com/sufficit/sufficit-apiclient</RepositoryUrl>
-		<PackageProjectUrl>https://github.com/sufficit/sufficit-apiclient</PackageProjectUrl>
-		<PackageIconUrl>https://raw.githubusercontent.com/sufficit/sufficit-apiclient/main/icon.ico</PackageIconUrl>
+        <RepositoryUrl>https://github.com/sufficit/sufficit-client</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/sufficit/sufficit-client</PackageProjectUrl>
+		<PackageIconUrl>https://raw.githubusercontent.com/sufficit/sufficit-client/main/icon.ico</PackageIconUrl>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   
 		<PackageLicenseFile>license</PackageLicenseFile>
@@ -68,12 +68,12 @@
 	</ItemGroup>
 
 
-	<ItemGroup Label="Sufficit Dependencies" Condition=" '$(Configuration)'=='Debug' ">
+	<ItemGroup Label="Sufficit Dependencies on Debug" Condition=" '$(Configuration)'=='Debug' ">
 		<ProjectReference Include="..\..\sufficit-base\src\Sufficit.Base.csproj" />
 		<ProjectReference Include="..\..\sufficit-identity-core\src\Sufficit.Identity.Core.csproj" />
 	</ItemGroup>
 
-	<ItemGroup Label="Sufficit Dependencies" Condition=" '$(Configuration)'=='Release' ">
+	<ItemGroup Label="Sufficit Dependencies on Release" Condition=" '$(Configuration)'=='Release' ">
 		<PackageReference Include="Sufficit.Base" Version="1.22.*" />
 		<PackageReference Include="Sufficit.Identity.Core" Version="1.22.*" />
 	</ItemGroup>
