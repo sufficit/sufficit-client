@@ -68,14 +68,14 @@
 	</ItemGroup>
 
 
-	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+	<ItemGroup Label="Sufficit Dependencies" Condition=" '$(Configuration)'=='Debug' ">
 		<ProjectReference Include="..\..\sufficit-base\src\Sufficit.Base.csproj" />
 		<ProjectReference Include="..\..\sufficit-identity-core\src\Sufficit.Identity.Core.csproj" />
 	</ItemGroup>
-	
-	<ItemGroup Condition="'$(Configuration)' == 'Release'">
-		<ProjectReference Include="Sufficit.Base" Version="1.22.*" />
-		<ProjectReference Include="Sufficit.Identity.Core" Version="1.22.*" />
+
+	<ItemGroup Label="Sufficit Dependencies" Condition=" '$(Configuration)'=='Release' ">
+		<PackageReference Include="Sufficit.Base" Version="1.22.*" />
+		<PackageReference Include="Sufficit.Identity.Core" Version="1.22.*" />
 	</ItemGroup>
 
 </Project>
