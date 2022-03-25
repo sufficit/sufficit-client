@@ -18,49 +18,32 @@ namespace Sufficit.Client
         /// <param name="services"></param>
         public static IServiceCollection AddSufficitEndPointsAPI(this IServiceCollection services)
         {
-            services.AddOptions<EndPointsAPIOptions>();
-            /*
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.Authority = "https://identity.sufficit.com.br:5001";
-                    options.Audience = "api";
-                });
-            */
-            // importante para incluir propriedades extras ao usuario
-            //services.AddScoped<AuthenticationStateProvider, CustomRemoteAuthenticationService>();
-            //services.AddScoped<AuthorizationMessageHandler>();
-
             var provider = services.BuildServiceProvider();
             var configuration = provider.GetRequiredService<IConfiguration>();
 
             // Definindo o local da configuração global
             // Importante ser dessa forma para o sistema acompanhar as mudanças no arquivo de configuração em tempo real 
-            services.Configure<EndPointsAPIOptions>(options => configuration.GetSection(EndPointsAPIOptions.SECTIONNAME));
+            services.Configure<EndPointsAPIOptions>(configuration.GetSection(EndPointsAPIOptions.SECTIONNAME));
 
             // Capturando para uso local
-            var endpointApiOptions = configuration.GetSection(EndPointsAPIOptions.SECTIONNAME).Get<EndPointsAPIOptions>() ?? new EndPointsAPIOptions();
-            var builder = services.AddHttpClient(endpointApiOptions.ClientId, client => client.BaseAddress = new Uri(endpointApiOptions.BaseUrl));
-            var handler = provider.GetService<AuthorizationMessageHandler>();
-            if (handler != null) {
-                handler.ConfigureHandler(authorizedUrls: GetAuthorizedUrls(endpointApiOptions));
-                builder.AddHttpMessageHandler(hn => handler);
+            var options = configuration.GetSection(EndPointsAPIOptions.SECTIONNAME).Get<EndPointsAPIOptions>() ?? new EndPointsAPIOptions(); 
+            var builder = services.AddHttpClient(options.ClientId, client => client.BaseAddress = new Uri(options.BaseUrl));
+            
+            // if exists any authentication control and navigation system, adds
+            // or just use anonymous access
+            var accessTokenProvider = provider.GetService<IAccessTokenProvider>();
+            if (accessTokenProvider != null) 
+            {
+                services.AddScoped<APIAuthorizationMessageHandler>();
+                builder.AddHttpMessageHandler<APIAuthorizationMessageHandler>();
             }
 
-            services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(endpointApiOptions.ClientId));
+            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(options.ClientId));
 
             services.TryAddTransient<APIClientService>();
             services.TryAddTransient<IWebSocketService, WebSocketService>();
 
             return services;
-        }
-
-        public static IEnumerable<string> GetAuthorizedUrls(EndPointsAPIOptions options)
-        {
-            if (options != null)
-            {
-                yield return $"{options.BaseUrl}";
-            }
-        }
+        }        
     }
 }

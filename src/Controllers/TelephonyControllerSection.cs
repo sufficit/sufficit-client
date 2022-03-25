@@ -35,7 +35,7 @@ namespace Sufficit.Client.Controllers
 
         public async Task<IEnumerable<ICallRecordBasic>> CallSearchAsync(CallSearchParameters parameters, CancellationToken cancellationToken = default)
         {            
-            string requestEndpoint = "/telephony/calls";
+            string requestEndpoint = $"{Controller}/calls";
             string requestParams = parameters.ToUriQuery();
             _logger.LogTrace($"CallSearchAsync: {requestParams}");
 

@@ -14,26 +14,69 @@
         <Version Condition=" '$(VersionSuffix)' != '' ">$(VersionSuffix)</Version>
     </PropertyGroup>
 	
+	<PropertyGroup Label="Sufficit Product General">
+		<Company>SUFFICIT SOLUÇÕES EM TECNOLOGIA DA INFORMAÇÃO</Company>
+		<Authors>Hugo Castro de Deco</Authors>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<ProductName>Sufficit Endpoints API Client</ProductName>
+		<AssemblyName>Sufficit.Client</AssemblyName>
+
+		<!-- Copia todas as dlls de dependencias para o diretório de publicação dos projetos que o utilizam -->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<PreserveCompilationReferences>false</PreserveCompilationReferences>
+
+		<RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+	</PropertyGroup>
+	
 	<PropertyGroup Label="Sufficit Pacote NUGET">
         <Name>Sufficit.Client</Name>
         <PackageId>Sufficit.Client</PackageId>
-        <PackageDescription></PackageDescription>
+        <PackageDescription>Endpoints API Client</PackageDescription>
         <RepositoryUrl>https://github.com/sufficit/sufficit-apiclient</RepositoryUrl>
-        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    </PropertyGroup>
+		<PackageProjectUrl>https://github.com/sufficit/sufficit-apiclient</PackageProjectUrl>
+		<PackageIconUrl>https://raw.githubusercontent.com/sufficit/sufficit-apiclient/main/icon.ico</PackageIconUrl>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  
+		<PackageLicenseFile>license</PackageLicenseFile>
+		<PackageReadmeFile>readme.md</PackageReadmeFile>
+		<PackageIcon>icon.png</PackageIcon>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<None Include="../icon.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="../license">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="../readme.md">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 		
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="6.0.2" />
-	  <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.2" />
+	  <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="6.0.3" />
+	  <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.3" />
 	  <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
 	</ItemGroup>
 
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\sufficit-base\src\SufficitBase.csproj" />
-  </ItemGroup>
+	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+		<ProjectReference Include="..\..\sufficit-base\src\Sufficit.Base.csproj" />
+		<ProjectReference Include="..\..\sufficit-identity-core\src\Sufficit.Identity.Core.csproj" />
+	</ItemGroup>
+	
+	<ItemGroup Condition="'$(Configuration)' == 'Release'">
+		<ProjectReference Include="Sufficit.Base" Version="1.22.*" />
+		<ProjectReference Include="Sufficit.Identity.Core" Version="1.22.*" />
+	</ItemGroup>
 
 </Project>
+ 

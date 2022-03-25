@@ -28,7 +28,10 @@ namespace Sufficit.Client
             _httpClient.BaseAddress = new Uri(options.Value.BaseUrl);
 
             // Definindo controllers sections
+            Access = new AccessControllerSection(_httpClient, logger);
             Telephony = new TelephonyControllerSection(_httpClient, _logger);
+            Identity = new IdentityControllerSection(_httpClient, _logger);
+            Contact = new ContactControllerSection(_httpClient, _logger);
 
             _logger.LogTrace($"Sufficit API Client Service instantiated with base address: {options.Value.BaseUrl}");
         }
@@ -43,6 +46,12 @@ namespace Sufficit.Client
             return await _httpClient.GetFromJsonAsync<WeatherForecast[]>("/WeatherForecast");            
         }
 
-        public TelephonyControllerSection Telephony { get; }        
+        public AccessControllerSection Access { get; }
+
+        public TelephonyControllerSection Telephony { get; }
+
+        public IdentityControllerSection Identity { get; }
+
+        public ContactControllerSection Contact { get; }
     }
 }
