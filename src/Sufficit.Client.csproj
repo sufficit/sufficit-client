@@ -67,7 +67,7 @@
 	  <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
 	</ItemGroup>
 
-	<ItemGroup Label="Sufficit Dependencies on Release" Condition=" '$(Configuration)'=='Release' ">
+	<ItemGroup Label="Sufficit Dependencies on Release" Condition=" '$(Configuration)'=='Release' Or '$(Configuration)' == '' ">
 		<PackageReference Include="Sufficit.Base" Version="1.22.*" />
 		<PackageReference Include="Sufficit.Identity.Core" Version="1.22.*" />
 	</ItemGroup>
