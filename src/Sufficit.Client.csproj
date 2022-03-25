@@ -67,15 +67,14 @@
 	  <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
 	</ItemGroup>
 
+	<ItemGroup Label="Sufficit Dependencies on Release" Condition=" '$(Configuration)'=='Release' ">
+		<PackageReference Include="Sufficit.Base" Version="1.22.*" />
+		<PackageReference Include="Sufficit.Identity.Core" Version="1.22.*" />
+	</ItemGroup>
 
 	<ItemGroup Label="Sufficit Dependencies on Debug" Condition=" '$(Configuration)'=='Debug' ">
 		<ProjectReference Include="..\..\sufficit-base\src\Sufficit.Base.csproj" />
 		<ProjectReference Include="..\..\sufficit-identity-core\src\Sufficit.Identity.Core.csproj" />
-	</ItemGroup>
-
-	<ItemGroup Label="Sufficit Dependencies on Release" Condition=" '$(Configuration)'=='Release' ">
-		<PackageReference Include="Sufficit.Base" Version="1.22.*" />
-		<PackageReference Include="Sufficit.Identity.Core" Version="1.22.*" />
 	</ItemGroup>
 
 </Project>
