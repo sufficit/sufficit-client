@@ -79,20 +79,15 @@
 	  <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
 	</ItemGroup>
 
-	<Choose>
-		<When Condition="'$(Configuration)' != 'Debug'">
-			<ItemGroup Label="Sufficit Dependencies">
-				<PackageReference Include="Sufficit.Base" Version="1.22.*" />
-				<PackageReference Include="Sufficit.Identity.Core" Version="1.22.*" />
-			</ItemGroup>
-		</When>
-		<Otherwise>
-			<ItemGroup Label="Sufficit Dependencies">
-				<ProjectReference Include="..\..\sufficit-base\src\Sufficit.Base.csproj" />
-				<ProjectReference Include="..\..\sufficit-identity-core\src\Sufficit.Identity.Core.csproj" />
-			</ItemGroup>
-		</Otherwise>
-	</Choose>
-
+	<ItemGroup Label="Sufficit Dependencies on Release">
+		<PackageReference Condition="'$(Configuration)' != 'Debug'" Include="Sufficit.Base" Version="1.22.*" />
+		<PackageReference Condition="'$(Configuration)' != 'Debug'" Include="Sufficit.Identity.Core" Version="1.22.*" />
+	</ItemGroup>
+		
+	<ItemGroup Label="Sufficit Dependencies on Debug">
+		<ProjectReference Condition="'$(Configuration)' == 'Debug'" Include="..\..\sufficit-base\src\Sufficit.Base.csproj" />
+		<ProjectReference Condition="'$(Configuration)' == 'Debug'" Include="..\..\sufficit-identity-core\src\Sufficit.Identity.Core.csproj" />
+	</ItemGroup>
+	
 </Project>
  
