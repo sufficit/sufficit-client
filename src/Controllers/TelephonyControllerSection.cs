@@ -24,6 +24,7 @@ namespace Sufficit.Client.Controllers
             _logger = logger;
 
             Balance = new TelephonyBalanceControllerSection(_httpClient, _logger);
+            EventsPanel = new TelephonyEventsPanelControllerSection(_httpClient, _logger);
         }
 
         public async Task<Guid> WebRTCKey()
@@ -32,6 +33,8 @@ namespace Sufficit.Client.Controllers
         }
 
         public TelephonyBalanceControllerSection Balance { get; }
+
+        public TelephonyEventsPanelControllerSection EventsPanel { get; }
 
         public async Task<IEnumerable<ICallRecordBasic>> CallSearchAsync(CallSearchParameters parameters, CancellationToken cancellationToken = default)
         {            
