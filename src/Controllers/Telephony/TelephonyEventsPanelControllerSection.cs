@@ -1,10 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
 using Sufficit.Telephony.Asterisk.Manager;
+using Sufficit.Telephony.EventsPanel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Telephony
@@ -32,6 +35,16 @@ namespace Sufficit.Client.Controllers.Telephony
             var result = await _httpClient.GetFromJsonAsync<IEnumerable<AMIHubConnection>>(uri, cancellationToken);
             if (result != null) { return result; }
             return Array.Empty<AMIHubConnection>();
+        }
+
+        public async Task<EventsPanelServiceOptions?> GetOptions(CancellationToken cancellationToken = default)
+        {
+            string requestEndpoint = $"{Controller}{Prefix}/options";
+            var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, true));
+            options.PropertyNameCaseInsensitive = true;
+            return await _httpClient.GetFromJsonAsync<EventsPanelServiceOptions>(uri, options, cancellationToken);           
         }
     }
 }
