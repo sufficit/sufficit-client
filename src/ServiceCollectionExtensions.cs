@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -28,14 +30,19 @@ namespace Sufficit.Client
             // Capturando para uso local
             var options = configuration.GetSection(EndPointsAPIOptions.SECTIONNAME).Get<EndPointsAPIOptions>() ?? new EndPointsAPIOptions(); 
             var builder = services.AddHttpClient(options.ClientId, client => client.BaseAddress = new Uri(options.BaseUrl));
-            
+
             // if exists any authentication control and navigation system, adds
-            // or just use anonymous access
+            // or just use anonymous access                        
             var accessTokenProvider = provider.GetService<IAccessTokenProvider>();
-            if (accessTokenProvider != null) 
+            if (accessTokenProvider != null)
             {
-                services.AddScoped<APIAuthorizationMessageHandler>();
+                services.AddTransient<APIAuthorizationMessageHandler>();
                 builder.AddHttpMessageHandler<APIAuthorizationMessageHandler>();
+            }
+            else
+            {
+                services.AddTransient<ProtectedApiBearerTokenHandler>();
+                builder.AddHttpMessageHandler<ProtectedApiBearerTokenHandler>();
             }
 
             services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(options.ClientId));
@@ -44,6 +51,13 @@ namespace Sufficit.Client
             services.TryAddTransient<IWebSocketService, WebSocketService>();
 
             return services;
-        }        
+        }
+
+        public static IApplicationBuilder UseSufficitEndPointsAPI(this IApplicationBuilder app) 
+        {
+
+
+            return app;
+        }
     }
 }
