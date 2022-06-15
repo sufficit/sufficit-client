@@ -20,6 +20,8 @@ namespace Sufficit.Client
         /// <param name="services"></param>
         public static IServiceCollection AddSufficitEndPointsAPI(this IServiceCollection services)
         {
+            services.AddOptions<EndPointsAPIOptions>();
+
             var provider = services.BuildServiceProvider();
             var configuration = provider.GetRequiredService<IConfiguration>();
 
@@ -28,22 +30,11 @@ namespace Sufficit.Client
             services.Configure<EndPointsAPIOptions>(configuration.GetSection(EndPointsAPIOptions.SECTIONNAME));
 
             // Capturando para uso local
-            var options = configuration.GetSection(EndPointsAPIOptions.SECTIONNAME).Get<EndPointsAPIOptions>() ?? new EndPointsAPIOptions(); 
-            var builder = services.AddHttpClient(options.ClientId, client => client.BaseAddress = new Uri(options.BaseUrl));
-
-            // if exists any authentication control and navigation system, adds
-            // or just use anonymous access                        
-            var accessTokenProvider = provider.GetService<IAccessTokenProvider>();
-            if (accessTokenProvider != null)
-            {
-                services.AddTransient<APIAuthorizationMessageHandler>();
-                builder.AddHttpMessageHandler<APIAuthorizationMessageHandler>();
-            }
-            else
-            {
-                services.AddTransient<ProtectedApiBearerTokenHandler>();
-                builder.AddHttpMessageHandler<ProtectedApiBearerTokenHandler>();
-            }
+            var options = configuration.GetSection(EndPointsAPIOptions.SECTIONNAME).Get<EndPointsAPIOptions>() ?? new EndPointsAPIOptions();
+            
+            services.AddTransient<ProtectedApiBearerTokenHandler>();
+            services.AddHttpClient(options.ClientId, client => client.BaseAddress = new Uri(options.BaseUrl))
+                .AddHttpMessageHandler<ProtectedApiBearerTokenHandler>();
 
             services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(options.ClientId));
 

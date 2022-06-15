@@ -64,9 +64,17 @@ namespace Sufficit.Client.Controllers.Telephony
             string requestEndpoint = $"{Controller}{Prefix}/useroptions";
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
             var options = new JsonSerializerOptions();
+            options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, true));
             options.PropertyNameCaseInsensitive = true;
-            return await _httpClient.GetFromJsonAsync<EventsPanelUserOptions>(uri, options, cancellationToken);
+
+            HttpResponseMessage res = await _httpClient.GetAsync(uri, cancellationToken);
+            res.EnsureSuccessStatusCode();
+
+            if(res.StatusCode == System.Net.HttpStatusCode.NoContent)
+                return null;
+
+            return await res.Content.ReadFromJsonAsync<EventsPanelUserOptions?>(options, cancellationToken);                  
         }
 
         public async Task PostUserOptions(EventsPanelUserOptions value, CancellationToken cancellationToken = default)

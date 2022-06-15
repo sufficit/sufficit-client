@@ -28,7 +28,7 @@ namespace Sufficit.Client
             _httpClient.BaseAddress = new Uri(options.Value.BaseUrl);
 
             // Definindo controllers sections
-            Access = new AccessControllerSection(_httpClient, logger);
+            Access = new AccessControllerSection(_httpClient, _logger);
             Telephony = new TelephonyControllerSection(_httpClient, _logger);
             Identity = new IdentityControllerSection(_httpClient, _logger);
             Contact = new ContactControllerSection(_httpClient, _logger);
