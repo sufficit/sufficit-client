@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sufficit.EndPoints.Configuration;
+using Sufficit.Telephony;
+using Sufficit.Telephony.CheckUp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,21 +20,21 @@ namespace Sufficit.Client
 
         public WebSocketService(IOptions<EndPointsAPIOptions> options, ILogger<WebSocketService> logger)
         {
-            _options = options; 
+            _options = options;
             _logger = logger;
 
             _connection = new HubConnectionBuilder()
                 .WithUrl($"{_options.Value.BaseUrl}/ws")
 
                 // Só começa a reconectar se iniciou a 1ª conexão com sucesso
-                .WithAutomaticReconnect(new TimeSpan[]{ TimeSpan.FromSeconds(10) })
+                .WithAutomaticReconnect(new TimeSpan[] { TimeSpan.FromSeconds(10) })
                 .Build();
 
-            _connection.Reconnected     += _connection_Reconnected;
-            _connection.Reconnecting    += _connection_Reconnecting;
-            _connection.Closed          += _connection_Closed;
+            _connection.Reconnected += _connection_Reconnected;
+            _connection.Reconnecting += _connection_Reconnecting;
+            _connection.Closed += _connection_Closed;
 
-            
+
 
             _logger.LogTrace("WebSocketService Instantiated.");
         }
@@ -74,5 +76,13 @@ namespace Sufficit.Client
         public event EventHandler? OnChanged;
 
         public HubConnectionState State => _connection.State;
+
+
+        #region IMPLEMENTS INTERFACE CHECKUP METHODS
+
+        public IAsyncEnumerable<CheckUpStepInfo> CheckUpOutBoundRoutes(Guid ContextId, CancellationToken cancellationToken)
+            => _connection.StreamAsync<CheckUpStepInfo>("CheckUpOutBoundRoutes", ContextId, cancellationToken);
+
+        #endregion
     }
 }

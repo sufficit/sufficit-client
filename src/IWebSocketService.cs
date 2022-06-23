@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
+using Sufficit.Telephony.CheckUp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client
 {
-    public interface IWebSocketService
+    public interface IWebSocketService : ICheckUpMethods
     {
         event EventHandler? OnChanged;
 

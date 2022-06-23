@@ -30,8 +30,14 @@ namespace Sufficit.Client.Extensions
                 sb.AppendFormat("dids={0}&", parameters.DIDs);
 
             sb.AppendFormat("billed={0}&", parameters.Billed);
-            sb.AppendFormat("answered={0}&", parameters.Answered);            
-            sb.AppendFormat("limit={0}", parameters.Limit);
+            sb.AppendFormat("answered={0}&", parameters.Answered);
+
+            if (parameters.Limit > 0)
+                sb.AppendFormat("limit={0}&", parameters.Limit);
+
+            if (parameters.MaxRecords > 0)
+                sb.AppendFormat("maxrecords={0}&", parameters.MaxRecords);
+
             return sb.ToString();
         }
     }

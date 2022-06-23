@@ -51,5 +51,18 @@ namespace Sufficit.Client.Controllers
             if (response != null) return response;             
             else return new Contact[] { };
         }
+
+        public async Task<IAttribute?> GetAttribute(ContactAttributeSearchParameters parameters, CancellationToken cancellationToken = default)
+        {
+            string requestEndpoint = $"{Controller}/attribute";
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["ContactId"] = parameters.ContactId.ToString();
+            query["Key"] = parameters.Key;
+            query["Value"] = parameters.Value;
+            query["ExactMatch"] = parameters.ExactMatch.ToString();
+
+            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
+            return await _httpClient.GetFromJsonAsync<Sufficit.Contacts.Attribute>(uri, cancellationToken);
+        }
     }
 }

@@ -43,9 +43,18 @@ namespace Sufficit.Client.Controllers
             _logger.LogTrace($"CallSearchAsync: {requestParams}");
 
             string requestUri = $"{requestEndpoint}?{requestParams}";
-            var response = await _httpClient.GetFromJsonAsync<IEnumerable<CallRecord>>(requestUri, cancellationToken);
-            if (response != null) return response;
-            else return new CallRecord[] { };
+            var response = await _httpClient.GetAsync(requestUri, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                throw new Exception(content);
+            } 
+            else 
+            {
+                var content = await response.Content.ReadFromJsonAsync<IEnumerable<CallRecord>>();
+                if (content != null) return content;
+                else return new CallRecord[] { }; 
+            }
         }
     }
 }

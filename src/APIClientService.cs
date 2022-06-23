@@ -32,6 +32,7 @@ namespace Sufficit.Client
             Telephony = new TelephonyControllerSection(_httpClient, _logger);
             Identity = new IdentityControllerSection(_httpClient, _logger);
             Contact = new ContactControllerSection(_httpClient, _logger);
+            Sales = new SalesControllerSection(_httpClient, _logger);
 
             _logger.LogTrace($"Sufficit API Client Service instantiated with base address: {options.Value.BaseUrl}");
         }
@@ -53,5 +54,7 @@ namespace Sufficit.Client
         public IdentityControllerSection Identity { get; }
 
         public ContactControllerSection Contact { get; }
+
+        public SalesControllerSection Sales { get; }
     }
 }
