@@ -59,7 +59,7 @@ namespace Sufficit.Client.Controllers
 
         #region WEB CALL BACK
 
-        public Task PostWebCallBack(WebCallBackRequest request, CancellationToken cancellationToken = default)
+        public Task WebCallBack(WebCallBackRequest request, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}/webcallback";
             var uri = new Uri(requestEndpoint, UriKind.Relative);
