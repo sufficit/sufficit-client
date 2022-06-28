@@ -18,7 +18,7 @@
 		<Company>SUFFICIT SOLUÇÕES EM TECNOLOGIA DA INFORMAÇÃO</Company>
 		<Authors>Hugo Castro de Deco</Authors>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-		<ProductName>Sufficit Endpoints API Client</ProductName>
+		<ProductName>Sufficit EndPoints API Client</ProductName>
 		<AssemblyName>Sufficit.Client</AssemblyName>
 
 		<!-- Copia todas as dlls de dependencias para o diretório de publicação dos projetos que o utilizam -->
@@ -31,7 +31,7 @@
 	<PropertyGroup Label="Sufficit Pacote NUGET">
         <Name>Sufficit.Client</Name>
         <PackageId>Sufficit.Client</PackageId>
-        <PackageDescription>Endpoints API Client</PackageDescription>
+        <PackageDescription>EndPoints API Client</PackageDescription>
         <RepositoryUrl>https://github.com/sufficit/sufficit-client</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/sufficit/sufficit-client</PackageProjectUrl>
 		<PackageIconUrl>https://raw.githubusercontent.com/sufficit/sufficit-client/main/icon.ico</PackageIconUrl>
@@ -71,12 +71,13 @@
 	<ItemGroup Label="Sufficit Dependencies on Packing" Condition=" '$(Configuration)' == 'Packing' ">
 		<PackageReference Include="Sufficit.Base" Version="1.22.*" />
 		<PackageReference Include="Sufficit.Identity.Core" Version="1.22.*" />
+		<PackageReference Include="Sufficit.Telephony.EventsPanel.Core" Version="1.22.*" />
 	</ItemGroup>
 
 	<ItemGroup Label="Sufficit Local Dependencies" Condition=" '$(Configuration)' != 'Packing' ">
 		<ProjectReference Include="..\..\sufficit-base\src\Sufficit.Base.csproj" />
 		<ProjectReference Include="..\..\sufficit-identity-core\src\Sufficit.Identity.Core.csproj" />
-		<ProjectReference Include="..\..\sufficit-telephony-eventspanel\src\Sufficit.Telephony.EventsPanel.csproj" />
+		<ProjectReference Include="..\..\sufficit-telephony-eventspanel-core\src\Sufficit.Telephony.EventsPanel.Core.csproj" />
 	</ItemGroup>
 	
 </Project>
