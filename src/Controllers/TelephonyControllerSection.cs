@@ -56,5 +56,16 @@ namespace Sufficit.Client.Controllers
                 else return new CallRecord[] { }; 
             }
         }
+
+        #region WEB CALL BACK
+
+        public Task PostWebCallBack(WebCallBackRequest request, CancellationToken cancellationToken = default)
+        {
+            string requestEndpoint = $"{Controller}/webcallback";
+            var uri = new Uri(requestEndpoint, UriKind.Relative);
+            return _httpClient.PostAsJsonAsync<WebCallBackRequest>(uri, request, cancellationToken);
+        }
+
+        #endregion
     }
 }
