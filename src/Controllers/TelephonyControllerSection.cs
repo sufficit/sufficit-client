@@ -25,6 +25,8 @@ namespace Sufficit.Client.Controllers
 
             Balance = new TelephonyBalanceControllerSection(_httpClient, _logger);
             EventsPanel = new TelephonyEventsPanelControllerSection(_httpClient, _logger);
+            IVR = new TelephonyIVRControllerSection(_httpClient, _logger);
+            Audio = new TelephonyAudioControllerSection(_httpClient, _logger);
         }
 
         public async Task<Guid> WebRTCKey()
@@ -35,6 +37,10 @@ namespace Sufficit.Client.Controllers
         public TelephonyBalanceControllerSection Balance { get; }
 
         public TelephonyEventsPanelControllerSection EventsPanel { get; }
+
+        public TelephonyIVRControllerSection IVR { get; }
+
+        public TelephonyAudioControllerSection Audio { get; }
 
         public async Task<IEnumerable<ICallRecordBasic>> CallSearchAsync(CallSearchParameters parameters, CancellationToken cancellationToken = default)
         {            
@@ -47,8 +53,12 @@ namespace Sufficit.Client.Controllers
             if (!response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                throw new Exception(content);
-            } 
+#if NET6_0_OR_GREATER
+                throw new HttpRequestException(content, null, response.StatusCode);
+#else
+                throw new HttpRequestException(content);
+#endif
+            }
             else 
             {
                 var content = await response.Content.ReadFromJsonAsync<IEnumerable<CallRecord>>();
@@ -57,15 +67,15 @@ namespace Sufficit.Client.Controllers
             }
         }
 
-        #region WEB CALL BACK
+#region WEB CALL BACK
 
-        public Task WebCallBack(WebCallBackRequest request, CancellationToken cancellationToken = default)
+        public Task<HttpResponseMessage> WebCallBack(WebCallBackRequest request, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}/webcallback";
             var uri = new Uri(requestEndpoint, UriKind.Relative);
             return _httpClient.PostAsJsonAsync<WebCallBackRequest>(uri, request, cancellationToken);
         }
 
-        #endregion
+#endregion
     }
 }

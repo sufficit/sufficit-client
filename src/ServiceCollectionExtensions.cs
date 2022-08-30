@@ -30,14 +30,14 @@ namespace Sufficit.Client
             // Capturando para uso local
             var options = configuration.GetSection(EndPointsAPIOptions.SECTIONNAME).Get<EndPointsAPIOptions>() ?? new EndPointsAPIOptions();
             
-            services.AddTransient<ProtectedApiBearerTokenHandler>();
+            services.AddScoped<ProtectedApiBearerTokenHandler>();
             services.AddHttpClient(options.ClientId, client => client.BaseAddress = new Uri(options.BaseUrl))
                 .AddHttpMessageHandler<ProtectedApiBearerTokenHandler>();
 
             services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(options.ClientId));
 
-            services.TryAddTransient<APIClientService>();
-            services.TryAddTransient<IWebSocketService, WebSocketService>();
+            services.TryAddSingleton<APIClientService>();
+            services.AddScoped<IWebSocketService, WebSocketService>();
 
             return services;
         }

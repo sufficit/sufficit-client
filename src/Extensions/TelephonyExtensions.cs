@@ -40,5 +40,18 @@ namespace Sufficit.Client.Extensions
 
             return sb.ToString();
         }
+
+        public static string ToQueryString(this AudioSearchParameters source)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            if (source.AudioId.HasValue)
+                query["audioId"] = source.AudioId.ToString();
+            if (source.ContextId.HasValue)
+                query["contextId"] = source.ContextId.ToString();
+            if (!string.IsNullOrWhiteSpace(source.Title))
+                query["title"] = source.Title!.ToString();
+
+            return query.ToString() ?? string.Empty;
+        }
     }
 }

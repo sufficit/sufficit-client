@@ -29,10 +29,7 @@ namespace Sufficit.Client.Controllers.Telephony
         public async Task<IEnumerable<AMIHubConnection>> GetEndpoints(CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}{Prefix}/endpoints";
-            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            //query["id"] = id.ToString();
-
-            var uri = new Uri($"{ requestEndpoint }?{ query }", UriKind.Relative);
+            var uri = new Uri($"{ requestEndpoint }", UriKind.Relative);
             var result = await _httpClient.GetFromJsonAsync<IEnumerable<AMIHubConnection>>(uri, cancellationToken);
             if (result != null) { return result; }
             return Array.Empty<AMIHubConnection>();

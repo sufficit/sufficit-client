@@ -27,12 +27,12 @@ namespace Sufficit.Client.Controllers
 
         public async Task<IContact?> GetContact(Guid id, CancellationToken cancellationToken = default)
         {
-            string requestEndpoint = $"{Controller}/contact";
+            string requestEndpoint = $"{Controller}";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
 
             var uri = new Uri($"{ requestEndpoint }?{ query }", UriKind.Relative);
-            return await _httpClient.GetFromJsonAsync<Contact>(uri, cancellationToken);
+            return await _httpClient.GetFromJsonAsync<Contact?>(uri, cancellationToken);
         }
 
         public async Task<IEnumerable<IContact>> GetContacts(string filter, int results = 10, CancellationToken cancellationToken = default)
@@ -46,10 +46,23 @@ namespace Sufficit.Client.Controllers
             if (results > 0)
                 query["results"] = results.ToString();
 
-            var uri = new Uri($"{ requestEndpoint }?{ query }", UriKind.Relative);
-            var response = await _httpClient.GetFromJsonAsync<IEnumerable<Contact>>(uri, cancellationToken);
-            if (response != null) return response;             
-            else return new Contact[] { };
+            var requestUri = new Uri($"{ requestEndpoint }?{ query }", UriKind.Relative);            
+            var response = await _httpClient.GetAsync(requestUri, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+#if NET6_0_OR_GREATER
+                throw new HttpRequestException(content, null, response.StatusCode);
+#else
+                throw new HttpRequestException(content);
+#endif
+            }
+            else
+            {
+                var content = await response.Content.ReadFromJsonAsync<IEnumerable<Contact>>();
+                if (content != null) return content;
+                else return new Contact[] { };
+            }           
         }
 
         public async Task<IAttribute?> GetAttribute(ContactAttributeSearchParameters parameters, CancellationToken cancellationToken = default)
