@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Sufficit.Client.Controllers.Telephony;
 using Sufficit.Client.Extensions;
 using Sufficit.Telephony;
@@ -7,7 +11,10 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http.Json;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers
@@ -17,11 +24,17 @@ namespace Sufficit.Client.Controllers
         public const string Controller = "/telephony";
         private readonly ILogger _logger;
         private readonly HttpClient _httpClient;
+        private readonly JsonSerializerOptions options;
 
         public TelephonyControllerSection(HttpClient httpClient, ILogger logger)
         {
             _httpClient = httpClient;
             _logger = logger;
+
+            options = new JsonSerializerOptions();
+            options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, true));
+            options.PropertyNameCaseInsensitive = true;
 
             Balance = new TelephonyBalanceControllerSection(_httpClient, _logger);
             EventsPanel = new TelephonyEventsPanelControllerSection(_httpClient, _logger);
@@ -67,7 +80,7 @@ namespace Sufficit.Client.Controllers
             }
         }
 
-#region WEB CALL BACK
+        #region WEB CALL BACK
 
         public Task<HttpResponseMessage> WebCallBack(WebCallBackRequest request, CancellationToken cancellationToken = default)
         {
@@ -76,6 +89,42 @@ namespace Sufficit.Client.Controllers
             return _httpClient.PostAsJsonAsync<WebCallBackRequest>(uri, request, cancellationToken);
         }
 
-#endregion
+        #endregion
+
+        #region DESTINATIONS
+
+        [Authorize]
+        public async Task<IEnumerable<IDestination>> Destinations(DestinationSearchParameters parameters, CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("by parameters: {?}", parameters);
+
+            var query = parameters.ToQueryString();
+            var uri = new Uri($"{Controller}/destinations?{query}", UriKind.Relative);
+            var response = await _httpClient.GetAsync(uri, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                return Array.Empty<IDestination>();
+
+            return await response.Content.ReadFromJsonAsync<IEnumerable<Destination>>(options, cancellationToken) ?? Array.Empty<Destination>();
+        }
+
+        [Authorize]
+        public async Task<IDestination?> Destination(DestinationSearchParameters parameters, CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("single by parameters: {?}", parameters);
+
+            var query = parameters.ToQueryString();
+            var uri = new Uri($"{Controller}/destination?{query}", UriKind.Relative);
+            var response = await _httpClient.GetAsync(uri, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                return null;
+
+            return await response.Content.ReadFromJsonAsync<Destination>(options, cancellationToken);
+        }
+
+        #endregion
     }
 }

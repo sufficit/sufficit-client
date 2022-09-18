@@ -53,5 +53,19 @@ namespace Sufficit.Client.Extensions
 
             return query.ToString() ?? string.Empty;
         }
+
+        public static string ToQueryString(this DestinationSearchParameters source)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["contextid"] = source.ContextId.ToString();
+
+            if (!string.IsNullOrWhiteSpace(source.Filter))
+                query["filter"] = source.Filter;
+
+            if (source.Limit.HasValue)
+                query["limit"] = source.Limit.ToString();
+
+            return query.ToString() ?? string.Empty;
+        }
     }
 }
