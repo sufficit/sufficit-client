@@ -60,8 +60,8 @@
 		
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.2.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.6" />
-	  <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.6" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.10" />
+	  <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.10" />
 	  <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
