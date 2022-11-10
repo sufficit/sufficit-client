@@ -43,7 +43,14 @@ namespace Sufficit.Client.Controllers.Telephony
             var options = new JsonSerializerOptions();
             options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, true));
             options.PropertyNameCaseInsensitive = true;
-            return await _httpClient.GetFromJsonAsync<EventsPanelServiceOptions>(uri, options, cancellationToken);           
+
+            HttpResponseMessage res = await _httpClient.GetAsync(uri, cancellationToken);
+            res.EnsureSuccessStatusCode();
+
+            if (res.StatusCode == System.Net.HttpStatusCode.NoContent)
+                return null;
+
+            return await res.Content.ReadFromJsonAsync<EventsPanelServiceOptions?>(options, cancellationToken);      
         }
 
         public async Task<IEnumerable<EventsPanelCardInfo>?> GetUserCards(CancellationToken cancellationToken = default)
