@@ -37,7 +37,7 @@ namespace Sufficit.Client.Controllers
             options.PropertyNameCaseInsensitive = true;
 
             Balance = new TelephonyBalanceControllerSection(_httpClient, _logger);
-            EventsPanel = new TelephonyEventsPanelControllerSection(_httpClient, _logger);
+            EventsPanel = new TelephonyEventsPanelControllerSection(_httpClient, _logger, options);
             IVR = new TelephonyIVRControllerSection(_httpClient, _logger);
             Audio = new TelephonyAudioControllerSection(_httpClient, _logger);
         }

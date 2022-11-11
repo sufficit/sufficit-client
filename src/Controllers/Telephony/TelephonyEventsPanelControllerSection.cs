@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Sufficit.Telephony;
 using Sufficit.Telephony.Asterisk.Manager;
 using Sufficit.Telephony.EventsPanel;
 using System;
@@ -19,11 +21,13 @@ namespace Sufficit.Client.Controllers.Telephony
         private static string Controller => TelephonyControllerSection.Controller;
         private readonly ILogger _logger;
         private readonly HttpClient _httpClient;
+        private readonly JsonSerializerOptions _options;
 
-        public TelephonyEventsPanelControllerSection(HttpClient httpClient, ILogger logger)
+        public TelephonyEventsPanelControllerSection(HttpClient httpClient, ILogger logger, JsonSerializerOptions options)
         {
             _httpClient = httpClient;
             _logger = logger;
+            _options = options;
         }
 
         public async Task<IEnumerable<AMIHubConnection>> GetEndpoints(CancellationToken cancellationToken = default)
@@ -40,55 +44,46 @@ namespace Sufficit.Client.Controllers.Telephony
         {
             string requestEndpoint = $"{Controller}{Prefix}/serviceoptions";
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, true));
-            options.PropertyNameCaseInsensitive = true;
-
-            HttpResponseMessage res = await _httpClient.GetAsync(uri, cancellationToken);
+            var res = await _httpClient.GetAsync(uri, cancellationToken);
             res.EnsureSuccessStatusCode();
 
             if (res.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return null;
 
-            return await res.Content.ReadFromJsonAsync<EventsPanelServiceOptions?>(options, cancellationToken);      
+            return await res.Content.ReadFromJsonAsync<EventsPanelServiceOptions?>(_options, cancellationToken);      
         }
 
         public async Task<IEnumerable<EventsPanelCardInfo>?> GetUserCards(CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}{Prefix}/usercards";
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, true));
-            options.PropertyNameCaseInsensitive = true;
-            return await _httpClient.GetFromJsonAsync<IEnumerable<EventsPanelCardInfo>>(uri, options, cancellationToken);
+            var res = await _httpClient.GetAsync(uri, cancellationToken);
+            res.EnsureSuccessStatusCode();
+
+            if (res.StatusCode == System.Net.HttpStatusCode.NoContent)
+                return null;
+
+            return await res.Content.ReadFromJsonAsync<IEnumerable<EventsPanelCardInfo>>(_options, cancellationToken);
         }
 
         public async Task<EventsPanelUserOptions?> GetUserOptions(CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}{Prefix}/useroptions";
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
-            var options = new JsonSerializerOptions();
-            options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, true));
-            options.PropertyNameCaseInsensitive = true;
-
             HttpResponseMessage res = await _httpClient.GetAsync(uri, cancellationToken);
             res.EnsureSuccessStatusCode();
 
             if(res.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return null;
 
-            return await res.Content.ReadFromJsonAsync<EventsPanelUserOptions?>(options, cancellationToken);                  
+            return await res.Content.ReadFromJsonAsync<EventsPanelUserOptions?>(_options, cancellationToken);                  
         }
 
         public async Task PostUserOptions(EventsPanelUserOptions value, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}{Prefix}/useroptions";
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, true));
-            options.PropertyNameCaseInsensitive = true;
-            await _httpClient.PostAsJsonAsync<EventsPanelUserOptions>(uri, value, options, cancellationToken);
+            await _httpClient.PostAsJsonAsync<EventsPanelUserOptions>(uri, value, _options, cancellationToken);
         }
     }
 }
