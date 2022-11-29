@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Sufficit.Client.Controllers.Telephony;
 using Sufficit.Client.Extensions;
 using Sufficit.Telephony;
@@ -10,11 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers

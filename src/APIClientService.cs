@@ -5,6 +5,7 @@ using Sufficit.EndPoints.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,11 +29,11 @@ namespace Sufficit.Client
             _httpClient.BaseAddress = new Uri(options.Value.BaseUrl);
 
             // Definindo controllers sections
-            Access = new AccessControllerSection(_httpClient, _logger);
+            Access = new AccessControllerSection(_httpClient);
             Telephony = new TelephonyControllerSection(_httpClient, _logger);
-            Identity = new IdentityControllerSection(_httpClient, _logger);
-            Contact = new ContactControllerSection(_httpClient, _logger);
-            Sales = new SalesControllerSection(_httpClient, _logger);
+            Identity = new IdentityControllerSection(_httpClient);
+            Contact = new ContactControllerSection(_httpClient);
+            Sales = new SalesControllerSection(_httpClient);
 
             _logger.LogTrace($"Sufficit API Client Service instantiated with base address: {options.Value.BaseUrl}");
         }

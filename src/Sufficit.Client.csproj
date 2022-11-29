@@ -1,9 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup Label="Targeting">
-		<TargetFramework>net7.0</TargetFramework>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
+	<PropertyGroup Label="Sufficit Targeting">
+		<TargetFrameworks>net7.0;netstandard2.0</TargetFrameworks>
 		<Nullable>enable</Nullable>
-		<LangVersion>10.0</LangVersion>
-		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>8.0</LangVersion>
+		<ImplicitUsings>disable</ImplicitUsings>
 		<RootNamespace>Sufficit.Client</RootNamespace>
 	</PropertyGroup>
 	
@@ -57,15 +58,16 @@
 			<PackagePath></PackagePath>
 		</None>
 	</ItemGroup>
-		
+
+
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.2.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="7.0.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.0" />
-	  <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
-	  <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
-	  <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
-	  <PackageReference Include="System.Net.Http.Json" Version="7.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="7.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
+		<PackageReference Include="System.Net.Http.Json" Version="7.0.0" />
 	</ItemGroup>
 
 	<ItemGroup Label="Sufficit Dependencies on Packing" Condition=" '$(Configuration)' == 'Packing' ">

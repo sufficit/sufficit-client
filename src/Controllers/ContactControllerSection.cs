@@ -1,14 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
-using Sufficit.Client.Controllers.Telephony;
-using Sufficit.Client.Extensions;
 using Sufficit.Contacts;
 using Sufficit.Telephony;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers
@@ -16,13 +15,11 @@ namespace Sufficit.Client.Controllers
     public sealed class ContactControllerSection
     {
         public const string Controller = "/contact";
-        private readonly ILogger _logger;
         private readonly HttpClient _httpClient;
 
-        public ContactControllerSection(HttpClient httpClient, ILogger logger)
+        public ContactControllerSection(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _logger = logger;
         }
 
         public async Task<IContact?> GetContact(Guid id, CancellationToken cancellationToken = default)
@@ -51,7 +48,7 @@ namespace Sufficit.Client.Controllers
             if (!response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-#if NET6_0_OR_GREATER
+#if NET5_0_OR_GREATER
                 throw new HttpRequestException(content, null, response.StatusCode);
 #else
                 throw new HttpRequestException(content);

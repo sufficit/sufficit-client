@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Sufficit.EndPoints.Configuration;
 using System;
+using System.Net.Http;
 
 namespace Sufficit.Client
 {

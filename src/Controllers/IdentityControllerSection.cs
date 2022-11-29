@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using Sufficit.Identity;
+﻿using Sufficit.Identity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers
@@ -12,13 +11,11 @@ namespace Sufficit.Client.Controllers
     public sealed class IdentityControllerSection
     {
         public const string Controller = "/identity";
-        private readonly ILogger _logger;
         private readonly HttpClient _httpClient;
 
-        public IdentityControllerSection(HttpClient httpClient, ILogger logger)
+        public IdentityControllerSection(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _logger = logger;
         }
 
         public async Task<IEnumerable<IDirective>> GetDirectives(string filter, int results = 0, CancellationToken cancellationToken = default)

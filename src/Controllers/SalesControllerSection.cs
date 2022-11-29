@@ -8,8 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers
@@ -17,13 +19,11 @@ namespace Sufficit.Client.Controllers
     public sealed class SalesControllerSection
     {
         public const string Controller = "/sales";
-        private readonly ILogger _logger;
         private readonly HttpClient _httpClient;
 
-        public SalesControllerSection(HttpClient httpClient, ILogger logger)
+        public SalesControllerSection(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _logger = logger;
         }
 
         public async Task<IEnumerable<IClient>> GetClients(string? filter, uint results = 10, CancellationToken cancellationToken = default)
