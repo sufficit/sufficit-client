@@ -32,9 +32,9 @@ namespace Sufficit.Client.Controllers
             return await _httpClient.GetFromJsonAsync<Contact?>(uri, cancellationToken);
         }
 
-        public async Task<IEnumerable<IContact>> GetContacts(string filter, int results = 10, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<IContact>> Search(string filter, int results = 10, CancellationToken cancellationToken = default)
         {            
-            string requestEndpoint = $"{Controller}/contacts";
+            string requestEndpoint = $"{Controller}/search";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
 
             if (!string.IsNullOrWhiteSpace(filter))
