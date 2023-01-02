@@ -45,21 +45,11 @@ namespace Sufficit.Client.Controllers
 
             var requestUri = new Uri($"{ requestEndpoint }?{ query }", UriKind.Relative);            
             var response = await _httpClient.GetAsync(requestUri, cancellationToken);
-            if (!response.IsSuccessStatusCode)
-            {
-                var content = await response.Content.ReadAsStringAsync();
-#if NET5_0_OR_GREATER
-                throw new HttpRequestException(content, null, response.StatusCode);
-#else
-                throw new HttpRequestException(content);
-#endif
-            }
-            else
-            {
-                var content = await response.Content.ReadFromJsonAsync<IEnumerable<Contact>>();
-                if (content != null) return content;
-                else return new Contact[] { };
-            }           
+            await response.EnsureSuccess();
+
+            var content = await response.Content.ReadFromJsonAsync<IEnumerable<Contact>>();
+            if (content != null) return content;
+            else return new Contact[] { };                       
         }
 
         public async Task<IAttribute?> GetAttribute(ContactAttributeSearchParameters parameters, CancellationToken cancellationToken = default)

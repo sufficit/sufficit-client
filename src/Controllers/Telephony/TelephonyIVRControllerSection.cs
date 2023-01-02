@@ -99,7 +99,8 @@ namespace Sufficit.Client.Controllers.Telephony
         {
             var uri = new Uri($"{Controller}/ivr", UriKind.Relative);
             var response = await _httpClient.PostAsJsonAsync(uri, ivr, cancellationToken);
-            response.EnsureSuccessStatusCode();
+
+            await response.EnsureSuccess();
         }
     }
 }
