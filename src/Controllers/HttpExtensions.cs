@@ -9,6 +9,12 @@ namespace Sufficit.Client.Controllers
 {
     public static class HttpExtensions
     {
+        /// <summary>
+        /// Nearly the HttpResponseMessage.EnsureSuccessStatusCode(), but reads the content from request before throws
+        /// </summary>
+        /// <param name="response"></param>
+        /// <returns></returns>
+        /// <exception cref="HttpRequestException"></exception>
         public static async ValueTask EnsureSuccess(this HttpResponseMessage response)
         {
             if (!response.IsSuccessStatusCode)

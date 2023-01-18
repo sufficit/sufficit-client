@@ -28,8 +28,16 @@ namespace Sufficit.Client.Controllers
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
 
-            var uri = new Uri($"{ requestEndpoint }?{ query }", UriKind.Relative);
-            return await _httpClient.GetFromJsonAsync<Contact?>(uri, cancellationToken);
+            var requestUri = new Uri($"{ requestEndpoint }?{ query }", UriKind.Relative);
+            var response = await _httpClient.GetAsync(requestUri, cancellationToken);
+            await response.EnsureSuccess();
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                return null;
+
+            var content = await response.Content.ReadFromJsonAsync<Contact>();
+            if (content != null) return content;
+            else return null;
         }
 
         public async Task<IEnumerable<IContact>> Search(string filter, int results = 10, CancellationToken cancellationToken = default)
