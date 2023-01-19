@@ -62,8 +62,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.2.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="7.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="7.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
@@ -71,9 +71,9 @@
 	</ItemGroup>
 
 	<ItemGroup Label="Sufficit Dependencies on Packing" Condition=" '$(Configuration)' == 'Packing' ">
-		<PackageReference Include="Sufficit.Base" Version="1.22.*" />
-		<PackageReference Include="Sufficit.Identity.Core" Version="1.22.*" />
-		<PackageReference Include="Sufficit.Telephony.EventsPanel.Core" Version="1.22.*" />
+		<PackageReference Include="Sufficit.Base" Version="1.*" />
+		<PackageReference Include="Sufficit.Identity.Core" Version="1.*" />
+		<PackageReference Include="Sufficit.Telephony.EventsPanel.Core" Version="1.*" />
 	</ItemGroup>
 
 	<ItemGroup Label="Sufficit Local Dependencies" Condition=" '$(Configuration)' != 'Packing' ">
