@@ -22,7 +22,7 @@ namespace Sufficit.Client.Controllers
             _httpClient = httpClient;
         }
 
-        public async Task<IContact?> GetContact(Guid id, CancellationToken cancellationToken = default)
+        public async Task<Contact?> GetContact(Guid id, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
@@ -40,7 +40,7 @@ namespace Sufficit.Client.Controllers
             else return null;
         }
 
-        public async Task<IEnumerable<IContact>> Search(string filter, int results = 10, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Contact>> Search(string filter, int results = 10, CancellationToken cancellationToken = default)
         {            
             string requestEndpoint = $"{Controller}/search";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);

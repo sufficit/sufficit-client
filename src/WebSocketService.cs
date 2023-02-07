@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Sufficit.CheckUp;
 using Sufficit.EndPoints.Configuration;
-using Sufficit.Telephony;
-using Sufficit.Telephony.CheckUp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
