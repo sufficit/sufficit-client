@@ -35,7 +35,7 @@ namespace Sufficit.Client.Controllers.Telephony
             options.PropertyNameCaseInsensitive = true;
         }
 
-        public async Task<IEnumerable<DirectInwardDialingV1>> ByContext(Guid contextId, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<DirectInwardDialing>> ByContext(Guid contextId, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("by context: {contextid}", contextId);
 
@@ -47,12 +47,12 @@ namespace Sufficit.Client.Controllers.Telephony
             response.EnsureSuccessStatusCode();
             
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                return Array.Empty<DirectInwardDialingV1>();
+                return Array.Empty<DirectInwardDialing>();
             
-            return await response.Content.ReadFromJsonAsync<IEnumerable<DirectInwardDialingV1>>(options, cancellationToken) ?? Array.Empty<DirectInwardDialingV1>();
+            return await response.Content.ReadFromJsonAsync<IEnumerable<DirectInwardDialing>>(options, cancellationToken) ?? Array.Empty<DirectInwardDialing>();
         }
 
-        public async Task<DirectInwardDialingV1?> ById(Guid id, CancellationToken cancellationToken = default)
+        public async Task<DirectInwardDialing?> ById(Guid id, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("by id: {id}", id);
 
@@ -66,7 +66,7 @@ namespace Sufficit.Client.Controllers.Telephony
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return null;
 
-            return await response.Content.ReadFromJsonAsync<DirectInwardDialingV1>(options, cancellationToken);
+            return await response.Content.ReadFromJsonAsync<DirectInwardDialing>(options, cancellationToken);
         }
 
         /// <summary>
@@ -75,6 +75,19 @@ namespace Sufficit.Client.Controllers.Telephony
         public async Task Owner(OwnerUpdateParameters parameters, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}{Prefix}/owner", UriKind.Relative);
+            var request = new HttpRequestMessage(HttpMethod.Post, uri);
+            request.Content = JsonContent.Create(parameters, null, options);
+
+            var response = await _httpClient.SendAsync(request, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Update Owner information
+        /// </summary>
+        public async Task Context(ContextUpdateParameters parameters, CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/context", UriKind.Relative);
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
             request.Content = JsonContent.Create(parameters, null, options);
 

@@ -25,11 +25,8 @@ namespace Sufficit.Client.Controllers.Telephony
         {
             _httpClient = httpClient;
             _logger = logger;
-            
-            options = new JsonSerializerOptions();
-            options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, true));
-            options.PropertyNameCaseInsensitive = true;
+
+            options = Json.Generate();
         }
 
         public async Task<IEnumerable<IVR>> ByContext(Guid contextId, CancellationToken cancellationToken = default)

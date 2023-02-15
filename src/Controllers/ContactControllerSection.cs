@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Sufficit.Contacts;
+using Sufficit.Logging;
 using Sufficit.Telephony;
 using System;
 using System.Collections.Generic;
@@ -55,9 +56,12 @@ namespace Sufficit.Client.Controllers
             var response = await _httpClient.GetAsync(requestUri, cancellationToken);
             await response.EnsureSuccess();
 
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                return Array.Empty<Contact>();
+
             var content = await response.Content.ReadFromJsonAsync<IEnumerable<Contact>>();
             if (content != null) return content;
-            else return new Contact[] { };                       
+            else return Array.Empty<Contact>();                       
         }
 
         public async Task<IAttribute?> GetAttribute(ContactAttributeSearchParameters parameters, CancellationToken cancellationToken = default)
@@ -69,8 +73,14 @@ namespace Sufficit.Client.Controllers
             query["Value"] = parameters.Value;
             query["ExactMatch"] = parameters.ExactMatch.ToString();
 
-            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
-            return await _httpClient.GetFromJsonAsync<Sufficit.Contacts.Attribute>(uri, cancellationToken);
+            var requestUri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
+            var response = await _httpClient.GetAsync(requestUri, cancellationToken);
+            await response.EnsureSuccess();
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                return null;
+
+            return await response.Content.ReadFromJsonAsync<Sufficit.Contacts.Attribute?>(Json.Options, cancellationToken);
         }
     }
 }
