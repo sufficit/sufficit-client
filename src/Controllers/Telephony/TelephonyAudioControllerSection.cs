@@ -15,54 +15,43 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Telephony
 {
-    public sealed class TelephonyAudioControllerSection : AudioControllerInterface
+    public sealed class TelephonyAudioControllerSection : ControllerSection, AudioControllerInterface
     {
-        private static string Controller => TelephonyControllerSection.Controller;
-        private readonly ILogger _logger;
-        private readonly HttpClient _httpClient;
-        private readonly JsonSerializerOptions options;
+        private const string Controller = TelephonyControllerSection.Controller;
+        private const string Prefix = "/audio";
 
-        public TelephonyAudioControllerSection(HttpClient httpClient, ILogger logger)
-        {
-            _httpClient = httpClient;
-            _logger = logger;
-            
-            options = new JsonSerializerOptions();
-            options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, true));
-            options.PropertyNameCaseInsensitive = true;
-        }
+        public TelephonyAudioControllerSection(APIClientService service) : base(service) { }    
 
         public async Task<IEnumerable<Audio>> ByContext(Guid contextId, CancellationToken cancellationToken = default)
         {
-            _logger.LogTrace("by context: {contextid}", contextId);
+            logger.LogTrace("by context: {contextid}", contextId);
 
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["contextid"] = contextId.ToString();
 
-            var uri = new Uri($"{Controller}/audio/bycontext?{query}", UriKind.Relative);
-            var response = await _httpClient.GetAsync(uri, cancellationToken);
+            var uri = new Uri($"{Controller}{Prefix}/bycontext?{query}", UriKind.Relative);
+            var response = await httpClient.GetAsync(uri, cancellationToken);
             response.EnsureSuccessStatusCode();
             
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return Array.Empty<Audio>();
             
-            return await response.Content.ReadFromJsonAsync<IEnumerable<Audio>>(options, cancellationToken) ?? Array.Empty<Audio>();
+            return await response.Content.ReadFromJsonAsync<IEnumerable<Audio>>(jsonOptions, cancellationToken) ?? Array.Empty<Audio>();
         }
 
         public async Task<Audio?> Find(AudioSearchParameters parameters, CancellationToken cancellationToken)
         {
-            _logger.LogTrace("by parameters: {?}", parameters);
+            logger.LogTrace("by parameters: {?}", parameters);
 
             var query = parameters.ToQueryString();
-            var uri = new Uri($"{Controller}/audio?{query}", UriKind.Relative);
-            var response = await _httpClient.GetAsync(uri, cancellationToken);
+            var uri = new Uri($"{Controller}{Prefix}?{query}", UriKind.Relative);
+            var response = await httpClient.GetAsync(uri, cancellationToken);
             response.EnsureSuccessStatusCode();
 
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return null;
 
-            return await response.Content.ReadFromJsonAsync<Audio>(options, cancellationToken);
+            return await response.Content.ReadFromJsonAsync<Audio>(jsonOptions, cancellationToken);
         }
     }
 }

@@ -16,57 +16,45 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Telephony
 {
-    public sealed class TelephonyDIDControllerSection
+    public sealed class TelephonyDIDControllerSection : ControllerSection
     {
-        private static string Prefix => "/did";
-        private static string Controller => TelephonyControllerSection.Controller;
-        private readonly ILogger _logger;
-        private readonly HttpClient _httpClient;
-        private readonly JsonSerializerOptions options;
+        private const string Controller = TelephonyControllerSection.Controller;
+        private const string Prefix = "/did";
 
-        public TelephonyDIDControllerSection(HttpClient httpClient, ILogger logger)
-        {
-            _httpClient = httpClient;
-            _logger = logger;
-            
-            options = new JsonSerializerOptions();
-            options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, true));
-            options.PropertyNameCaseInsensitive = true;
-        }
+        public TelephonyDIDControllerSection(APIClientService service) : base(service) { }  
 
         public async Task<IEnumerable<DirectInwardDialing>> ByContext(Guid contextId, CancellationToken cancellationToken = default)
         {
-            _logger.LogTrace("by context: {contextid}", contextId);
+            logger.LogTrace("by context: {contextid}", contextId);
 
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["contextid"] = contextId.ToString();
 
             var uri = new Uri($"{Controller}{Prefix}/bycontext?{query}", UriKind.Relative);
-            var response = await _httpClient.GetAsync(uri, cancellationToken);
-            response.EnsureSuccessStatusCode();
-            
+            var response = await httpClient.GetAsync(uri, cancellationToken);
+            await response.EnsureSuccess();
+
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return Array.Empty<DirectInwardDialing>();
             
-            return await response.Content.ReadFromJsonAsync<IEnumerable<DirectInwardDialing>>(options, cancellationToken) ?? Array.Empty<DirectInwardDialing>();
+            return await response.Content.ReadFromJsonAsync<IEnumerable<DirectInwardDialing>>(jsonOptions, cancellationToken) ?? Array.Empty<DirectInwardDialing>();
         }
 
         public async Task<DirectInwardDialing?> ById(Guid id, CancellationToken cancellationToken = default)
         {
-            _logger.LogTrace("by id: {id}", id);
+            logger.LogTrace("by id: {id}", id);
 
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
 
             var uri = new Uri($"{Controller}{Prefix}/byid?{query}", UriKind.Relative);
-            var response = await _httpClient.GetAsync(uri, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            var response = await httpClient.GetAsync(uri, cancellationToken);
+            await response.EnsureSuccess();
 
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return null;
 
-            return await response.Content.ReadFromJsonAsync<DirectInwardDialing>(options, cancellationToken);
+            return await response.Content.ReadFromJsonAsync<DirectInwardDialing>(jsonOptions, cancellationToken);
         }
 
         /// <summary>
@@ -76,10 +64,10 @@ namespace Sufficit.Client.Controllers.Telephony
         {
             var uri = new Uri($"{Controller}{Prefix}/owner", UriKind.Relative);
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Content = JsonContent.Create(parameters, null, options);
+            request.Content = JsonContent.Create(parameters, null, jsonOptions);
 
-            var response = await _httpClient.SendAsync(request, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            var response = await httpClient.SendAsync(request, cancellationToken);
+            await response.EnsureSuccess();
         }
 
         /// <summary>
@@ -89,10 +77,10 @@ namespace Sufficit.Client.Controllers.Telephony
         {
             var uri = new Uri($"{Controller}{Prefix}/context", UriKind.Relative);
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Content = JsonContent.Create(parameters, null, options);
+            request.Content = JsonContent.Create(parameters, null, jsonOptions);
 
-            var response = await _httpClient.SendAsync(request, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            var response = await httpClient.SendAsync(request, cancellationToken);
+            await response.EnsureSuccess();
         }
 
         /// <summary>
@@ -102,10 +90,10 @@ namespace Sufficit.Client.Controllers.Telephony
         {
             var uri = new Uri($"{Controller}{Prefix}/filter", UriKind.Relative);
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Content = JsonContent.Create(parameters, null, options);
+            request.Content = JsonContent.Create(parameters, null, jsonOptions);
 
-            var response = await _httpClient.SendAsync(request, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            var response = await httpClient.SendAsync(request, cancellationToken);
+            await response.EnsureSuccess();
         }
 
         /// <summary>
@@ -115,10 +103,10 @@ namespace Sufficit.Client.Controllers.Telephony
         {
             var uri = new Uri($"{Controller}{Prefix}/extra", UriKind.Relative);
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Content = JsonContent.Create(parameters, null, options);
+            request.Content = JsonContent.Create(parameters, null, jsonOptions);
 
-            var response = await _httpClient.SendAsync(request, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            var response = await httpClient.SendAsync(request, cancellationToken);
+            await response.EnsureSuccess();
         }
 
         /// <summary>
@@ -131,10 +119,10 @@ namespace Sufficit.Client.Controllers.Telephony
 
             var uri = new Uri($"{Controller}{Prefix}/destination?{query}", UriKind.Relative);
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Content = JsonContent.Create(destination, null, options);
+            request.Content = JsonContent.Create(destination, null, jsonOptions);
 
-            var response = await _httpClient.SendAsync(request, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            var response = await httpClient.SendAsync(request, cancellationToken);
+            await response.EnsureSuccess();
         }
 
         /// <summary>
@@ -147,10 +135,10 @@ namespace Sufficit.Client.Controllers.Telephony
 
             var uri = new Uri($"{Controller}{Prefix}/properties?{query}", UriKind.Relative);
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Content = JsonContent.Create(properties, null, options);
+            request.Content = JsonContent.Create(properties, null, jsonOptions);
 
-            var response = await _httpClient.SendAsync(request, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            var response = await httpClient.SendAsync(request, cancellationToken);
+            await response.EnsureSuccess();
         }
     }
 }

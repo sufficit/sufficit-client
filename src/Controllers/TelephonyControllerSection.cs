@@ -18,33 +18,22 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers
 {
-    public sealed class TelephonyControllerSection
+    public sealed class TelephonyControllerSection : ControllerSection
     {
         public const string Controller = "/telephony";
-        private readonly ILogger _logger;
-        private readonly HttpClient _httpClient;
-        private readonly JsonSerializerOptions options;
 
-        public TelephonyControllerSection(HttpClient httpClient, ILogger logger)
-        {
-            _httpClient = httpClient;
-            _logger = logger;
-
-            options = new JsonSerializerOptions();
-            options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, true));
-            options.PropertyNameCaseInsensitive = true;
-
-            Balance = new TelephonyBalanceControllerSection(_httpClient, _logger);
-            EventsPanel = new TelephonyEventsPanelControllerSection(_httpClient, _logger, options);
-            IVR = new TelephonyIVRControllerSection(_httpClient, _logger);
-            Audio = new TelephonyAudioControllerSection(_httpClient, _logger);
-            DID = new TelephonyDIDControllerSection(_httpClient, _logger);
+        public TelephonyControllerSection(APIClientService service) : base(service) 
+        {           
+            Balance = new TelephonyBalanceControllerSection(service);
+            EventsPanel = new TelephonyEventsPanelControllerSection(service);
+            IVR = new TelephonyIVRControllerSection(service);
+            Audio = new TelephonyAudioControllerSection(service);
+            DID = new TelephonyDIDControllerSection(service);
         }
-
+    
         public async Task<Guid> WebRTCKey()
         {
-            return await _httpClient.GetFromJsonAsync<Guid>($"{Controller}/webrtckey");           
+            return await httpClient.GetFromJsonAsync<Guid>($"{Controller}/webrtckey");           
         }
 
         public TelephonyBalanceControllerSection Balance { get; }
@@ -61,10 +50,10 @@ namespace Sufficit.Client.Controllers
         {            
             string requestEndpoint = $"{Controller}/calls";
             string requestParams = parameters.ToUriQuery();
-            _logger.LogTrace($"CallSearchAsync: {requestParams}");
+            logger.LogTrace($"CallSearchAsync: {requestParams}");
 
             string requestUri = $"{requestEndpoint}?{requestParams}";
-            var response = await _httpClient.GetAsync(requestUri, cancellationToken);
+            var response = await httpClient.GetAsync(requestUri, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
@@ -88,7 +77,7 @@ namespace Sufficit.Client.Controllers
         {
             string requestEndpoint = $"{Controller}/webcallback";
             var uri = new Uri(requestEndpoint, UriKind.Relative);
-            return _httpClient.PostAsJsonAsync<WebCallBackRequest>(uri, request, cancellationToken);
+            return httpClient.PostAsJsonAsync<WebCallBackRequest>(uri, request, cancellationToken);
         }
 
         #endregion
@@ -98,33 +87,33 @@ namespace Sufficit.Client.Controllers
         [Authorize]
         public async Task<IEnumerable<IDestination>> Destinations(DestinationSearchParameters parameters, CancellationToken cancellationToken = default)
         {
-            _logger.LogTrace("by parameters: {?}", parameters);
+            logger.LogTrace("by parameters: {?}", parameters);
 
             var query = parameters.ToQueryString();
             var uri = new Uri($"{Controller}/destinations?{query}", UriKind.Relative);
-            var response = await _httpClient.GetAsync(uri, cancellationToken);
+            var response = await httpClient.GetAsync(uri, cancellationToken);
             response.EnsureSuccessStatusCode();
 
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return Array.Empty<IDestination>();
 
-            return await response.Content.ReadFromJsonAsync<IEnumerable<Destination>>(options, cancellationToken) ?? Array.Empty<Destination>();
+            return await response.Content.ReadFromJsonAsync<IEnumerable<Destination>>(jsonOptions, cancellationToken) ?? Array.Empty<Destination>();
         }
 
         [Authorize]
         public async Task<IDestination?> Destination(DestinationSearchParameters parameters, CancellationToken cancellationToken = default)
         {
-            _logger.LogTrace("single by parameters: {?}", parameters);
+            logger.LogTrace("single by parameters: {?}", parameters);
 
             var query = parameters.ToQueryString();
             var uri = new Uri($"{Controller}/destination?{query}", UriKind.Relative);
-            var response = await _httpClient.GetAsync(uri, cancellationToken);
+            var response = await httpClient.GetAsync(uri, cancellationToken);
             response.EnsureSuccessStatusCode();
 
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return null;
 
-            return await response.Content.ReadFromJsonAsync<Destination>(options, cancellationToken);
+            return await response.Content.ReadFromJsonAsync<Destination>(jsonOptions, cancellationToken);
         }
 
         #endregion

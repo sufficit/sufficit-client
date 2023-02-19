@@ -8,16 +8,12 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers
 {
-    public sealed class IdentityControllerSection
+    public sealed class IdentityControllerSection : ControllerSection
     {
         public const string Controller = "/identity";
-        private readonly HttpClient _httpClient;
 
-        public IdentityControllerSection(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
-
+        public IdentityControllerSection(APIClientService service) : base(service) { }
+    
         public async Task<IEnumerable<IDirective>> GetDirectives(string filter, int results = 0, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}/directives";
@@ -30,7 +26,7 @@ namespace Sufficit.Client.Controllers
                 query["results"] = results.ToString();
 
             var uri = new Uri($"{ requestEndpoint }?{ query }", UriKind.Relative);
-            var response = await _httpClient.GetFromJsonAsync<IEnumerable<DirectiveBase>>(uri, cancellationToken);
+            var response = await httpClient.GetFromJsonAsync<IEnumerable<DirectiveBase>>(uri, cancellationToken);
             if (response != null) return response;
             else return new IDirective[] { };
         }

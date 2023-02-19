@@ -13,16 +13,12 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers
 {
-    public sealed class ContactControllerSection
+    public sealed class ContactControllerSection : ControllerSection
     {
         public const string Controller = "/contact";
-        private readonly HttpClient _httpClient;
 
-        public ContactControllerSection(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
-
+        public ContactControllerSection(APIClientService service) : base(service) { }
+    
         public async Task<Contact?> GetContact(Guid id, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}";
@@ -30,7 +26,7 @@ namespace Sufficit.Client.Controllers
             query["id"] = id.ToString();
 
             var requestUri = new Uri($"{ requestEndpoint }?{ query }", UriKind.Relative);
-            var response = await _httpClient.GetAsync(requestUri, cancellationToken);
+            var response = await httpClient.GetAsync(requestUri, cancellationToken);
             await response.EnsureSuccess();
 
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
@@ -53,13 +49,13 @@ namespace Sufficit.Client.Controllers
                 query["results"] = results.ToString();
 
             var requestUri = new Uri($"{ requestEndpoint }?{ query }", UriKind.Relative);            
-            var response = await _httpClient.GetAsync(requestUri, cancellationToken);
+            var response = await httpClient.GetAsync(requestUri, cancellationToken);
             await response.EnsureSuccess();
 
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return Array.Empty<Contact>();
 
-            var content = await response.Content.ReadFromJsonAsync<IEnumerable<Contact>>();
+            var content = await response.Content.ReadFromJsonAsync<IEnumerable<Contact>>(jsonOptions, cancellationToken);
             if (content != null) return content;
             else return Array.Empty<Contact>();                       
         }
@@ -74,13 +70,13 @@ namespace Sufficit.Client.Controllers
             query["ExactMatch"] = parameters.ExactMatch.ToString();
 
             var requestUri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
-            var response = await _httpClient.GetAsync(requestUri, cancellationToken);
+            var response = await httpClient.GetAsync(requestUri, cancellationToken);
             await response.EnsureSuccess();
 
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return null;
 
-            return await response.Content.ReadFromJsonAsync<Sufficit.Contacts.Attribute?>(Json.Options, cancellationToken);
+            return await response.Content.ReadFromJsonAsync<Sufficit.Contacts.Attribute?>(jsonOptions, cancellationToken);
         }
     }
 }

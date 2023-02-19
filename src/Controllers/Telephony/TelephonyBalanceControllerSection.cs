@@ -7,21 +7,15 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Telephony
 {
-    public sealed class TelephonyBalanceControllerSection
+    public sealed class TelephonyBalanceControllerSection : ControllerSection
     {
-        private static string Controller => TelephonyControllerSection.Controller;
-        private readonly ILogger _logger;
-        private readonly HttpClient _httpClient;
+        private const string Controller = TelephonyControllerSection.Controller;
 
-        public TelephonyBalanceControllerSection(HttpClient httpClient, ILogger logger)
-        {
-            _httpClient = httpClient;
-            _logger = logger;
-        }
+        public TelephonyBalanceControllerSection(APIClientService service) : base(service) { }
 
         public async Task Notify(Guid idcontext, bool force, CancellationToken cancellationToken)
         {
-            _logger.LogTrace("notifying: {idcontext} => {force}", idcontext, force);
+            logger.LogTrace("notifying: {idcontext} => {force}", idcontext, force);
 
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["idcontext"] = idcontext.ToString();
@@ -29,7 +23,7 @@ namespace Sufficit.Client.Controllers.Telephony
 
             var uri = new Uri($"{Controller}/balance?{query}", UriKind.Relative);
             var request = new HttpRequestMessage(HttpMethod.Head, uri);            
-            var response = await _httpClient.SendAsync(request, cancellationToken);
+            var response = await httpClient.SendAsync(request, cancellationToken);
             response.EnsureSuccessStatusCode();
         }
     }

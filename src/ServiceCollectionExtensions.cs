@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Sufficit.Client.Extensions;
 using Sufficit.EndPoints.Configuration;
 using System;
 using System.Net.Http;
@@ -31,17 +32,28 @@ namespace Sufficit.Client
             // Capturando para uso local
             var options = configuration.GetSection(EndPointsAPIOptions.SECTIONNAME).Get<EndPointsAPIOptions>() ?? new EndPointsAPIOptions();
             
-            services.AddScoped<ProtectedApiBearerTokenHandler>();
-            services.AddHttpClient(options.ClientId, client => client.BaseAddress = new Uri(options.BaseUrl))
-                .AddHttpMessageHandler<ProtectedApiBearerTokenHandler>();
+            services.AddTransient<ProtectedApiBearerTokenHandler>();
+            services.AddHttpClient(options.ClientId, client => client.Configure(options)).AddHttpMessageHandler<ProtectedApiBearerTokenHandler>();
 
-            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(options.ClientId));
+            // services.AddHttpClient<IAPIHttpClient, APIHttpClient>();
+            // services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(options.ClientId));
 
-            services.TryAddSingleton<APIClientService>();
+            services.AddSingleton<APIClientService>();
             services.AddScoped<IWebSocketService, WebSocketService>();
 
             return services;
         }
+
+        /* // example of policy handler for httpclient
+        .AddPolicyHandler(GetRetryPolicy())
+        static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+        {
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+        }
+        */
 
         public static IApplicationBuilder UseSufficitEndPointsAPI(this IApplicationBuilder app) 
         {

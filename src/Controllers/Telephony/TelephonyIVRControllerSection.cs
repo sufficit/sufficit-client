@@ -14,36 +14,28 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Telephony
 {
-    public sealed class TelephonyIVRControllerSection : IVRControllerInterface
+    public sealed class TelephonyIVRControllerSection : ControllerSection, IVRControllerInterface
     {
-        private static string Controller => TelephonyControllerSection.Controller;
-        private readonly ILogger _logger;
-        private readonly HttpClient _httpClient;
-        private readonly JsonSerializerOptions options;
+        private const string Controller = TelephonyControllerSection.Controller;
+        private const string Prefix = "/ivr";
 
-        public TelephonyIVRControllerSection(HttpClient httpClient, ILogger logger)
-        {
-            _httpClient = httpClient;
-            _logger = logger;
-
-            options = Json.Generate();
-        }
-
+        public TelephonyIVRControllerSection(APIClientService service) : base(service) { }   
+   
         public async Task<IEnumerable<IVR>> ByContext(Guid contextId, CancellationToken cancellationToken = default)
         {
-            _logger.LogTrace("by context: {contextid}", contextId);
+            logger.LogTrace("by context: {contextid}", contextId);
 
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["contextid"] = contextId.ToString();
 
-            var uri = new Uri($"{Controller}/ivr/bycontext?{query}", UriKind.Relative);
-            var response = await _httpClient.GetAsync(uri, cancellationToken);
+            var uri = new Uri($"{Controller}{Prefix}/bycontext?{query}", UriKind.Relative);
+            var response = await httpClient.GetAsync(uri, cancellationToken);
             response.EnsureSuccessStatusCode();
             
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return Array.Empty<IVR>();
             
-            return await response.Content.ReadFromJsonAsync<IEnumerable<IVR>>(options, cancellationToken) ?? Array.Empty<IVR>();
+            return await response.Content.ReadFromJsonAsync<IEnumerable<IVR>>(jsonOptions, cancellationToken) ?? Array.Empty<IVR>();
         }
 
         public Task<IVR?> Find(ClientIVRSearchParameters parameters, CancellationToken cancellationToken = default)
@@ -51,34 +43,34 @@ namespace Sufficit.Client.Controllers.Telephony
 
         public async Task<IVR?> Find(IVRSearchParameters parameters, CancellationToken cancellationToken)
         {
-            _logger.LogTrace("by parameters: {?}", parameters);
+            logger.LogTrace("by parameters: {?}", parameters);
 
             var query = ClientIVRSearchParameters.ToQueryString(parameters);
-            var uri = new Uri($"{Controller}/ivr?{query}", UriKind.Relative);
-            var response = await _httpClient.GetAsync(uri, cancellationToken);
+            var uri = new Uri($"{Controller}{Prefix}?{query}", UriKind.Relative);
+            var response = await httpClient.GetAsync(uri, cancellationToken);
             response.EnsureSuccessStatusCode();
 
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return null;
 
-            return await response.Content.ReadFromJsonAsync<IVR>(options, cancellationToken);
+            return await response.Content.ReadFromJsonAsync<IVR>(jsonOptions, cancellationToken);
         }
 
         public async Task<IEnumerable<IVROption>> GetOptions(Guid ivrId, CancellationToken cancellationToken = default)
         {
-            _logger.LogTrace("options by id: {?}", ivrId);
+            logger.LogTrace("options by id: {?}", ivrId);
 
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["ivrid"] = ivrId.ToString();
 
-            var uri = new Uri($"{Controller}/ivr/options?{query}", UriKind.Relative);
-            var response = await _httpClient.GetAsync(uri, cancellationToken);
+            var uri = new Uri($"{Controller}{Prefix}/options?{query}", UriKind.Relative);
+            var response = await httpClient.GetAsync(uri, cancellationToken);
             response.EnsureSuccessStatusCode();
 
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return Array.Empty<IVROption>();
 
-            return await response.Content.ReadFromJsonAsync<IEnumerable<IVROption>>(options, cancellationToken) 
+            return await response.Content.ReadFromJsonAsync<IEnumerable<IVROption>>(jsonOptions, cancellationToken) 
                 ?? Array.Empty<IVROption>();
         }
 
@@ -87,15 +79,15 @@ namespace Sufficit.Client.Controllers.Telephony
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["ivrid"] = ivrId.ToString();
 
-            var uri = new Uri($"{Controller}/ivr/options?{query}", UriKind.Relative);
-            var response = await _httpClient.PostAsJsonAsync(uri, options, cancellationToken);
+            var uri = new Uri($"{Controller}{Prefix}/options?{query}", UriKind.Relative);
+            var response = await httpClient.PostAsJsonAsync(uri, options, cancellationToken);
             response.EnsureSuccessStatusCode();
         }
 
         public async Task Update(IVR ivr, CancellationToken cancellationToken = default)
         {
-            var uri = new Uri($"{Controller}/ivr", UriKind.Relative);
-            var response = await _httpClient.PostAsJsonAsync(uri, ivr, cancellationToken);
+            var uri = new Uri($"{Controller}{Prefix}", UriKind.Relative);
+            var response = await httpClient.PostAsJsonAsync(uri, ivr, cancellationToken);
 
             await response.EnsureSuccess();
         }

@@ -2,10 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,7 +17,6 @@ namespace Sufficit.Client
         /// <summary>
         /// Testar se o accessor existe, !?
         /// </summary>
-        /// <param name="httpContextAccessor"></param>
         public ProtectedApiBearerTokenHandler(IHttpContextAccessor httpContextAccessor, ILogger<ProtectedApiBearerTokenHandler> logger)
         {
             _accessor = httpContextAccessor;
@@ -31,18 +27,21 @@ namespace Sufficit.Client
         {
             if (ShouldAuthenticate(request)) 
             {
-                if (_accessor.HttpContext != null)
+                if (!request.Headers.Contains("Authorization"))
                 {
-                    // request the access token
-                    accessToken = await _accessor.HttpContext.GetTokenAsync("access_token");
-                } 
-                else { _logger.LogWarning("http context not available at this time, you should lead with that !"); }
+                    if (_accessor.HttpContext != null)
+                    {
+                        // request the access token
+                        accessToken = await _accessor.HttpContext.GetTokenAsync("access_token");
+                    }
+                    else { _logger.LogWarning("http context not available at this time, you should lead with that !"); }
 
-                if(string.IsNullOrWhiteSpace(accessToken))
-                    throw new Exception("access token not available at this time");
+                    if (string.IsNullOrWhiteSpace(accessToken))
+                        throw new Exception("access token not available at this time");
 
-                // set the bearer token to the outgoing request
-                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);                
+                    // set the bearer token to the outgoing request
+                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+                }            
             }
 
             // Proceed calling the inner handler, that will actually send the request

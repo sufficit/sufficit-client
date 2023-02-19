@@ -8,45 +8,39 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Sufficit.Client
 {
-    public class APIClientService
-    {
-        private readonly IOptions<EndPointsAPIOptions> _options;
-        private readonly IHttpClientFactory _factory;
-        private readonly ILogger _logger;
-        private readonly HttpClient _httpClient;
-
-        public APIClientService(IOptions<EndPointsAPIOptions> options, IHttpClientFactory clientFactory, ILogger<APIClientService> logger)
-        {
-            _options = options;
-            _factory = clientFactory;
-            _logger = logger;
-
-            _httpClient = _factory.CreateClient(_options.Value.ClientId);
-            _httpClient.BaseAddress = new Uri(options.Value.BaseUrl);
-
+    /// <summary>
+    /// Singleton implementation of default API Client <br />
+    /// With Transient Http Client
+    /// </summary>
+    public class APIClientService : ControllerSection
+    {                       
+        public APIClientService(IOptionsMonitor<EndPointsAPIOptions> ioptions, IHttpClientFactory clientFactory, ILogger<APIClientService> logger)
+            : base(ioptions, clientFactory, logger, Json.Options)
+        {          
             // Definindo controllers sections
-            Access = new AccessControllerSection(_httpClient);
-            Telephony = new TelephonyControllerSection(_httpClient, _logger);
-            Identity = new IdentityControllerSection(_httpClient);
-            Contact = new ContactControllerSection(_httpClient);
-            Sales = new SalesControllerSection(_httpClient);
-            Logging = new LoggingControllerSection(_httpClient);
+            Access = new AccessControllerSection(this);
+            Telephony = new TelephonyControllerSection(this);
+            Identity = new IdentityControllerSection(this);
+            Contact = new ContactControllerSection(this);
+            Sales = new SalesControllerSection(this);
+            Logging = new LoggingControllerSection(this);
 
-            _logger.LogTrace($"Sufficit API Client Service instantiated with base address: {options.Value.BaseUrl}");
+            logger.LogTrace($"Sufficit API Client Service instantiated with base address: {options.BaseUrl}");
         }
 
         public async Task<HealthResponse?> Health()
         {
-            return await _httpClient.GetFromJsonAsync<HealthResponse>("/health");
+            return await httpClient.GetFromJsonAsync<HealthResponse>("/health");
         }
 
         public async Task<WeatherForecast[]?> WeatherForeacast()
         {
-            return await _httpClient.GetFromJsonAsync<WeatherForecast[]>("/WeatherForecast");            
+            return await httpClient.GetFromJsonAsync<WeatherForecast[]>("/WeatherForecast");            
         }
 
         public AccessControllerSection Access { get; }
