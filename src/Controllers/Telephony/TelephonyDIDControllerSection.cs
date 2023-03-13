@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using Sufficit.Client.Extensions;
+using Sufficit.Exchange;
 using Sufficit.Telephony;
 using Sufficit.Telephony.Asterisk;
 using Sufficit.Telephony.DIDs;
@@ -23,7 +25,7 @@ namespace Sufficit.Client.Controllers.Telephony
 
         public TelephonyDIDControllerSection(APIClientService service) : base(service) { }  
 
-        public async Task<IEnumerable<DirectInwardDialing>> ByContext(Guid contextId, CancellationToken cancellationToken = default)
+        public Task<IEnumerable<DirectInwardDialing>> ByContext(Guid contextId, CancellationToken cancellationToken = default)
         {
             logger.LogTrace("by context: {contextid}", contextId);
 
@@ -31,16 +33,11 @@ namespace Sufficit.Client.Controllers.Telephony
             query["contextid"] = contextId.ToString();
 
             var uri = new Uri($"{Controller}{Prefix}/bycontext?{query}", UriKind.Relative);
-            var response = await httpClient.GetAsync(uri, cancellationToken);
-            await response.EnsureSuccess();
-
-            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                return Array.Empty<DirectInwardDialing>();
-            
-            return await response.Content.ReadFromJsonAsync<IEnumerable<DirectInwardDialing>>(jsonOptions, cancellationToken) ?? Array.Empty<DirectInwardDialing>();
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestMany<DirectInwardDialing>(message, cancellationToken);
         }
 
-        public async Task<DirectInwardDialing?> ById(Guid id, CancellationToken cancellationToken = default)
+        public Task<DirectInwardDialing?> ById(Guid id, CancellationToken cancellationToken = default)
         {
             logger.LogTrace("by id: {id}", id);
 
@@ -48,97 +45,101 @@ namespace Sufficit.Client.Controllers.Telephony
             query["id"] = id.ToString();
 
             var uri = new Uri($"{Controller}{Prefix}/byid?{query}", UriKind.Relative);
-            var response = await httpClient.GetAsync(uri, cancellationToken);
-            await response.EnsureSuccess();
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<DirectInwardDialing>(message, cancellationToken);
+        }
 
-            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                return null;
+        public Task<DirectInwardDialing?> ByExtension(string extension, CancellationToken cancellationToken = default)
+        {
+            logger.LogTrace("by extension: {extension}", extension);
 
-            return await response.Content.ReadFromJsonAsync<DirectInwardDialing>(jsonOptions, cancellationToken);
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["extension"] = extension.ToString();
+
+            var uri = new Uri($"{Controller}{Prefix}/byextension?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<DirectInwardDialing>(message, cancellationToken);
+        }
+
+        public Task<IEnumerable<DirectInwardDialing>> Search(DIDSearchParameters parameters, CancellationToken cancellationToken = default)
+        {
+            logger.LogTrace("by search parameters: {parameters}", parameters);
+            var uri = new Uri($"{Controller}{Prefix}/search", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            return RequestMany<DirectInwardDialing>(message, cancellationToken);
         }
 
         /// <summary>
         /// Update Owner information
         /// </summary>
-        public async Task Owner(OwnerUpdateParameters parameters, CancellationToken cancellationToken)
+        public Task Owner(OwnerUpdateParameters parameters, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}{Prefix}/owner", UriKind.Relative);
-            var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Content = JsonContent.Create(parameters, null, jsonOptions);
-
-            var response = await httpClient.SendAsync(request, cancellationToken);
-            await response.EnsureSuccess();
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            return Request(message, cancellationToken);
         }
 
         /// <summary>
         /// Update Owner information
         /// </summary>
-        public async Task Context(ContextUpdateParameters parameters, CancellationToken cancellationToken)
+        public Task Context(ContextUpdateParameters parameters, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}{Prefix}/context", UriKind.Relative);
-            var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Content = JsonContent.Create(parameters, null, jsonOptions);
-
-            var response = await httpClient.SendAsync(request, cancellationToken);
-            await response.EnsureSuccess();
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            return Request(message, cancellationToken);
         }
 
         /// <summary>
         /// Update Filter information
         /// </summary>
-        public async Task Filter(FilterUpdateParameters parameters, CancellationToken cancellationToken)
+        public Task Filter(FilterUpdateParameters parameters, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}{Prefix}/filter", UriKind.Relative);
-            var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Content = JsonContent.Create(parameters, null, jsonOptions);
-
-            var response = await httpClient.SendAsync(request, cancellationToken);
-            await response.EnsureSuccess();
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            return Request(message, cancellationToken);
         }
 
         /// <summary>
         /// Update Extra information
         /// </summary>
-        public async Task Extra(ExtraUpdateParameters parameters, CancellationToken cancellationToken)
+        public Task Extra(ExtraUpdateParameters parameters, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}{Prefix}/extra", UriKind.Relative);
-            var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Content = JsonContent.Create(parameters, null, jsonOptions);
-
-            var response = await httpClient.SendAsync(request, cancellationToken);
-            await response.EnsureSuccess();
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            return Request(message, cancellationToken);
         }
 
         /// <summary>
         /// Update Destination information
         /// </summary>
-        public async Task Destination(Guid id, DestinationBase destination, CancellationToken cancellationToken)
+        public Task Destination(Guid id, DestinationBase destination, CancellationToken cancellationToken)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
 
             var uri = new Uri($"{Controller}{Prefix}/destination?{query}", UriKind.Relative);
-            var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Content = JsonContent.Create(destination, null, jsonOptions);
-
-            var response = await httpClient.SendAsync(request, cancellationToken);
-            await response.EnsureSuccess();
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(destination, null, jsonOptions);
+            return Request(message, cancellationToken);
         }
 
         /// <summary>
         /// Update basic properties
         /// </summary>
-        public async Task Properties(Guid id, DirectInwardDialingProperties properties, CancellationToken cancellationToken)
+        public Task Properties(Guid id, DirectInwardDialingProperties properties, CancellationToken cancellationToken)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
 
             var uri = new Uri($"{Controller}{Prefix}/properties?{query}", UriKind.Relative);
-            var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Content = JsonContent.Create(properties, null, jsonOptions);
-
-            var response = await httpClient.SendAsync(request, cancellationToken);
-            await response.EnsureSuccess();
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(properties, null, jsonOptions);
+            return Request(message, cancellationToken);
         }
     }
 }

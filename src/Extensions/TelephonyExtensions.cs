@@ -1,4 +1,5 @@
 ﻿using Sufficit.Telephony;
+using Sufficit.Telephony.DIDs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,5 +68,21 @@ namespace Sufficit.Client.Extensions
 
             return query.ToString() ?? string.Empty;
         }
+
+        /*
+        public static string ToQueryString(this DIDSearchParameters source)
+        {
+            var sb = new StringBuilder();
+            if (source.ContextId.HasValue)
+                sb.AppendFormat("contextid={0}&", source.ContextId);
+
+            if (source.ProviderId.HasValue)
+                sb.AppendFormat("providerid={0}&", source.ProviderId);
+
+
+            var query = System.Web.HttpUtility.ParseQueryString(sb.ToString());
+            return query.ToString();
+        }
+        */
     }
 }

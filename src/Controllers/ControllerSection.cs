@@ -2,12 +2,9 @@
 using Microsoft.Extensions.Options;
 using Sufficit.Client.Extensions;
 using Sufficit.EndPoints.Configuration;
-using Sufficit.Gateway.Receitanet;
-using Sufficit.Telephony;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -53,24 +50,30 @@ namespace Sufficit.Client.Controllers
 
         protected async Task<IEnumerable<T>> RequestMany<T>(HttpRequestMessage message, CancellationToken cancellationToken)
         {
-            var response = await httpClient.SendAsync(message, cancellationToken);
+            using var response = await httpClient.SendAsync(message, cancellationToken);
             await response.EnsureSuccess();
 
-            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)            
-                return Array.Empty<T>();            
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                return Array.Empty<T>();
 
             return await response.Content.ReadFromJsonAsync<IEnumerable<T>>(jsonOptions, cancellationToken) ?? Array.Empty<T>();
         }
 
         protected async Task<T?> Request<T>(HttpRequestMessage message, CancellationToken cancellationToken) where T : class
         {
-            var response = await httpClient.SendAsync(message, cancellationToken);
+            using var response = await httpClient.SendAsync(message, cancellationToken);
             await response.EnsureSuccess();
 
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return null;
 
             return await response.Content.ReadFromJsonAsync<T>(jsonOptions, cancellationToken);
+        }
+
+        protected async Task Request(HttpRequestMessage message, CancellationToken cancellationToken)
+        {
+            using var response = await httpClient.SendAsync(message, cancellationToken);
+            await response.EnsureSuccess();
         }
     }
 }
