@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using Sufficit.Contacts;
+using Sufficit.Gateway.ReceitaNet;
 using Sufficit.Logging;
 using Sufficit.Telephony;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net.Http;
@@ -37,6 +39,16 @@ namespace Sufficit.Client.Controllers
             else return null;
         }
 
+        public Task<IEnumerable<Contact>> Search(ContactSearchParameters parameters, CancellationToken cancellationToken)
+        {
+            string requestEndpoint = $"{Controller}/search";
+
+            var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            return RequestMany<Contact>(message, cancellationToken);
+        }
+        
         public async Task<IEnumerable<Contact>> Search(string filter, int results = 10, CancellationToken cancellationToken = default)
         {            
             string requestEndpoint = $"{Controller}/search";
