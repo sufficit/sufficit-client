@@ -59,6 +59,17 @@ namespace Sufficit.Client.Controllers
             return await response.Content.ReadFromJsonAsync<IEnumerable<T>>(jsonOptions, cancellationToken) ?? Array.Empty<T>();
         }
 
+        protected async Task<T?> RequestStruct<T>(HttpRequestMessage message, CancellationToken cancellationToken) where T : struct
+        {
+            using var response = await httpClient.SendAsync(message, cancellationToken);
+            await response.EnsureSuccess();
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                return null;
+
+            return await response.Content.ReadFromJsonAsync<T>(jsonOptions, cancellationToken);
+        }
+
         protected async Task<T?> Request<T>(HttpRequestMessage message, CancellationToken cancellationToken) where T : class
         {
             using var response = await httpClient.SendAsync(message, cancellationToken);
