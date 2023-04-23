@@ -29,6 +29,7 @@ namespace Sufficit.Client.Controllers
             IVR = new TelephonyIVRControllerSection(service);
             Audio = new TelephonyAudioControllerSection(service);
             DID = new TelephonyDIDControllerSection(service);
+            EndPoint = new TelephonyEndPointControllerSection(service);
         }
     
         public async Task<Guid> WebRTCKey()
@@ -45,6 +46,8 @@ namespace Sufficit.Client.Controllers
         public TelephonyAudioControllerSection Audio { get; }
 
         public TelephonyDIDControllerSection DID { get; }
+
+        public TelephonyEndPointControllerSection EndPoint { get; }
 
         public async Task<IEnumerable<ICallRecordBasic>> CallSearchAsync(CallSearchParameters parameters, CancellationToken cancellationToken = default)
         {            

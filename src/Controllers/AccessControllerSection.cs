@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Sufficit.Gateway.ReceitaNet;
 using Sufficit.Identity;
 using System;
 using System.Collections.Generic;
@@ -16,16 +17,15 @@ namespace Sufficit.Client.Controllers
 
         public AccessControllerSection(APIClientService service) : base(service) { }   
 
-        public async Task<IEnumerable<UserPolicyBase>> GetUserPolicies(Guid id, CancellationToken cancellationToken = default)
+        public Task<IEnumerable<UserPolicyBase>> GetUserPolicies(Guid id, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}/userdirectives";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
 
-            var uri = new Uri($"{ requestEndpoint }?{ query }", UriKind.Relative);
-            var result = await httpClient.GetFromJsonAsync<IEnumerable<UserPolicyBase>>(uri, cancellationToken);
-            if (result != null) { return result; }
-            return Array.Empty<UserPolicyBase>();
+            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestMany<UserPolicyBase>(message, cancellationToken);
         }
     }
 }

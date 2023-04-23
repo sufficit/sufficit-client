@@ -30,6 +30,7 @@ namespace Sufficit.Client
             Sales = new SalesControllerSection(this);
             Logging = new LoggingControllerSection(this);
             Gateway = new GatewayControllerSection(this);
+            Provisioning = new ProvisioningControllerSection(this);
 
             logger.LogTrace($"Sufficit API Client Service instantiated with base address: {options.BaseUrl}");
         }
@@ -57,5 +58,7 @@ namespace Sufficit.Client
         public LoggingControllerSection Logging { get; }
 
         public GatewayControllerSection Gateway { get; }
+
+        public ProvisioningControllerSection Provisioning { get; }
     }
 }
