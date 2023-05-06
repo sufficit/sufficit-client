@@ -31,13 +31,13 @@ namespace Sufficit.Client.Controllers.Telephony
 
             if (parameters.Title != null)
             {
-                query["title"] = parameters.Title.Text;
+                query["title.text"] = parameters.Title.Text;
                 query["title.exactmatch"] = parameters.Title.ExactMatch.ToString();
             }
 
             if (parameters.Description != null)
             {
-                query["description"] = parameters.Description.Text;
+                query["description.text"] = parameters.Description.Text;
                 query["description.exactmatch"] = parameters.Description.ExactMatch.ToString();
             }
 

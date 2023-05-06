@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Sufficit.Client.Extensions;
 using Sufficit.EndPoints.Configuration;
+using Sufficit.Identity;
 using System;
 using System.Net.Http;
 
@@ -32,8 +33,12 @@ namespace Sufficit.Client
             // Capturando para uso local
             var options = configuration.GetSection(EndPointsAPIOptions.SECTIONNAME).Get<EndPointsAPIOptions>() ?? new EndPointsAPIOptions();
             
+            // If not added previously, using default token provider
+            services.TryAddScoped<ITokenProvider, HttpContextTokenProvider>();
+
             services.AddTransient<ProtectedApiBearerTokenHandler>();
-            services.AddHttpClient(options.ClientId, client => client.Configure(options)).AddHttpMessageHandler<ProtectedApiBearerTokenHandler>();
+            services.AddHttpClient(options.ClientId, client => client.Configure(options))
+                .AddHttpMessageHandler<ProtectedApiBearerTokenHandler>();
 
             // services.AddHttpClient<IAPIHttpClient, APIHttpClient>();
             // services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(options.ClientId));

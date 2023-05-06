@@ -4,6 +4,7 @@ using Sufficit.Identity;
 using Sufficit.Provisioning;
 using Sufficit.Telephony;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -18,6 +19,20 @@ namespace Sufficit.Client.Controllers
         public const string Controller = "/provisioning";
 
         public ProvisioningControllerSection(APIClientService service) : base(service) { }
+
+        [Authorize(Roles = "provisioning")]
+        public Task Delete(string key, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(key)) 
+                throw new ArgumentNullException(nameof(key));
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["macaddress"] = key;
+
+            var uri = new Uri($"{Controller}/device?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Delete, uri);
+            return Request(message, cancellationToken);
+        }
 
         [Authorize(Roles = "provisioning")]
         public Task Update(Device device, CancellationToken cancellationToken)
