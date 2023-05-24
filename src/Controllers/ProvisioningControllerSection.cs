@@ -35,9 +35,37 @@ namespace Sufficit.Client.Controllers
         }
 
         [Authorize(Roles = "provisioning")]
+        public Task Delete(string macaddress, string key, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(macaddress))
+                throw new ArgumentNullException(nameof(macaddress));
+
+            if (string.IsNullOrWhiteSpace(key))
+                throw new ArgumentNullException(nameof(key));
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["macaddress"] = macaddress;
+            query["key"] = key;
+
+            var uri = new Uri($"{Controller}/attribute?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Delete, uri);
+            return Request(message, cancellationToken);
+        }
+
+
+        [Authorize(Roles = "provisioning")]
         public Task Update(Device device, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}/device", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(device, null, jsonOptions);
+            return Request(message, cancellationToken);
+        }
+
+        [Authorize(Roles = "provisioning")]
+        public Task Update(DeviceAttribute device, CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}/attribute", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(device, null, jsonOptions);
             return Request(message, cancellationToken);
@@ -76,6 +104,17 @@ namespace Sufficit.Client.Controllers
             var uri = new Uri($"{Controller}/device?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return Request<Device>(message, cancellationToken);
+        }
+
+        [Authorize(Roles = "provisioning")]
+        public Task<IEnumerable<DeviceAttribute>> AttributesByMAC(string macaddress, CancellationToken cancellationToken)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["macaddress"] = macaddress;
+
+            var uri = new Uri($"{Controller}/attributes?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestMany<DeviceAttribute>(message, cancellationToken);
         }
     }
 }
