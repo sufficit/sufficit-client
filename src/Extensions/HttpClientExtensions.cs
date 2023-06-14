@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using Sufficit.EndPoints.Configuration;
-using Sufficit.Sales;
+﻿using Sufficit.EndPoints.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;

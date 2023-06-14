@@ -14,7 +14,7 @@ namespace Sufficit.Client.Controllers
 
         public IdentityControllerSection(APIClientService service) : base(service) { }
     
-        public async Task<IEnumerable<IDirective>> GetDirectives(string filter, int results = 0, CancellationToken cancellationToken = default)
+        public Task<IEnumerable<DirectiveBase>> GetDirectives(string filter, int results = 0, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}/directives";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
@@ -26,9 +26,8 @@ namespace Sufficit.Client.Controllers
                 query["results"] = results.ToString();
 
             var uri = new Uri($"{ requestEndpoint }?{ query }", UriKind.Relative);
-            var response = await httpClient.GetFromJsonAsync<IEnumerable<DirectiveBase>>(uri, cancellationToken);
-            if (response != null) return response;
-            else return new IDirective[] { };
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestMany<DirectiveBase>(message, cancellationToken);
         }
     }
 }

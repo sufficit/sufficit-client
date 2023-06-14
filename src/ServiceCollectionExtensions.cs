@@ -18,7 +18,6 @@ namespace Sufficit.Client
         /// <summary>
         /// Inclui toda a configuração para sincronia com a API de EndPoints da Sufficit
         /// </summary>
-        /// <param name="services"></param>
         public static IServiceCollection AddSufficitEndPointsAPI(this IServiceCollection services)
         {
             services.AddOptions<EndPointsAPIOptions>();
@@ -41,7 +40,7 @@ namespace Sufficit.Client
                 .AddHttpMessageHandler<ProtectedApiBearerTokenHandler>();
 
             // services.AddHttpClient<IAPIHttpClient, APIHttpClient>();
-            // services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(options.ClientId));
+            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(options.ClientId));
 
             services.AddSingleton<APIClientService>();
             services.AddScoped<IWebSocketService, WebSocketService>();
