@@ -31,7 +31,7 @@ namespace Sufficit.Client
 
             // Capturando para uso local
             var options = configuration.GetSection(EndPointsAPIOptions.SECTIONNAME).Get<EndPointsAPIOptions>() ?? new EndPointsAPIOptions();
-            
+
             // If not added previously, using default token provider
             services.TryAddScoped<ITokenProvider, HttpContextTokenProvider>();
 
