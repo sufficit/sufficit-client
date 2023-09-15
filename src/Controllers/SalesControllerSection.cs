@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using Sufficit.Client.Controllers.Telephony;
-using Sufficit.Client.Extensions;
 using Sufficit.Contacts;
 using Sufficit.Logging;
 using Sufficit.Sales;
@@ -23,7 +22,7 @@ namespace Sufficit.Client.Controllers
 
         public SalesControllerSection(APIClientService service) : base(service) { }
 
-        public async Task<IEnumerable<IClient>> GetClients(string? filter, uint? results, CancellationToken cancellationToken)
+        public Task<IEnumerable<ClientInformation>> GetClients(string? filter, uint? results, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/clients";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
@@ -35,17 +34,18 @@ namespace Sufficit.Client.Controllers
                 query["results"] = results.Value.ToString();
 
             var uri = new Uri($"{ requestEndpoint }?{ query }", UriKind.Relative);
-            var request = new HttpRequestMessage(HttpMethod.Get, uri);
-            using (var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken))
-            {
-                await response.EnsureSuccess();
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestMany<ClientInformation>(message, cancellationToken);
+        }
 
-                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                    return Array.Empty<ClientInformation>();
+        public Task<IEnumerable<Contract>> GetContracts(ContractSearchParameters parameters, CancellationToken cancellationToken)
+        {
+            string requestEndpoint = $"{Controller}/contract/search";
+            var query = parameters.ToQueryString();
+            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
 
-                return await response.Content.ReadFromJsonAsync<IEnumerable<ClientInformation>>(jsonOptions, cancellationToken)
-                    ?? Array.Empty<ClientInformation>();
-            }
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestMany<Contract>(message, cancellationToken);
         }
     }
 }

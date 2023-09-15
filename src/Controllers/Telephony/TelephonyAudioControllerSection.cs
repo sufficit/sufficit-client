@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Sufficit.Client.Extensions;
 using Sufficit.Telephony;
 using Sufficit.Telephony.Asterisk;
 using System;

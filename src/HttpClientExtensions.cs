@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sufficit.Client.Extensions
+namespace Sufficit.Client
 {
     public static class HttpClientExtensions
     {

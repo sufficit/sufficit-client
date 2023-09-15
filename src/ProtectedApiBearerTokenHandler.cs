@@ -9,11 +9,15 @@ namespace Sufficit.Client
 
         protected override bool ShouldAuthenticate(HttpRequestMessage request)
         {
+            if (request.Method == HttpMethod.Head)            
+                return false;
+
             switch (request.RequestUri?.AbsolutePath)
             {
                 case "/health":
                 case "/contact":
                 case "/identity/directives":
+                case "/telephony/destination/fromasterisk":
                 case "/telephony/eventspanel/endpoints":
                 case "/telephony/webcallback": return false;
                 default: return true;

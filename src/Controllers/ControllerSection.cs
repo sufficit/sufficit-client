@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Sufficit.Client.Extensions;
 using Sufficit.EndPoints.Configuration;
 using System;
 using System.Collections;

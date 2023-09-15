@@ -1,18 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Sufficit.Client.Controllers.Telephony;
-using Sufficit.Client.Extensions;
 using Sufficit.Telephony;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -49,20 +43,22 @@ namespace Sufficit.Client.Controllers
 
         public TelephonyEndPointControllerSection EndPoint { get; }
 
-        public async Task<IEnumerable<ICallRecordBasic>> CallSearchAsync(CallSearchParameters parameters, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<ICallRecordBasic>> CallSearchAsync(CallSearchParameters parameters, CancellationToken cancellationToken)
         {            
             string requestEndpoint = $"{Controller}/calls";
-            string requestParams = parameters.ToUriQuery();
-            logger.LogTrace($"CallSearchAsync: {requestParams}");
+            string query = parameters.ToQueryString();
+            logger.LogTrace($"CallSearchAsync: {query}");
 
-            string requestUri = $"{requestEndpoint}?{requestParams}";
+            string requestUri = $"{requestEndpoint}?{query}";
             var response = await httpClient.GetAsync(requestUri, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
-                var content = await response.Content.ReadAsStringAsync();
 #if NET6_0_OR_GREATER
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
                 throw new HttpRequestException(content, null, response.StatusCode);
 #else
+
+                var content = await response.Content.ReadAsStringAsync();
                 throw new HttpRequestException(content);
 #endif
             }
