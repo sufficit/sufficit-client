@@ -62,11 +62,7 @@ namespace Sufficit.Client.Controllers
         public Task<Sufficit.Contacts.Attribute?> GetAttribute(ContactAttributeSearchParameters parameters, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}/attribute";
-            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query["ContactId"] = parameters.ContactId.ToString();
-            query["Key"] = parameters.Key;
-            query["Value"] = parameters.Value;
-            query["ExactMatch"] = parameters.ExactMatch.ToString();
+            var query = parameters.ToQueryString();
 
             var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);

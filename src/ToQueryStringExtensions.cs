@@ -1,6 +1,8 @@
-﻿using Sufficit.Provisioning;
+﻿using Sufficit.Contacts;
+using Sufficit.Provisioning;
 using Sufficit.Sales;
 using Sufficit.Telephony;
+using Sufficit.Telephony.DIDs;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -145,6 +147,31 @@ namespace Sufficit.Client
 
             if (source.Limit > 0)
                 query[nameof(source.Limit).ToLower()] = source.Limit.ToString();
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        public static string ToQueryString(this ContactAttributeSearchParameters source)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query[nameof(source.ContactId).ToLower()] = source.ContactId.ToString();
+
+            if (source.Keys != null) {
+                foreach (var key in source.Keys)
+                    query.Add(nameof(source.Keys).ToLower(), key);
+            }
+
+            if (source.Value != null)
+            {
+                query["value.text"] = source.Value.Text;
+                query["value.exactmatch"] = source.Value.ExactMatch.ToString().ToLower();
+            }
+
+            if (source.Description != null)
+            {
+                query["description.text"] = source.Description.Text;
+                query["description.exactmatch"] = source.Description.ExactMatch.ToString().ToLower();
+            }
 
             return query.ToString() ?? string.Empty;
         }
