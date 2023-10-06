@@ -22,11 +22,11 @@ namespace Sufficit.Client.Controllers
 
         public ContactControllerSection(APIClientService service) : base(service) { }
     
-        public Task<Contact?> GetContact(Guid id, CancellationToken cancellationToken = default)
+        public Task<Contact?> GetContact(Guid contactid, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query["id"] = id.ToString();
+            query["contactid"] = contactid.ToString();
 
             var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
