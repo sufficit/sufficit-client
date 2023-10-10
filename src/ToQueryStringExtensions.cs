@@ -4,6 +4,7 @@ using Sufficit.Sales;
 using Sufficit.Telephony;
 using Sufficit.Telephony.DIDs;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -112,9 +113,10 @@ namespace Sufficit.Client
             return query.ToString() ?? string.Empty;
         }
 
-        public static string ToQueryString(this ContractSearchParameters source)
+        public static string ToQueryString(this ContractSearchParameters source, NameValueCollection? collection = null)
         {
-            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            var query = collection ?? System.Web.HttpUtility.ParseQueryString(string.Empty);
+
             if (source.ContextId != null)
                 query[nameof(source.ContextId).ToLower()] = source.ContextId.ToString();
 
@@ -151,29 +153,73 @@ namespace Sufficit.Client
             return query.ToString() ?? string.Empty;
         }
 
-        public static string ToQueryString(this ContactAttributeSearchParameters source)
+        public static string ToQueryString(this AttributeSearchParameters source, NameValueCollection? collection = null)
         {
-            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query[nameof(source.ContactId).ToLower()] = source.ContactId.ToString();
+            var query = collection ?? System.Web.HttpUtility.ParseQueryString(string.Empty);
 
-            if (source.Keys != null) {
-                foreach (var key in source.Keys)
-                    query.Add(nameof(source.Keys).ToLower(), key);
-            }
+            if (source.ContactId != null)
+                query[nameof(source.ContactId).ToLower()] = source.ContactId.ToString();
 
             if (source.Value != null)
             {
                 query["value.text"] = source.Value.Text;
                 query["value.exactmatch"] = source.Value.ExactMatch.ToString().ToLower();
+                if (source.Value.Keys != null)
+                {
+                    foreach (var key in source.Value.Keys)
+                        query.Add("value.keys", key.ToLower());
+                }
+
             }
 
             if (source.Description != null)
             {
                 query["description.text"] = source.Description.Text;
                 query["description.exactmatch"] = source.Description.ExactMatch.ToString().ToLower();
+                if (source.Description.Keys != null)
+                {
+                    foreach (var key in source.Description.Keys)
+                        query.Add("description.keys", key.ToLower());
+                }
             }
 
             return query.ToString() ?? string.Empty;
+        }
+
+        public static string ToQueryString(this AttributeWithKeysSearchParameters source, NameValueCollection? collection = null)
+        {
+            var query = collection ?? System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            if (source.Keys != null)
+            {
+                foreach (var key in source.Keys)
+                    query.Add(nameof(source.Keys).ToLower(), key.ToLower());
+            }
+
+            return (source as AttributeSearchParameters).ToQueryString(query);
+        }
+
+        public static string ToQueryString(this ContactAttributeSearchParameters source, NameValueCollection? collection = null)
+        {
+            var query = collection ?? System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            if (source.ContactId != null)
+                query[nameof(source.ContactId).ToLower()] = source.ContactId.ToString();
+
+            return (source as AttributeWithKeysSearchParameters).ToQueryString(query);
+        }
+
+        public static string ToQueryString(this ContactSearchParameters source, NameValueCollection? collection = null)
+        {
+            var query = collection ?? System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            if (source.ContextId != null)
+                query[nameof(source.ContextId).ToLower()] = source.ContextId.ToString();
+
+            if (source.Limit > 0)
+                query[nameof(source.Limit).ToLower()] = source.Limit.ToString();
+
+            return (source as AttributeWithKeysSearchParameters).ToQueryString(query);
         }
 
         /*

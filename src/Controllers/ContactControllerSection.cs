@@ -16,34 +16,34 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers
 {
-    public sealed class ContactControllerSection : ControllerSection
+    public sealed class ContactsControllerSection : ControllerSection
     {
         public const string Controller = "/contact";
 
-        public ContactControllerSection(APIClientService service) : base(service) { }
+        public ContactsControllerSection(APIClientService service) : base(service) { }
     
         public Task<Contact?> GetContact(Guid contactid, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query["contactid"] = contactid.ToString();
+            query[nameof(contactid)] = contactid.ToString();
 
             var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return Request<Contact>(message, cancellationToken);
         }
 
-        public Task<IEnumerable<Contact>> Search(ContactSearchParameters parameters, CancellationToken cancellationToken)
+        public Task<IEnumerable<ContactWithAttributes>> Search(ContactSearchParameters parameters, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/search";
 
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(parameters, null, jsonOptions);
-            return RequestMany<Contact>(message, cancellationToken);
+            return RequestMany<ContactWithAttributes>(message, cancellationToken);
         }
         
-        public Task<IEnumerable<Contact>> Search(string filter, int results = 10, CancellationToken cancellationToken = default)
+        public Task<IEnumerable<ContactWithAttributes>> Search(string filter, int results = 10, CancellationToken cancellationToken = default)
         {            
             string requestEndpoint = $"{Controller}/search";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
@@ -56,7 +56,7 @@ namespace Sufficit.Client.Controllers
 
             var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
-            return RequestMany<Contact>(message, cancellationToken);
+            return RequestMany<ContactWithAttributes>(message, cancellationToken);
         }
 
         public Task<Sufficit.Contacts.Attribute?> GetAttribute(ContactAttributeSearchParameters parameters, CancellationToken cancellationToken = default)

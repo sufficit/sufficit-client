@@ -26,7 +26,7 @@ namespace Sufficit.Client
             Access = new AccessControllerSection(this);
             Telephony = new TelephonyControllerSection(this);
             Identity = new IdentityControllerSection(this);
-            Contact = new ContactControllerSection(this);
+            Contacts = new ContactsControllerSection(this);
             Sales = new SalesControllerSection(this);
             Logging = new LoggingControllerSection(this);
             Gateway = new GatewayControllerSection(this);
@@ -51,7 +51,7 @@ namespace Sufficit.Client
 
         public IdentityControllerSection Identity { get; }
 
-        public ContactControllerSection Contact { get; }
+        public ContactsControllerSection Contacts { get; }
 
         public SalesControllerSection Sales { get; }
 
