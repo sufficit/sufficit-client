@@ -33,6 +33,17 @@ namespace Sufficit.Client.Controllers
             return Request<Contact>(message, cancellationToken);
         }
 
+        public Task<IEnumerable<Sufficit.Contacts.Attribute>> GetAttributes(Guid contactid, CancellationToken cancellationToken)
+        {
+            string requestEndpoint = $"{Controller}/attributes";
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query[nameof(contactid)] = contactid.ToString();
+
+            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestMany<Sufficit.Contacts.Attribute>(message, cancellationToken);
+        }
+
         public Task<IEnumerable<ContactWithAttributes>> Search(ContactSearchParameters parameters, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/search";
