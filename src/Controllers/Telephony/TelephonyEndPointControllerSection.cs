@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Sufficit.Contacts;
 using Sufficit.Telephony;
 using System;
 using System.Collections.Generic;
@@ -17,35 +18,13 @@ namespace Sufficit.Client.Controllers.Telephony
 
         public TelephonyEndPointControllerSection(APIClientService service) : base(service) { }  
 
-        public Task<IEnumerable<EndPoint>> GetEndPoints(EndPointSearchParameters parameters, CancellationToken cancellationToken = default)
+        public Task<IEnumerable<EndPoint>> GetEndPoints(EndPointSearchParameters parameters, CancellationToken cancellationToken)
         {
-            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            if (parameters.Id.HasValue)
-                query["id"] = parameters.Id.ToString();
+            string requestEndpoint = $"{Controller}{Prefix}/search";
 
-            if (parameters.UserId.HasValue)
-                query["userid"] = parameters.UserId.ToString();
-
-            if (parameters.ContextId.HasValue)
-                query["contextid"] = parameters.ContextId.ToString();
-
-            if (parameters.Title != null)
-            {
-                query["title.text"] = parameters.Title.Text;
-                query["title.exactmatch"] = parameters.Title.ExactMatch.ToString();
-            }
-
-            if (parameters.Description != null)
-            {
-                query["description.text"] = parameters.Description.Text;
-                query["description.exactmatch"] = parameters.Description.ExactMatch.ToString();
-            }
-
-            if (parameters.Limit > 0)
-                query["limit"] = parameters.Limit.ToString();
-
-            var uri = new Uri($"{Controller}{Prefix}?{query}", UriKind.Relative);
-            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(parameters, null, jsonOptions);
             return RequestMany<EndPoint>(message, cancellationToken);
         }
     }

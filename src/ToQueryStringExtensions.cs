@@ -222,6 +222,45 @@ namespace Sufficit.Client
             return (source as AttributeWithKeysSearchParameters).ToQueryString(query);
         }
 
+        /* // using POST for now, so no needed to querystring
+         
+        public static string ToQueryString(this EndPointSearchParameters source, NameValueCollection? collection = null)
+        {
+            var query = collection ?? System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            if (source.Id.HasValue)
+                query[nameof(source.Id).ToLower()] = source.Id.ToString();
+
+            if (source.UserId.HasValue)
+                query[nameof(source.UserId).ToLower()] = source.UserId.ToString();
+
+            if (source.ContextId.HasValue)
+                query[nameof(source.ContextId).ToLower()] = source.ContextId.ToString();
+
+            if (source.Filter != null)
+            {
+                query["filter.text"] = source.Filter.Text;
+                query["filter.exactmatch"] = source.Filter.ExactMatch.ToString();
+            }
+
+            if (source.Title != null)
+            {
+                query["title.text"] = source.Title.Text;
+                query["title.exactmatch"] = source.Title.ExactMatch.ToString();
+            }
+
+            if (source.Description != null)
+            {
+                query["description.text"] = source.Description.Text;
+                query["description.exactmatch"] = source.Description.ExactMatch.ToString();
+            }
+
+            if (source.Limit > 0)
+                query[nameof(source.Limit).ToLower()] = source.Limit.ToString();
+
+            return query.ToString() ?? string.Empty;
+        }
+        */
         /*
         public static string ToQueryString(this DIDSearchParameters source)
         {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Sufficit.Contacts;
+using Sufficit.EndPoints;
 using Sufficit.Gateway.ReceitaNet;
 using Sufficit.Identity;
 using Sufficit.Logging;
@@ -8,6 +9,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
@@ -78,6 +80,44 @@ namespace Sufficit.Client.Controllers
             var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return Request<Sufficit.Contacts.Attribute>(message, cancellationToken);
+        }
+
+        public async Task<bool> CanUpdate(Guid contactid, CancellationToken cancellationToken)
+        {
+            string requestEndpoint = $"{Controller}/canupdate";
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query[nameof(contactid)] = contactid.ToString();
+
+            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return (await RequestStruct<bool>(message, cancellationToken)) ?? false;
+        }
+
+        public async Task<Guid?> Update(ContactWithAttributes item, CancellationToken cancellationToken)
+        {
+            string requestEndpoint = $"{Controller}";
+
+            var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(item, null, jsonOptions);
+            var response = await Request<EndPointResponse>(message, cancellationToken);
+            return (Guid?)response?.Data;
+        }
+
+        public async Task<EndPointResponse?> Update(Guid contextid, Stream avatar, CancellationToken cancellationToken)
+        {
+            string requestEndpoint = $"{Controller}/avatar";
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query[nameof(contextid)] = contextid.ToString();
+                       
+            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+
+            var formData = new MultipartFormDataContent();
+            formData.Add(new StreamContent(avatar), nameof(avatar), contextid.ToString("N") + ".jpg");
+            message.Content = formData;
+
+            return await Request<EndPointResponse>(message, cancellationToken);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Sufficit.Telephony;
 using Sufficit.Telephony.Asterisk;
+using Sufficit.Telephony.WebRTC;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,6 +37,14 @@ namespace Sufficit.Client.Controllers.Telephony
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return RequestMany<string>(message, cancellationToken);
+        }
+
+        public Task<WebRTCPreferences?> GetPreferences(CancellationToken cancellationToken)
+        {
+            string requestEndpoint = $"{Controller}{Prefix}/preferences";
+            var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<WebRTCPreferences>(message, cancellationToken);
         }
     }
 }
