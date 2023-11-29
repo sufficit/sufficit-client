@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Sufficit.EndPoints;
 using Sufficit.Exchange;
 using Sufficit.Telephony;
 using Sufficit.Telephony.Asterisk;
@@ -58,6 +59,15 @@ namespace Sufficit.Client.Controllers.Telephony
             var uri = new Uri($"{Controller}{Prefix}/byextension?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return Request<DirectInwardDialing>(message, cancellationToken);
+        }
+
+        public Task<EndPointFullResponse<DirectInwardDialing>> FullSearch(DIDSearchParameters parameters, CancellationToken cancellationToken = default)
+        {
+            logger.LogTrace("by full search parameters: {parameters}", parameters);
+            var uri = new Uri($"{Controller}{Prefix}/fullsearch", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            return Request<EndPointFullResponse<DirectInwardDialing>>(message, cancellationToken)!;
         }
 
         public Task<IEnumerable<DirectInwardDialing>> Search(DIDSearchParameters parameters, CancellationToken cancellationToken = default)
