@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Sufficit.EndPoints.Configuration;
@@ -57,12 +56,5 @@ namespace Sufficit.Client
                 .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
         }
         */
-
-        public static IApplicationBuilder UseSufficitEndPointsAPI(this IApplicationBuilder app) 
-        {
-
-
-            return app;
-        }
     }
 }
