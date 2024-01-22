@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
 	<PropertyGroup Label="Sufficit Targeting">
-		<TargetFrameworks>net6.0;net7.0;net8.0;netstandard2.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net6.0;net7.0;net8.0</TargetFrameworks>
 		<Nullable>enable</Nullable>
 		<LangVersion>8.0</LangVersion>
 		<ImplicitUsings>disable</ImplicitUsings>
@@ -58,17 +58,69 @@
 			<PackagePath></PackagePath>
 		</None>
 	</ItemGroup>
+	
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="*" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="*" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" version="*" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" version="*" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="*" />
+		<PackageReference Include="Microsoft.Extensions.Logging" version="*" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" version="*" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="*" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="*" />
+		<PackageReference Include="System.Text.Json" Version="*" />
+		<PackageReference Include="System.Net.Http.Json" Version="*" />
+	</ItemGroup>
 
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="[*,7.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="[*,7.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" version="[*,7.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" version="[*,7.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="[*,7.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Logging" version="[*,7.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" version="[*,7.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="[*,7.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="[*,7.0.0)" />
+		<PackageReference Include="System.Text.Json" Version="[*,7.0.0)" />
+		<PackageReference Include="System.Net.Http.Json" Version="[*,7.0.0)" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="[*,8.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="[*,8.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" version="[*,8.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" version="[*,8.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="[*,8.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Logging" version="[*,8.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" version="[*,8.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="[*,8.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="[*,8.0.0)" />
+		<PackageReference Include="System.Text.Json" Version="[*,8.0.0)" />
+		<PackageReference Include="System.Net.Http.Json" Version="[*,8.0.0)" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="[*,9.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="[*,9.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" version="[*,9.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" version="[*,9.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="[*,9.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Logging" version="[*,9.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" version="[*,9.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="[*,9.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="[*,9.0.0)" />
+		<PackageReference Include="System.Text.Json" Version="[*,9.0.0)" />
+		<PackageReference Include="System.Net.Http.Json" Version="[*,9.0.0)" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="[*,9.0.0)" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="[*,9.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="[*,9.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.Http" Version="[*,9.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="[*,9.0.0)" />
-		<PackageReference Include="System.Net.Http.Json" Version="[*,9.0.0)" />
+		
 	</ItemGroup>
 
 	<ItemGroup Label="Sufficit Dependencies on Packing" Condition=" '$(Configuration)' == 'Packing' ">
