@@ -222,6 +222,24 @@ namespace Sufficit.Client
             return (source as AttributeWithKeysSearchParameters).ToQueryString(query);
         }
 
+        public static string ToQueryString(this EndPointPropertyRequest source)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            query[nameof(source.Key).ToLower()] = source.Key.ToString();
+
+            if (source.ContextId.HasValue)
+                query[nameof(source.ContextId).ToLower()] = source.ContextId.Value.ToString("N");
+
+            if (source.EndPointId.HasValue)
+                query[nameof(source.EndPointId).ToLower()] = source.EndPointId.Value.ToString("N");
+
+            if (source.Value != null)
+                query[nameof(source.Value).ToLower()] = source.Value;
+
+            return query.ToString() ?? string.Empty;
+        }
+
         /* // using POST for now, so no needed to querystring
          
         public static string ToQueryString(this EndPointSearchParameters source, NameValueCollection? collection = null)

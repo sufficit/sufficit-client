@@ -83,7 +83,6 @@ namespace Sufficit.Client.Controllers
         }
 
         #endregion
-
         #region DESTINATIONS
 
         [Authorize]
