@@ -228,8 +228,8 @@ namespace Sufficit.Client
 
             query[nameof(source.Key).ToLower()] = source.Key.ToString();
 
-            if (source.ContextId.HasValue)
-                query[nameof(source.ContextId).ToLower()] = source.ContextId.Value.ToString("N");
+            if (source.ContextId != Guid.Empty)
+                query[nameof(source.ContextId).ToLower()] = source.ContextId.ToString("N");
 
             if (source.EndPointId.HasValue)
                 query[nameof(source.EndPointId).ToLower()] = source.EndPointId.Value.ToString("N");

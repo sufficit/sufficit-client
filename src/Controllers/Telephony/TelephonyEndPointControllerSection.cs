@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Sufficit.Contacts;
 using Sufficit.Telephony;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -29,6 +30,15 @@ namespace Sufficit.Client.Controllers.Telephony
             return RequestMany<EndPoint>(message, cancellationToken);
         }
 
+        public Task<EndPoint?> GetEndPoint(Guid id, CancellationToken cancellationToken)
+        {
+            string requestEndpoint = $"{Controller}{Prefix}/byid";
+
+            var query = $"id={id}";
+            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<EndPoint>(message, cancellationToken);
+        }
 
         #region PROPERTY
 
