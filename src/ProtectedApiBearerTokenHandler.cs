@@ -18,6 +18,7 @@ namespace Sufficit.Client
                 case "/contact":
                 case "/identity/directives":
                 case "/telephony/destination/fromasterisk":
+                case "/telephony/destination/inuse":
                 case "/telephony/eventspanel/endpoints":
                 case "/telephony/webcallback": return false;
                 default: return true;
