@@ -19,7 +19,7 @@ namespace Sufficit.Client
         public static string ToQueryString(this NameValueCollection source)
         {
             var array = from key in source.AllKeys
-                        from value in (source.GetValues(key) ?? new string[] { })
+                        from value in (source.GetValues(key) ?? Array.Empty<string>())
                         select string.Format("{0}={1}", HttpUtility.UrlEncode(key), HttpUtility.UrlEncode(value));
 
             return "?" + string.Join("&", array);
@@ -31,7 +31,7 @@ namespace Sufficit.Client
         public static string ToQueryString(this ICallSearchParameters source)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query[nameof(source.IDContext).ToLower()] = source.IDContext.ToString();
+            query[nameof(source.ContextId).ToLower()] = source.ContextId.ToString();
             query[nameof(source.Start).ToLower()] = source.Start.ToString("O");
 
             if (source.End.HasValue)

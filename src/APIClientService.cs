@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sufficit.Client
@@ -21,29 +22,50 @@ namespace Sufficit.Client
     {
         #region STATUS MONITOR
 
-        public bool Available { get; protected set; }
+        /// <summary>
+        ///     Last timestamp for health checked
+        /// </summary>
+        public DateTime HealthChecked { get; internal set; }
 
-        // Used for compare changes
-        private string BaseUrl { get; set; }
-
-        public event EventHandler? OnChanged;
-
-        protected async void OnOptionsChanged(EndPointsAPIOptions value, string? instance)
+        /// <summary>
+        ///     Sets a value for health status, used internal. <br />
+        ///     Or you can set a custom value for testing purposes
+        /// </summary>
+        public void Healthy(bool value = true)
         {
-            if (BaseUrl != value.BaseUrl)
+            // updating timestamp
+            HealthChecked = DateTime.UtcNow;
+
+            if (Available != value)
             {
-                BaseUrl = value.BaseUrl;
-                _ = await Health();
+                Available = value;
+                OnChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
-        public async Task<HealthResponse> Health()
+        SemaphoreSlim _semaphore = new SemaphoreSlim(1);
+
+        /// <summary>
+        ///     Used on component initialization for ensure ready status
+        /// </summary>
+        public async Task GetStatus()
+        {
+            await _semaphore.WaitAsync();
+            if (HealthChecked == DateTime.MinValue || DateTime.UtcNow.Subtract(HealthChecked).TotalMinutes > 30)
+                _ = await Health(default);
+
+            _semaphore.Release();          
+        }
+
+        public bool Available { get; private set; }
+
+        public async Task<HealthResponse> Health(CancellationToken cancellationToken)
         {
             bool status = false;
             HealthResponse? response = null;
             try
             {
-                response = await httpClient.GetFromJsonAsync<HealthResponse>("/health");
+                response = await httpClient.GetFromJsonAsync<HealthResponse>("/health", cancellationToken);
                 if (response != null)
                     status = response.Status == "Healthy";
             }
@@ -52,16 +74,36 @@ namespace Sufficit.Client
                 response = new HealthResponse() { Status = $"UnHealthy: {ex.Message}" };
             }
 
-            if (Available != status)
-            {
-                Available = status;
-                OnChanged?.Invoke(this, EventArgs.Empty);
-            }
-
-            return response ?? new HealthResponse() { Status = $"UnHealthy: null response" };
+            Healthy(status);
+            return response ?? new HealthResponse() { Status = "UnHealthy: null response" };
         }
 
         #endregion
+
+        // Used for compare changes
+        private string BaseUrl { get; set; }
+
+        /// <summary>
+        ///     Status changed
+        /// </summary>
+        public event EventHandler? OnChanged;
+
+        protected void OnOptionsChanged(EndPointsAPIOptions value, string? instance)
+        {
+            if (BaseUrl != value.BaseUrl)
+            {
+                BaseUrl = value.BaseUrl;
+                HealthChecked = DateTime.MinValue;
+            }
+        }
+
+        /// <summary>
+        ///     Default request from memory for testing purposes
+        /// </summary>
+        public async Task<WeatherForecast[]?> WeatherForeacast()
+        {
+            return await httpClient.GetFromJsonAsync<WeatherForecast[]>("/WeatherForecast");
+        }
 
         public APIClientService(IOptionsMonitor<EndPointsAPIOptions> ioptions, IHttpClientFactory clientFactory, ILogger<APIClientService> logger)
             : base(ioptions, clientFactory, logger, Json.Options)
@@ -73,37 +115,24 @@ namespace Sufficit.Client
             Contacts = new ContactsControllerSection(this);
             Sales = new SalesControllerSection(this);
             Logging = new LoggingControllerSection(this);
+            Notification = new NotificationControllerSection(this);
             Gateway = new GatewayControllerSection(this);
             Provisioning = new ProvisioningControllerSection(this);
 
-            // status monitor
-            Available = true;
             BaseUrl = ioptions.CurrentValue.BaseUrl;
             ioptions.OnChange(OnOptionsChanged);
 
-            logger.LogTrace($"Sufficit API Client Service instantiated with base address: {options.BaseUrl}");
-        }
-
-
-        public async Task<WeatherForecast[]?> WeatherForeacast()
-        {
-            return await httpClient.GetFromJsonAsync<WeatherForecast[]>("/WeatherForecast");            
+            logger.LogTrace("Sufficit API Client Service instantiated with base address: {url}", options.BaseUrl);
         }
 
         public AccessControllerSection Access { get; }
-
-        public TelephonyControllerSection Telephony { get; }
-
-        public IdentityControllerSection Identity { get; }
-
         public ContactsControllerSection Contacts { get; }
-
-        public SalesControllerSection Sales { get; }
-
-        public LoggingControllerSection Logging { get; }
-
         public GatewayControllerSection Gateway { get; }
-
+        public IdentityControllerSection Identity { get; }
+        public LoggingControllerSection Logging { get; }
+        public NotificationControllerSection Notification { get; }
         public ProvisioningControllerSection Provisioning { get; }
+        public SalesControllerSection Sales { get; }
+        public TelephonyControllerSection Telephony { get; }
     }
 }

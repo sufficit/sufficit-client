@@ -49,25 +49,9 @@ namespace Sufficit.Client.Controllers
             string query = parameters.ToQueryString();
             logger.LogTrace($"CallSearchAsync: {query}");
 
-            string requestUri = $"{requestEndpoint}?{query}";
-            var response = await httpClient.GetAsync(requestUri, cancellationToken);
-            if (!response.IsSuccessStatusCode)
-            {
-#if NET6_0_OR_GREATER
-                var content = await response.Content.ReadAsStringAsync(cancellationToken);
-                throw new HttpRequestException(content, null, response.StatusCode);
-#else
-
-                var content = await response.Content.ReadAsStringAsync();
-                throw new HttpRequestException(content);
-#endif
-            }
-            else 
-            {
-                var content = await response.Content.ReadFromJsonAsync<IEnumerable<CallRecord>>();
-                if (content != null) return content;
-                else return new CallRecord[] { }; 
-            }
+            string uri = $"{requestEndpoint}?{query}";
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return await RequestMany<CallRecord>(message, cancellationToken);
         }
 
         #region WEB CALL BACK

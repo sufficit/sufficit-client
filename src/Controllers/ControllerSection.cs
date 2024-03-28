@@ -20,6 +20,7 @@ namespace Sufficit.Client.Controllers
         protected readonly IHttpClientFactory factory;
         protected readonly ILogger logger;
         protected readonly JsonSerializerOptions jsonOptions;
+        private Action<bool>? _healthy;
 
         public ControllerSection(IOptionsMonitor<EndPointsAPIOptions> ioptions, IHttpClientFactory factory, ILogger logger, JsonSerializerOptions jsonOptions)
         {
@@ -35,6 +36,8 @@ namespace Sufficit.Client.Controllers
             this.factory = service.factory;
             this.logger = service.logger;
             this.jsonOptions = service.jsonOptions;
+
+            this._healthy = service.Healthy;
         }
 
         #region TRICKS 
@@ -52,6 +55,9 @@ namespace Sufficit.Client.Controllers
             using var response = await httpClient.SendAsync(message, cancellationToken);
             await response.EnsureSuccess();
 
+            // updating healthy for this controller
+            _healthy?.Invoke(true);
+
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return Array.Empty<T>();
 
@@ -62,6 +68,9 @@ namespace Sufficit.Client.Controllers
         {
             using var response = await httpClient.SendAsync(message, cancellationToken);
             await response.EnsureSuccess();
+
+            // updating healthy for this controller
+            _healthy?.Invoke(true);
 
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return null;
@@ -74,6 +83,9 @@ namespace Sufficit.Client.Controllers
             using var response = await httpClient.SendAsync(message, cancellationToken);
             await response.EnsureSuccess();
 
+            // updating healthy for this controller
+            _healthy?.Invoke(true);
+
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return null;
 
@@ -84,6 +96,9 @@ namespace Sufficit.Client.Controllers
         {
             using var response = await httpClient.SendAsync(message, cancellationToken);
             await response.EnsureSuccess();
+
+            // updating healthy for this controller
+            _healthy?.Invoke(true);
         }
     }
 }
