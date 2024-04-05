@@ -56,11 +56,11 @@ namespace Sufficit.Client.Controllers
 
         #region WEB CALL BACK
 
-        public Task<HttpResponseMessage> WebCallBack(WebCallBackRequest request, CancellationToken cancellationToken = default)
+        public Task<HttpResponseMessage> WebCallBack(ExternalCallRequest request, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}/webcallback";
             var uri = new Uri(requestEndpoint, UriKind.Relative);
-            return httpClient.PostAsJsonAsync<WebCallBackRequest>(uri, request, cancellationToken);
+            return httpClient.PostAsJsonAsync<ExternalCallRequest>(uri, request, cancellationToken);
         }
 
         #endregion
