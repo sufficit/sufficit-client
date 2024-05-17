@@ -43,8 +43,11 @@ namespace Sufficit.Client
             if (source.DIDs != null && source.DIDs.Any())
                 query[nameof(source.DIDs).ToLower()] = string.Join(",", source.DIDs);
 
-            query[nameof(source.Billed).ToLower()] = source.Billed.ToString();
-            query[nameof(source.Answered).ToLower()] = source.Answered.ToString();
+            if (source.Billed.HasValue)
+                query[nameof(source.Billed).ToLower()] = source.Billed.Value.ToString().ToLower();
+            
+            if (source.Answered.HasValue)
+                query[nameof(source.Answered).ToLower()] = source.Answered.Value.ToString().ToLower();
 
             if (source.Limit > 0)
                 query[nameof(source.Limit).ToLower()] = source.Limit.ToString();
