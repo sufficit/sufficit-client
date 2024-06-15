@@ -17,6 +17,10 @@ namespace Sufficit.Client
                 case "/health":
                 case "/contact":
                 case "/identity/directives":
+
+                case "/resources/htmltopdf":
+                case "/resources/urltopdf":
+
                 case "/telephony/destination/fromasterisk":
                 case "/telephony/destination/inuse":
                 case "/telephony/eventspanel/endpoints":

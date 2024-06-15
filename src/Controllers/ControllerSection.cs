@@ -78,7 +78,7 @@ namespace Sufficit.Client.Controllers
             return await response.Content.ReadFromJsonAsync<T>(jsonOptions, cancellationToken);
         }
 
-        protected async Task<T?> Request<T>(HttpRequestMessage message, CancellationToken cancellationToken) where T : class
+        protected async Task<T?> Request<T> (HttpRequestMessage message, CancellationToken cancellationToken) where T : class
         {
             using var response = await httpClient.SendAsync(message, cancellationToken);
             await response.EnsureSuccess();
@@ -90,6 +90,20 @@ namespace Sufficit.Client.Controllers
                 return null;
 
             return await response.Content.ReadFromJsonAsync<T>(jsonOptions, cancellationToken);
+        }
+
+        protected async Task<byte[]?> RequestBytes (HttpRequestMessage message, CancellationToken cancellationToken)
+        {
+            using var response = await httpClient.SendAsync(message, cancellationToken);
+            await response.EnsureSuccess();
+
+            // updating healthy for this controller
+            _healthy?.Invoke(true);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                return null;
+
+            return await response.Content.ReadAsByteArrayAsync();
         }
 
         protected async Task Request(HttpRequestMessage message, CancellationToken cancellationToken)

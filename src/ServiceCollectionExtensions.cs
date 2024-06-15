@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Sufficit.Client.Resources;
 using Sufficit.EndPoints.Configuration;
 using Sufficit.Identity;
+using Sufficit.Resources;
 using System;
 using System.Net.Http;
 
@@ -42,6 +44,9 @@ namespace Sufficit.Client
 
             services.AddSingleton<APIClientService>();
             services.AddScoped<IWebSocketService, WebSocketService>();
+
+            services.AddSingleton<RemotePDFTool>();
+            services.TryAddSingleton<IPDFTool, RemotePDFTool>();
 
             return services;
         }

@@ -43,7 +43,7 @@ namespace Sufficit.Client
             }
         }
 
-        SemaphoreSlim _semaphore = new SemaphoreSlim(1);
+        readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
         /// <summary>
         ///     Used on component initialization for ensure ready status
@@ -62,7 +62,7 @@ namespace Sufficit.Client
         public async Task<HealthResponse> Health(CancellationToken cancellationToken)
         {
             bool status = false;
-            HealthResponse? response = null;
+            HealthResponse? response;
             try
             {
                 response = await httpClient.GetFromJsonAsync<HealthResponse>("/health", cancellationToken);
@@ -113,6 +113,7 @@ namespace Sufficit.Client
             Telephony = new TelephonyControllerSection(this);
             Identity = new IdentityControllerSection(this);
             Contacts = new ContactsControllerSection(this);
+            Resources = new ResourcesControllerSection(this);
             Sales = new SalesControllerSection(this);
             Logging = new LoggingControllerSection(this);
             Notification = new NotificationControllerSection(this);
@@ -132,6 +133,7 @@ namespace Sufficit.Client
         public LoggingControllerSection Logging { get; }
         public NotificationControllerSection Notification { get; }
         public ProvisioningControllerSection Provisioning { get; }
+        public ResourcesControllerSection Resources { get; }
         public SalesControllerSection Sales { get; }
         public TelephonyControllerSection Telephony { get; }
     }
