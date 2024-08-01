@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sufficit.Client.Controllers;
+using Sufficit.Client.Controllers.Notification;
 using Sufficit.EndPoints.Configuration;
 using System;
 using System.Collections.Generic;
@@ -110,15 +111,17 @@ namespace Sufficit.Client
         {          
             // Definindo controllers sections
             Access = new AccessControllerSection(this);
-            Telephony = new TelephonyControllerSection(this);
-            Identity = new IdentityControllerSection(this);
             Contacts = new ContactsControllerSection(this);
-            Resources = new ResourcesControllerSection(this);
-            Sales = new SalesControllerSection(this);
+            Exchange = new ExchangeControllerSection(this);
+            Gateway = new GatewayControllerSection(this);
+            Identity = new IdentityControllerSection(this);
             Logging = new LoggingControllerSection(this);
             Notification = new NotificationControllerSection(this);
-            Gateway = new GatewayControllerSection(this);
             Provisioning = new ProvisioningControllerSection(this);
+            Resources = new ResourcesControllerSection(this);
+            Sales = new SalesControllerSection(this);
+            Telephony = new TelephonyControllerSection(this);
+
 
             BaseUrl = ioptions.CurrentValue.BaseUrl;
             ioptions.OnChange(OnOptionsChanged);
@@ -128,6 +131,7 @@ namespace Sufficit.Client
 
         public AccessControllerSection Access { get; }
         public ContactsControllerSection Contacts { get; }
+        public ExchangeControllerSection Exchange { get; }
         public GatewayControllerSection Gateway { get; }
         public IdentityControllerSection Identity { get; }
         public LoggingControllerSection Logging { get; }

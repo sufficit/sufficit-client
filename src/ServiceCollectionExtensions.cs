@@ -16,7 +16,7 @@ namespace Sufficit.Client
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Inclui toda a configuração para sincronia com a API de EndPoints da Sufficit
+        ///     Inclui toda a configuração para sincronia com a API de EndPoints da Sufficit
         /// </summary>
         public static IServiceCollection AddSufficitEndPointsAPI(this IServiceCollection services)
         {

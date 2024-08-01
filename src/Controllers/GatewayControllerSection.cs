@@ -9,9 +9,12 @@ namespace Sufficit.Client.Controllers
 
         public GatewayControllerSection(APIClientService service) : base(service) 
         {
+            PhoneVox = new PhoneVoxControllerSection(service);
             ReceitaNet = new ReceitaNetControllerSection(service);
         }
-    
+
+        public PhoneVoxControllerSection PhoneVox { get; }
+
         public ReceitaNetControllerSection ReceitaNet { get; }
     }
 }

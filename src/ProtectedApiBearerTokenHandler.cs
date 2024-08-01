@@ -14,9 +14,13 @@ namespace Sufficit.Client
 
             switch (request.RequestUri?.AbsolutePath)
             {
-                case "/health":
                 case "/contact":
+                case "/health":
                 case "/identity/directives":
+
+                case "/notification/contact/validate":
+                case "/notification/events":
+                case "/notification/subscribe":
 
                 case "/resources/htmltopdf":
                 case "/resources/urltopdf":
