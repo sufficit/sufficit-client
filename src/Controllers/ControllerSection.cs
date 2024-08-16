@@ -53,7 +53,7 @@ namespace Sufficit.Client.Controllers
         protected async Task<IEnumerable<T>> RequestMany<T>(HttpRequestMessage message, CancellationToken cancellationToken)
         {
             using var response = await httpClient.SendAsync(message, cancellationToken);
-            await response.EnsureSuccess();
+            await response.EnsureSuccess(cancellationToken);
 
             // updating healthy for this controller
             _healthy?.Invoke(true);
@@ -67,7 +67,7 @@ namespace Sufficit.Client.Controllers
         protected async Task<T?> RequestStruct<T>(HttpRequestMessage message, CancellationToken cancellationToken) where T : struct
         {
             using var response = await httpClient.SendAsync(message, cancellationToken);
-            await response.EnsureSuccess();
+            await response.EnsureSuccess(cancellationToken);
 
             // updating healthy for this controller
             _healthy?.Invoke(true);
@@ -81,7 +81,7 @@ namespace Sufficit.Client.Controllers
         protected async Task<T?> Request<T> (HttpRequestMessage message, CancellationToken cancellationToken) where T : class
         {
             using var response = await httpClient.SendAsync(message, cancellationToken);
-            await response.EnsureSuccess();
+            await response.EnsureSuccess(cancellationToken);
 
             // updating healthy for this controller
             _healthy?.Invoke(true);
@@ -95,7 +95,7 @@ namespace Sufficit.Client.Controllers
         protected async Task<byte[]?> RequestBytes (HttpRequestMessage message, CancellationToken cancellationToken)
         {
             using var response = await httpClient.SendAsync(message, cancellationToken);
-            await response.EnsureSuccess();
+            await response.EnsureSuccess(cancellationToken);
 
             // updating healthy for this controller
             _healthy?.Invoke(true);
@@ -109,7 +109,7 @@ namespace Sufficit.Client.Controllers
         protected async Task Request(HttpRequestMessage message, CancellationToken cancellationToken)
         {
             using var response = await httpClient.SendAsync(message, cancellationToken);
-            await response.EnsureSuccess();
+            await response.EnsureSuccess(cancellationToken);
 
             // updating healthy for this controller
             _healthy?.Invoke(true);

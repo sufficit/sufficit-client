@@ -22,17 +22,28 @@ namespace Sufficit.Client.Controllers.Gateway
 
         public ReceitaNetControllerSection(APIClientService service) : base(service) { }
 
-        public Task<RNOptions?> GetOptions(Guid contextId, string title = "default", CancellationToken cancellationToken = default)
+        public Task<RNOptions?> GetById(Guid id, CancellationToken cancellationToken = default)
         {
-            logger.LogTrace("by context id: {id}, title: {title}", contextId, title);
+            logger.LogTrace("by id: {id}", id);
 
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query["contextid"] = contextId.ToString();
-            query["title"] = title;
+            query["id"] = id.ToString();
 
             var uri = new Uri($"{Controller}{Prefix}/options?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return Request<RNOptions>(message, cancellationToken);
+        }
+
+        public Task<IEnumerable<RNOptions>> GetByContextId(Guid contextId, CancellationToken cancellationToken = default)
+        {
+            logger.LogTrace("by context id: {id}", contextId);
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["contextid"] = contextId.ToString();
+
+            var uri = new Uri($"{Controller}{Prefix}/bycontextid?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestMany<RNOptions>(message, cancellationToken);
         }
 
         public Task Update(RNOptions options, CancellationToken cancellationToken = default)
@@ -43,22 +54,22 @@ namespace Sufficit.Client.Controllers.Gateway
             return Request(message, cancellationToken);
         }
 
-        public Task<IEnumerable<RNDestination>> GetDestinations(Guid contextId, CancellationToken cancellationToken = default)
+        public Task<IEnumerable<RNDestination>> GetDestinations(Guid id, CancellationToken cancellationToken = default)
         {
-            logger.LogTrace("destinations by id: {contextid}", contextId);
+            logger.LogTrace("destinations by id: {id}", id);
 
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query["contextid"] = contextId.ToString();
+            query["id"] = id.ToString();
 
             var uri = new Uri($"{Controller}{Prefix}/destinations?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return RequestMany<RNDestination>(message, cancellationToken);
         }
 
-        public Task Update(Guid contextId, IEnumerable<RNDestination> destinations, CancellationToken cancellationToken = default)
+        public Task Update(Guid id, IEnumerable<RNDestination> destinations, CancellationToken cancellationToken = default)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query["contextid"] = contextId.ToString();
+            query["id"] = id.ToString();
 
             var uri = new Uri($"{Controller}{Prefix}/destinations?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
@@ -66,11 +77,10 @@ namespace Sufficit.Client.Controllers.Gateway
             return Request(message, cancellationToken);
         }
 
-        public Task Delete(Guid contextId, string title = "default", CancellationToken cancellationToken = default)
+        public Task Delete(Guid id, CancellationToken cancellationToken = default)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query["contextid"] = contextId.ToString();
-            query["title"] = title;
+            query["id"] = id.ToString();
 
             var uri = new Uri($"{Controller}{Prefix}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Delete, uri);

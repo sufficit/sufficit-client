@@ -84,12 +84,12 @@ namespace Sufficit.Client.Controllers.Telephony
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task Update(IVR ivr, CancellationToken cancellationToken = default)
+        public async Task Update (IVR ivr, CancellationToken cancellationToken = default)
         {
             var uri = new Uri($"{Controller}{Prefix}", UriKind.Relative);
             var response = await httpClient.PostAsJsonAsync(uri, ivr, cancellationToken);
 
-            await response.EnsureSuccess();
+            await response.EnsureSuccess(cancellationToken);
         }
     }
 }

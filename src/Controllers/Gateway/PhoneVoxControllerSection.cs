@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 using Sufficit.Contacts;
 using Sufficit.Gateway.PhoneVox;
 using Sufficit.Gateway.ReceitaNet;
@@ -40,7 +41,7 @@ namespace Sufficit.Client.Controllers.Gateway
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
 
-            var uri = new Uri($"{Controller}{Prefix}/options?{query}", UriKind.Relative);
+            var uri = new Uri($"{Controller}{Prefix}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Delete, uri);
             return Request(message, cancellationToken);
         }
@@ -65,6 +66,7 @@ namespace Sufficit.Client.Controllers.Gateway
             return Request(message, cancellationToken);
         }
 
+        [Authorize]
         public Task<IEnumerable<PhoneVoxDestination>> GetDestinations(Guid contextId, CancellationToken cancellationToken = default)
         {
             logger.LogTrace("destinations by id: {contextid}", contextId);

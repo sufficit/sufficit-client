@@ -39,7 +39,7 @@ namespace Sufficit.Client.Controllers.Telephony
             string requestEndpoint = $"{Controller}{Prefix}/serviceoptions";
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
             var response = await httpClient.GetAsync(uri, cancellationToken);
-            await response.EnsureSuccess();
+            await response.EnsureSuccess(cancellationToken);
 
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return null;

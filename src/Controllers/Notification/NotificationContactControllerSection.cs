@@ -33,7 +33,7 @@ namespace Sufficit.Client.Controllers.Notification
             using var response = await httpClient.SendAsync(message, cancellationToken);
             try
             {
-                await response.EnsureSuccess();
+                await response.EnsureSuccess(cancellationToken);
                 result.Success = true;
             } 
             catch (HttpRequestException ex)
