@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Sufficit.Client.Controllers.Telephony;
+using Sufficit.Contacts;
 using Sufficit.Telephony;
 using System;
 using System.Collections.Generic;
@@ -64,5 +65,13 @@ namespace Sufficit.Client.Controllers
         }
 
         #endregion
+
+        public async Task<IEnumerable<IIdTitlePair>> Carriers (CancellationToken cancellationToken = default)
+        {
+            string requestEndpoint = $"{Controller}/carriers";
+            string uri = $"{requestEndpoint}";
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return await RequestMany<Contact>(message, cancellationToken);
+        }
     }
 }

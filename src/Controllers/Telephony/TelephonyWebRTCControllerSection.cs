@@ -36,7 +36,7 @@ namespace Sufficit.Client.Controllers.Telephony
             string requestEndpoint = $"{Controller}{Prefix}/available";
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
-            return RequestMany<string>(message, cancellationToken);
+            return RequestManyStruct<string>(message, cancellationToken);
         }
 
         public Task<WebRTCPreferences?> GetPreferences(CancellationToken cancellationToken)

@@ -50,7 +50,13 @@ namespace Sufficit.Client.Controllers
 
         #endregion
 
-        protected async Task<IEnumerable<T>> RequestMany<T>(HttpRequestMessage message, CancellationToken cancellationToken)
+        protected Task<IEnumerable<T>> RequestManyStruct<T>(HttpRequestMessage message, CancellationToken cancellationToken)
+            => RequestManyInternal<T>(message, cancellationToken);
+
+        protected Task<IEnumerable<T>> RequestMany<T>(HttpRequestMessage message, CancellationToken cancellationToken) where T : class, new()
+            => RequestManyInternal<T>(message, cancellationToken);
+
+        private async Task<IEnumerable<T>> RequestManyInternal<T>(HttpRequestMessage message, CancellationToken cancellationToken)
         {
             using var response = await httpClient.SendAsync(message, cancellationToken);
             await response.EnsureSuccess(cancellationToken);
@@ -59,9 +65,9 @@ namespace Sufficit.Client.Controllers
             _healthy?.Invoke(true);
 
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                return Array.Empty<T>();
+                return Enumerable.Empty<T>();
 
-            return await response.Content.ReadFromJsonAsync<IEnumerable<T>>(jsonOptions, cancellationToken) ?? Array.Empty<T>();
+            return await response.Content.ReadFromJsonAsync<IEnumerable<T>>(jsonOptions, cancellationToken) ?? Enumerable.Empty<T>();
         }
 
         protected async Task<T?> RequestStruct<T>(HttpRequestMessage message, CancellationToken cancellationToken) where T : struct
@@ -78,7 +84,7 @@ namespace Sufficit.Client.Controllers
             return await response.Content.ReadFromJsonAsync<T>(jsonOptions, cancellationToken);
         }
 
-        protected async Task<T?> Request<T> (HttpRequestMessage message, CancellationToken cancellationToken) where T : class
+        protected async Task<T?> Request<T> (HttpRequestMessage message, CancellationToken cancellationToken) where T : class, new()
         {
             using var response = await httpClient.SendAsync(message, cancellationToken);
             await response.EnsureSuccess(cancellationToken);
