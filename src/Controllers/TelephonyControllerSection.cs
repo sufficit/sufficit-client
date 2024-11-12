@@ -22,10 +22,11 @@ namespace Sufficit.Client.Controllers
             Audio = new TelephonyAudioControllerSection(service);
             Balance = new TelephonyBalanceControllerSection(service);
             Destination = new TelephonyDestinationControllerSection(service);
-            EventsPanel = new TelephonyEventsPanelControllerSection(service);
-            IVR = new TelephonyIVRControllerSection(service);
             DID = new TelephonyDIDControllerSection(service);
             EndPoint = new TelephonyEndPointControllerSection(service);
+            EventsPanel = new TelephonyEventsPanelControllerSection(service);
+            IVR = new TelephonyIVRControllerSection(service); 
+            MusicOnHold = new TelephonyMusicOnHoldControllerSection(service);
             WebRTC = new TelephonyWebRTCControllerSection(service);
         }
     
@@ -41,6 +42,7 @@ namespace Sufficit.Client.Controllers
         public TelephonyEndPointControllerSection EndPoint { get; }
         public TelephonyEventsPanelControllerSection EventsPanel { get; }
         public TelephonyIVRControllerSection IVR { get; }
+        public TelephonyMusicOnHoldControllerSection MusicOnHold { get; }
         public TelephonyWebRTCControllerSection WebRTC { get; }
 
 
@@ -48,7 +50,7 @@ namespace Sufficit.Client.Controllers
         {            
             string requestEndpoint = $"{Controller}/calls";
             string query = parameters.ToQueryString();
-            logger.LogTrace($"CallSearchAsync: {query}");
+            logger.LogTrace("CallSearchAsync: {query}", query);
 
             string uri = $"{requestEndpoint}?{query}";
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
