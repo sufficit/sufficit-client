@@ -15,7 +15,7 @@ namespace Sufficit.Client.Controllers.Telephony
 
         public TelephonyAudioControllerSection(APIClientService service) : base(service) { }    
 
-        public async Task<IEnumerable<Audio>> ByContext(Guid contextId, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Sufficit.Telephony.Audio>> ByContext(Guid contextId, CancellationToken cancellationToken = default)
         {
             logger.LogTrace("by context: {contextid}", contextId);
 
@@ -27,12 +27,12 @@ namespace Sufficit.Client.Controllers.Telephony
             response.EnsureSuccessStatusCode();
             
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                return Array.Empty<Audio>();
+                return Array.Empty<Sufficit.Telephony.Audio>();
             
-            return await response.Content.ReadFromJsonAsync<IEnumerable<Audio>>(jsonOptions, cancellationToken) ?? Array.Empty<Audio>();
+            return await response.Content.ReadFromJsonAsync<IEnumerable<Sufficit.Telephony.Audio>>(jsonOptions, cancellationToken) ?? Array.Empty<Sufficit.Telephony.Audio>();
         }
 
-        public async Task<Audio?> Find(AudioSearchParameters parameters, CancellationToken cancellationToken)
+        public async Task<Sufficit.Telephony.Audio?> Find(AudioSearchParameters parameters, CancellationToken cancellationToken)
         {
             logger.LogTrace("by parameters: {?}", parameters);
 
@@ -44,7 +44,7 @@ namespace Sufficit.Client.Controllers.Telephony
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 return null;
 
-            return await response.Content.ReadFromJsonAsync<Audio>(jsonOptions, cancellationToken);
+            return await response.Content.ReadFromJsonAsync<Sufficit.Telephony.Audio>(jsonOptions, cancellationToken);
         }
     }
 }
