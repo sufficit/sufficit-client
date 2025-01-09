@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Sufficit.Net.Http;
 using Sufficit.Telephony;
 using Sufficit.Telephony.Asterisk;
 using Sufficit.Telephony.WebRTC;
@@ -16,12 +17,12 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Telephony
 {
-    public sealed class TelephonyWebRTCControllerSection : ControllerSection
+    public sealed class TelephonyWebRTCControllerSection : AuthenticatedControllerSection
     {
         private const string Controller = TelephonyControllerSection.Controller;
         private const string Prefix = "/webrtc";
 
-        public TelephonyWebRTCControllerSection(APIClientService service) : base(service) { }    
+        public TelephonyWebRTCControllerSection (IAuthenticatedControllerBase cb) : base(cb) { }
 
         public Task<Guid?> GetKey(CancellationToken cancellationToken)
         {

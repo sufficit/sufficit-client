@@ -1,24 +1,29 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
-using Sufficit.Contacts;
+using Sufficit.Net.Http;
 using Sufficit.Telephony;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Telephony
 {
-    public sealed class TelephonyEndPointControllerSection : ControllerSection
+    public sealed class TelephonyEndPointControllerSection : AuthenticatedControllerSection
     {
         private const string Controller = TelephonyControllerSection.Controller;
         private const string Prefix = "/endpoint";
 
-        public TelephonyEndPointControllerSection(APIClientService service) : base(service) { }  
+        private readonly JsonSerializerOptions _json;
+
+        public TelephonyEndPointControllerSection (IAuthenticatedControllerBase cb) : base(cb)
+        {
+            _json = cb.Json;
+        }
 
         public Task<IEnumerable<EndPoint>> GetEndPoints(EndPointSearchParameters parameters, CancellationToken cancellationToken)
         {
@@ -26,7 +31,7 @@ namespace Sufficit.Client.Controllers.Telephony
 
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            message.Content = JsonContent.Create(parameters, null, _json);
             return RequestMany<EndPoint>(message, cancellationToken);
         }
 
@@ -60,7 +65,7 @@ namespace Sufficit.Client.Controllers.Telephony
 
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            message.Content = JsonContent.Create(parameters, null, _json);
             return Request(message, cancellationToken);
         }
 

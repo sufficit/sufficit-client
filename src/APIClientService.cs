@@ -3,132 +3,58 @@ using Microsoft.Extensions.Options;
 using Sufficit.Client.Controllers;
 using Sufficit.Client.Controllers.Notification;
 using Sufficit.EndPoints.Configuration;
+using Sufficit.Identity;
+using Sufficit.Net.Http;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Sufficit.Client
 {
     /// <summary>
-    /// Singleton implementation of default API Client <br />
-    /// With Transient Http Client
+    /// Scoped implementation of default API Client <br />
+    /// With Transient Http Client (Authenticated)
     /// </summary>
-    public class APIClientService : ControllerSection
+    public class APIClientService
     {
-        #region STATUS MONITOR
-
-        /// <summary>
-        ///     Last timestamp for health checked
-        /// </summary>
-        public DateTime HealthChecked { get; internal set; }
-
-        /// <summary>
-        ///     Sets a value for health status, used internal. <br />
-        ///     Or you can set a custom value for testing purposes
-        /// </summary>
-        public void Healthy(bool value = true)
-        {
-            // updating timestamp
-            HealthChecked = DateTime.UtcNow;
-
-            if (Available != value)
-            {
-                Available = value;
-                OnChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
-
-        /// <summary>
-        ///     Used on component initialization for ensure ready status
-        /// </summary>
-        public async Task GetStatus()
-        {
-            await _semaphore.WaitAsync();
-            if (HealthChecked == DateTime.MinValue || DateTime.UtcNow.Subtract(HealthChecked).TotalMinutes > 30)
-                _ = await Health(default);
-
-            _semaphore.Release();          
-        }
-
-        public bool Available { get; private set; }
-
-        public async Task<HealthResponse> Health(CancellationToken cancellationToken)
-        {
-            bool status = false;
-            HealthResponse? response;
-            try
-            {
-                response = await httpClient.GetFromJsonAsync<HealthResponse>("/health", cancellationToken);
-                if (response != null)
-                    status = response.Status == "Healthy";
-            }
-            catch (Exception ex)
-            {
-                response = new HealthResponse() { Status = $"UnHealthy: {ex.Message}" };
-            }
-
-            Healthy(status);
-            return response ?? new HealthResponse() { Status = "UnHealthy: null response" };
-        }
-
-        #endregion
-
-        // Used for compare changes
-        private string BaseUrl { get; set; }
+        private readonly ILogger _logger;
+        private readonly HttpClient _client;
 
         /// <summary>
         ///     Status changed
         /// </summary>
         public event EventHandler? OnChanged;
 
-        protected void OnOptionsChanged(EndPointsAPIOptions value, string? instance)
-        {
-            if (BaseUrl != value.BaseUrl)
-            {
-                BaseUrl = value.BaseUrl;
-                HealthChecked = DateTime.MinValue;
-            }
-        }
+        public void OnHealthChanged (object? _, bool __) 
+            => OnChanged?.Invoke(this, new EventArgs());
 
-        /// <summary>
-        ///     Default request from memory for testing purposes
-        /// </summary>
-        public async Task<WeatherForecast[]?> WeatherForeacast()
-        {
-            return await httpClient.GetFromJsonAsync<WeatherForecast[]>("/WeatherForecast");
-        }
-
-        public APIClientService(IOptionsMonitor<EndPointsAPIOptions> ioptions, IHttpClientFactory clientFactory, ILogger<APIClientService> logger)
-            : base(ioptions, clientFactory, logger, Json.Options)
+        public APIClientService(IOptions<EndPointsAPIOptions> options, ITokenProvider tokens, ILogger<APIClientService> logger)            
         {          
-            // Definindo controllers sections
-            Access = new AccessControllerSection(this);
-            Contacts = new ContactsControllerSection(this);
-            Exchange = new ExchangeControllerSection(this);
-            Gateway = new GatewayControllerSection(this);
-            Identity = new IdentityControllerSection(this);
-            Logging = new LoggingControllerSection(this);
-            Notification = new NotificationControllerSection(this);
-            Provisioning = new ProvisioningControllerSection(this);
-            Resources = new ResourcesControllerSection(this);
-            Sales = new SalesControllerSection(this);
-            Telephony = new TelephonyControllerSection(this);
+            _logger = logger; 
+            _client = new PreConfiguredHttpClient(options.Value);
 
+            // setting health controller section
+            Health = new HealthCheckController(_client);
+            Health.OnChanged += OnHealthChanged;
 
-            BaseUrl = ioptions.CurrentValue.BaseUrl;
-            ioptions.OnChange(OnOptionsChanged);
+            var cb = new AuthenticatedControllerBase(tokens, _client, Json.Options, logger) { Healthy = Health.Healthy };
 
-            logger.LogTrace("Sufficit API Client Service instantiated with base address: {url}", options.BaseUrl);
+            // setting controllers sub sections
+            Access = new AccessControllerSection(cb);
+            Contacts = new ContactsControllerSection(cb);
+            Exchange = new ExchangeControllerSection(cb);
+            Gateway = new GatewayControllerSection(cb);
+            Identity = new IdentityControllerSection(cb);
+            Logging = new LoggingControllerSection(cb);
+            Notification = new NotificationControllerSection(cb);
+            Provisioning = new ProvisioningControllerSection(cb);
+            Resources = new ResourcesControllerSection(cb);
+            Sales = new SalesControllerSection(cb);
+            Telephony = new TelephonyControllerSection(cb);
+            
+            _logger.LogTrace("Sufficit API Client Service instantiated with base address: {address}", _client.BaseAddress);
         }
 
+        public HealthCheckController Health { get; }
         public AccessControllerSection Access { get; }
         public ContactsControllerSection Contacts { get; }
         public ExchangeControllerSection Exchange { get; }

@@ -12,7 +12,12 @@ namespace Sufficit.Client
         private readonly IHttpContextAccessor _accessor;
         public HttpContextTokenProvider(IHttpContextAccessor accessor) { _accessor = accessor; }
 
-        public async ValueTask<string?> GetTokenAsync ()
-            => await _accessor.HttpContext.GetTokenAsync("access_token");        
+        public async ValueTask<string?> GetTokenAsync()
+        {
+            if (_accessor.HttpContext != null)
+                return await _accessor.HttpContext.GetTokenAsync(ClaimTypes.AccessToken);
+
+            return null;
+        }
     }
 }

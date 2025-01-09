@@ -35,18 +35,9 @@ namespace Sufficit.Client
             // If not added previously, using default token provider
             services.TryAddScoped<ITokenProvider, HttpContextTokenProvider>();
 
-            services.AddTransient<ProtectedApiBearerTokenHandler>();
-            services.AddHttpClient(options.ClientId, client => client.Configure(options))
-                .AddHttpMessageHandler<ProtectedApiBearerTokenHandler>();
-
-            // services.AddHttpClient<IAPIHttpClient, APIHttpClient>();
-            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(options.ClientId));
-
-            services.AddSingleton<APIClientService>();
+            services.AddScoped<APIClientService>();
             services.AddScoped<IWebSocketService, WebSocketService>();
-
-            services.AddSingleton<RemotePDFTool>();
-            services.TryAddSingleton<IPDFTool, RemotePDFTool>();
+            services.TryAddScoped<IPDFTool, RemotePDFTool>();
 
             return services;
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Sufficit.Net.Http;
 using Sufficit.Telephony;
 using Sufficit.Telephony.Asterisk.Manager;
 using Sufficit.Telephony.EventsPanel;
@@ -17,34 +18,33 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Telephony
 {
-    public sealed class TelephonyEventsPanelControllerSection : ControllerSection
+    public sealed class TelephonyEventsPanelControllerSection : AuthenticatedControllerSection
     {
         private const string Controller = TelephonyControllerSection.Controller;
         private const string Prefix = "/eventspanel";
 
-        public TelephonyEventsPanelControllerSection(APIClientService service) : base(service) { }    
+        private readonly JsonSerializerOptions _json;
 
-        public async Task<IEnumerable<AMIHubConnection>> GetEndpoints(CancellationToken cancellationToken = default)
+        public TelephonyEventsPanelControllerSection(IAuthenticatedControllerBase cb) : base(cb)
+        {
+            _json = cb.Json;
+        }
+
+        public Task<IEnumerable<AMIHubConnection>> GetEndpoints(CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}{Prefix}/endpoints";
             var uri = new Uri($"{ requestEndpoint }", UriKind.Relative);
-            var result = await httpClient.GetFromJsonAsync<IEnumerable<AMIHubConnection>>(uri, cancellationToken);
-            if (result != null) { return result; }
-            return Array.Empty<AMIHubConnection>();
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestMany<AMIHubConnection>(message, cancellationToken);
         }
 
         [Authorize]
-        public async Task<EventsPanelServiceOptions?> GetServiceOptions(CancellationToken cancellationToken = default)
+        public Task<EventsPanelServiceOptions?> GetServiceOptions(CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}{Prefix}/serviceoptions";
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
-            var response = await httpClient.GetAsync(uri, cancellationToken);
-            await response.EnsureSuccess(cancellationToken);
-
-            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                return null;
-
-            return await response.Content.ReadFromJsonAsync<EventsPanelServiceOptions?>(jsonOptions, cancellationToken);      
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<EventsPanelServiceOptions>(message, cancellationToken);
         }
 
         public Task<IEnumerable<EventsPanelCardInfo>> GetCardsByUser(CancellationToken cancellationToken)
@@ -73,11 +73,17 @@ namespace Sufficit.Client.Controllers.Telephony
             return Request<EventsPanelUserOptions>(message, cancellationToken);               
         }
 
-        public async Task PostUserOptions(EventsPanelUserOptions value, CancellationToken cancellationToken = default)
+        public Task PostUserOptions(EventsPanelUserOptions value, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}{Prefix}/useroptions";
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
-            await httpClient.PostAsJsonAsync<EventsPanelUserOptions>(uri, value, jsonOptions, cancellationToken);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(value, null, _json);
+            return Request(message, cancellationToken);
         }
+
+        protected override string[]? AnonymousPaths { get; } = {
+            $"{Controller}{Prefix}/endpoints",
+        };
     }
 }

@@ -2,6 +2,7 @@
 using Sufficit.Client.Controllers.Telephony;
 using Sufficit.Contacts;
 using Sufficit.Logging;
+using Sufficit.Net.Http;
 using Sufficit.Sales;
 using Sufficit.Telephony;
 using System;
@@ -16,11 +17,11 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers
 {
-    public sealed class SalesControllerSection : ControllerSection
+    public sealed class SalesControllerSection : AuthenticatedControllerSection
     {
         public const string Controller = "/sales";
 
-        public SalesControllerSection(APIClientService service) : base(service) { }
+        public SalesControllerSection(IAuthenticatedControllerBase cb) : base(cb) { }
 
         public Task<IEnumerable<ClientInformation>> GetClients(string? filter, uint? results, CancellationToken cancellationToken)
         {

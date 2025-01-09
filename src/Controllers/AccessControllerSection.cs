@@ -1,4 +1,5 @@
 ﻿using Sufficit.Identity;
+using Sufficit.Net.Http;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -7,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers
 {
-    public sealed class AccessControllerSection : ControllerSection
+    public sealed class AccessControllerSection : AuthenticatedControllerSection
     {
         public const string Controller = "/access";
 
-        public AccessControllerSection(APIClientService service) : base(service) { }   
+        public AccessControllerSection (IAuthenticatedControllerBase cb) : base(cb) { }   
 
         public Task<IEnumerable<UserPolicyBase>> GetUserPolicies(Guid id, CancellationToken cancellationToken = default)
         {

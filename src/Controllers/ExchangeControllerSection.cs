@@ -1,24 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
-using Sufficit.Client.Controllers.Telephony;
-using Sufficit.Telephony;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Sufficit.Net.Http;
 
 namespace Sufficit.Client.Controllers
 {
-    public sealed class ExchangeControllerSection : ControllerSection
+    public sealed class ExchangeControllerSection : AuthenticatedControllerSection
     {
         public const string Controller = "/exchange";
 
-        public ExchangeControllerSection(APIClientService service) : base(service)
+        public ExchangeControllerSection(IAuthenticatedControllerBase cb) : base(cb) 
         {
-            Messages = new ExchangeMessagesControllerSection(service);
+            Messages = new ExchangeMessagesControllerSection(cb);
         }
     
         public ExchangeMessagesControllerSection Messages { get; }

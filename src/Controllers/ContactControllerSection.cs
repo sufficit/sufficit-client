@@ -1,29 +1,30 @@
-﻿using Microsoft.Extensions.Logging;
-using Sufficit.Contacts;
+﻿using Sufficit.Contacts;
 using Sufficit.EndPoints;
-using Sufficit.Gateway.ReceitaNet;
-using Sufficit.Identity;
-using Sufficit.Logging;
-using Sufficit.Telephony;
+using Sufficit.Net.Http;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers
 {
-    public sealed class ContactsControllerSection : ControllerSection
+    public sealed class ContactsControllerSection : AuthenticatedControllerSection
     {
         public const string Controller = "/contact";
 
-        public ContactsControllerSection(APIClientService service) : base(service) { }
-    
+        private readonly JsonSerializerOptions _json;
+
+        public ContactsControllerSection(IAuthenticatedControllerBase cb) : base(cb)
+        {
+            _json = cb.Json;
+        }
+
         public Task<Contact?> GetContact(Guid contactid, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}";
@@ -52,12 +53,12 @@ namespace Sufficit.Client.Controllers
 
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            message.Content = JsonContent.Create(parameters, null, _json);
             return RequestMany<ContactWithAttributes>(message, cancellationToken);
         }
-        
+
         public Task<IEnumerable<ContactWithAttributes>> Search(string filter, int results = 10, CancellationToken cancellationToken = default)
-        {            
+        {
             string requestEndpoint = $"{Controller}/search";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
 
@@ -99,7 +100,7 @@ namespace Sufficit.Client.Controllers
 
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(item, null, jsonOptions);
+            message.Content = JsonContent.Create(item, null, _json);
             var response = await Request<EndPointResponse>(message, cancellationToken);
             return (Guid?)response?.Data;
         }
@@ -109,7 +110,7 @@ namespace Sufficit.Client.Controllers
             string requestEndpoint = $"{Controller}/avatar";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query[nameof(contextid)] = contextid.ToString();
-                       
+
             var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
 
@@ -119,5 +120,7 @@ namespace Sufficit.Client.Controllers
 
             return await Request<EndPointResponse>(message, cancellationToken);
         }
+
+        protected override string[]? AnonymousPaths { get; } = { "/contact" };
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Sufficit.EndPoints;
+using Sufficit.Net.Http;
 using Sufficit.Notification;
 using System;
 using System.Collections.Generic;
@@ -10,12 +11,17 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Notification
 {
-    public sealed class NotificationContactControllerSection : ControllerSection
+    public sealed class NotificationContactControllerSection : AuthenticatedControllerSection
     {
         private const string Controller = NotificationControllerSection.Controller;
         private const string Prefix = "/contact";
 
-        public NotificationContactControllerSection(APIClientService service) : base(service) { }    
+        private readonly JsonSerializerOptions _json;
+
+        public NotificationContactControllerSection(IAuthenticatedControllerBase cb) : base(cb)
+        {
+            _json = cb.Json;
+        }
 
         public async Task<ContactValidationResponse> Validate(ContactValidationRequest parameters, CancellationToken cancellationToken = default)
         {
@@ -28,9 +34,9 @@ namespace Sufficit.Client.Controllers.Notification
 
             var uri = new Uri($"{Controller}{Prefix}/validate", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            message.Content = JsonContent.Create(parameters, null, _json);
 
-            using var response = await httpClient.SendAsync(message, cancellationToken);
+            using var response = await SendAsync(message, cancellationToken);
             try
             {
                 await response.EnsureSuccess(cancellationToken);
@@ -58,11 +64,13 @@ namespace Sufficit.Client.Controllers.Notification
 
             if (response.Content.Headers.ContentLength > 0 && response.Content.Headers.ContentType?.MediaType == "application/json")
             {
-                var response_object = await response.Content.ReadFromJsonAsync<ContactValidationResponse>(jsonOptions, cancellationToken);
+                var response_object = await response.Content.ReadFromJsonAsync<ContactValidationResponse>(_json, cancellationToken);
                 if (response_object != null) result = response_object;
             }
 
             return result;
         }
+
+        protected override string[]? AnonymousPaths { get; } = { $"{Controller}{Prefix}/validate" };
     }
 }

@@ -1,38 +1,48 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Sufficit.Client.Controllers.Telephony;
 using Sufficit.Contacts;
+using Sufficit.Net.Http;
 using Sufficit.Telephony;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers
 {
-    public sealed class TelephonyControllerSection : ControllerSection
+    public sealed class TelephonyControllerSection : AuthenticatedControllerSection
     {
         public const string Controller = "/telephony";
 
-        public TelephonyControllerSection(APIClientService service) : base(service)
+        private readonly ILogger _logger;
+        private readonly JsonSerializerOptions _json;
+
+        public TelephonyControllerSection(IAuthenticatedControllerBase cb) : base(cb)
         {
-            Audio = new TelephonyAudioControllerSection(service);
-            Balance = new TelephonyBalanceControllerSection(service);
-            Destination = new TelephonyDestinationControllerSection(service);
-            DID = new TelephonyDIDControllerSection(service);
-            EndPoint = new TelephonyEndPointControllerSection(service);
-            EventsPanel = new TelephonyEventsPanelControllerSection(service);
-            IVR = new TelephonyIVRControllerSection(service); 
-            MusicOnHold = new TelephonyMusicOnHoldControllerSection(service);
-            WebRTC = new TelephonyWebRTCControllerSection(service);
+            Audio = new TelephonyAudioControllerSection(cb);
+            Balance = new TelephonyBalanceControllerSection(cb);
+            Destination = new TelephonyDestinationControllerSection(cb);
+            DID = new TelephonyDIDControllerSection(cb);
+            EndPoint = new TelephonyEndPointControllerSection(cb);
+            EventsPanel = new TelephonyEventsPanelControllerSection(cb);
+            IVR = new TelephonyIVRControllerSection(cb); 
+            MusicOnHold = new TelephonyMusicOnHoldControllerSection(cb);
+            WebRTC = new TelephonyWebRTCControllerSection(cb);
+
+            _logger = cb.Logger;
+            _json = cb.Json;
         }
     
-        public async Task<Guid> WebRTCKey()
+        public Task<Guid?> WebRTCKey()
         {
-            return await httpClient.GetFromJsonAsync<Guid>($"{Controller}/webrtckey");           
+            string requestEndpoint = $"{Controller}/webrtckey";
+            var uri = new Uri(requestEndpoint, UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestStruct<Guid>(message, CancellationToken.None); 
         }
 
         public TelephonyAudioControllerSection Audio { get; }
@@ -50,7 +60,7 @@ namespace Sufficit.Client.Controllers
         {            
             string requestEndpoint = $"{Controller}/calls";
             string query = parameters.ToQueryString();
-            logger.LogTrace("CallSearchAsync: {query}", query);
+            _logger.LogTrace("CallSearchAsync: {query}", query);
 
             string uri = $"{requestEndpoint}?{query}";
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
@@ -63,7 +73,9 @@ namespace Sufficit.Client.Controllers
         {
             string requestEndpoint = $"{Controller}/webcallback";
             var uri = new Uri(requestEndpoint, UriKind.Relative);
-            return httpClient.PostAsJsonAsync<ExternalCallRequest>(uri, request, cancellationToken);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(request, null, _json);
+            return SendAsync(message, cancellationToken);
         }
 
         #endregion
@@ -75,5 +87,9 @@ namespace Sufficit.Client.Controllers
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return await RequestMany<Contact>(message, cancellationToken);
         }
+
+        protected override string[]? AnonymousPaths { get; } = {
+            $"{Controller}/webcallback",
+        };
     }
 }

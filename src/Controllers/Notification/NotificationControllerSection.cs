@@ -1,21 +1,27 @@
-﻿using Sufficit.Notification;
+﻿using Sufficit.Net.Http;
+using Sufficit.Notification;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Notification
 {
-    public sealed class NotificationControllerSection : ControllerSection
+    public sealed class NotificationControllerSection : AuthenticatedControllerSection
     {
         public const string Controller = "/notification";
 
-        public NotificationControllerSection(APIClientService service) : base(service) 
+        private readonly JsonSerializerOptions _json;
+
+        public NotificationControllerSection(IAuthenticatedControllerBase cb) : base(cb)
         {
-            Contact = new NotificationContactControllerSection(service);
+            Contact = new NotificationContactControllerSection(cb);
+
+            _json = cb.Json;
         }
 
         public NotificationContactControllerSection Contact { get; }
@@ -23,9 +29,6 @@ namespace Sufficit.Client.Controllers.Notification
         public Task<IEnumerable<BoardNotification>> GetNotifications(CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/boardnotifications";
-            //var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            //query["id"] = id.ToString();
-
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return RequestMany<BoardNotification>(message, cancellationToken);
@@ -44,8 +47,13 @@ namespace Sufficit.Client.Controllers.Notification
             var uri = new Uri($"{Controller}/subscribe", UriKind.Relative);
 
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(request, null, jsonOptions);
+            message.Content = JsonContent.Create(request, null, _json);
             return Request(message, cancellationToken);
         }
+
+        protected override string[]? AnonymousPaths { get; } = { 
+            $"{Controller}/events", 
+            $"{Controller}/subscribe" 
+        };
     }
 }

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
 	<PropertyGroup Label="Sufficit Targeting">
-		<TargetFrameworks>netstandard2.0;net6.0;net7.0;net8.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net7.0;net8.0;net9.0</TargetFrameworks>
 		<Nullable>enable</Nullable>
 		<LangVersion>8.0</LangVersion>
 		<ImplicitUsings>disable</ImplicitUsings>
@@ -62,8 +62,8 @@
 	<PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
 		<NoWarn>$(NoWarn);nullable</NoWarn>
 	</PropertyGroup>
-	
-	<ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
 		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="[*,9.0.0)" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Connections.Common" Version="[*,9.0.0)" />
 		<PackageReference Include="Microsoft.AspNetCore.Metadata" Version="[*,9.0.0)" />
@@ -80,7 +80,25 @@
 		<PackageReference Include="Microsoft.Extensions.Options" Version="[*,9.0.0)" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="[*,9.0.0)" />
 		<PackageReference Include="System.Text.Json" Version="[*,9.0.0)" />
-		<PackageReference Include="System.Net.Http.Json" Version="[*,9.0.0)" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'net8.0' Or '$(TargetFramework)' == 'net9.0' ">
+		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="[*,10.0.0)" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Connections.Common" Version="[*,10.0.0)" />
+		<PackageReference Include="Microsoft.AspNetCore.Metadata" Version="[*,10.0.0)" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="[*,10.0.0)" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="[*,10.0.0)" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="[*,10.0.0)" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="[*,10.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="[*,10.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" version="[*,10.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" version="[*,10.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="[*,10.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Logging" version="[*,10.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" version="[*,10.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="[*,10.0.0)" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="[*,10.0.0)" />
+		<PackageReference Include="System.Text.Json" Version="[*,10.0.0)" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -91,12 +109,14 @@
 	<ItemGroup Label="Sufficit Dependencies on Packing" Condition=" '$(Configuration)' == 'Packing' ">
 		<PackageReference Include="Sufficit.Base" Version="1.*" />
 		<PackageReference Include="Sufficit.Identity.Core" Version="1.*" />
+		<PackageReference Include="Sufficit.Net.Http" Version="1.*" />
 		<PackageReference Include="Sufficit.Telephony.EventsPanel.Core" Version="1.*" />
 	</ItemGroup>
 
 	<ItemGroup Label="Sufficit Local Dependencies" Condition=" '$(Configuration)' != 'Packing' ">
 		<ProjectReference Include="..\..\sufficit-base\src\Sufficit.Base.csproj" />
 		<ProjectReference Include="..\..\sufficit-identity-core\src\Sufficit.Identity.Core.csproj" />
+		<ProjectReference Include="..\..\sufficit-net-http\src\Sufficit.Net.Http.csproj" />		
 		<ProjectReference Include="..\..\sufficit-telephony-eventspanel-core\src\Sufficit.Telephony.EventsPanel.Core.csproj" />
 	</ItemGroup>
 	

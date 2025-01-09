@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Sufficit.Gateway.ReceitaNet;
-using Sufficit.Identity;
+using Sufficit.Net.Http;
 using Sufficit.Provisioning;
 using Sufficit.Telephony;
 using System;
@@ -9,16 +8,22 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers
 {
-    public sealed class ProvisioningControllerSection : ControllerSection
+    public sealed class ProvisioningControllerSection : AuthenticatedControllerSection
     {
         public const string Controller = "/provisioning";
 
-        public ProvisioningControllerSection(APIClientService service) : base(service) { }
+        private readonly JsonSerializerOptions _json;
+
+        public ProvisioningControllerSection (IAuthenticatedControllerBase cb) : base(cb)
+        {
+            _json = cb.Json;
+        }
 
         [Authorize(Roles = "provisioning")]
         public Task Delete(string key, CancellationToken cancellationToken)
@@ -58,7 +63,7 @@ namespace Sufficit.Client.Controllers
         {
             var uri = new Uri($"{Controller}/device", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(device, null, jsonOptions);
+            message.Content = JsonContent.Create(device, null, _json);
             return Request(message, cancellationToken);
         }
 
@@ -67,7 +72,7 @@ namespace Sufficit.Client.Controllers
         {
             var uri = new Uri($"{Controller}/attribute", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(device, null, jsonOptions);
+            message.Content = JsonContent.Create(device, null, _json);
             return Request(message, cancellationToken);
         }
 

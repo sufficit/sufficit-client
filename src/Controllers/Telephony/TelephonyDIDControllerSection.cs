@@ -1,33 +1,35 @@
 ﻿using Microsoft.Extensions.Logging;
 using Sufficit.EndPoints;
-using Sufficit.Exchange;
+using Sufficit.Net.Http;
 using Sufficit.Telephony;
-using Sufficit.Telephony.Asterisk;
 using Sufficit.Telephony.DIDs;
-using Sufficit.Telephony.EventsPanel;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Telephony
 {
-    public sealed class TelephonyDIDControllerSection : ControllerSection
+    public sealed class TelephonyDIDControllerSection : AuthenticatedControllerSection
     {
         private const string Controller = TelephonyControllerSection.Controller;
         private const string Prefix = "/did";
 
-        public TelephonyDIDControllerSection(APIClientService service) : base(service) { }  
+        private readonly ILogger _logger;
+        private readonly JsonSerializerOptions _json;
+
+        public TelephonyDIDControllerSection(IAuthenticatedControllerBase cb) : base(cb)
+        {
+            _logger = cb.Logger;
+            _json = cb.Json;
+        }
 
         public Task<IEnumerable<DirectInwardDialing>> ByContext(Guid contextId, CancellationToken cancellationToken = default)
         {
-            logger.LogTrace("by context: {contextid}", contextId);
+            _logger.LogTrace("by context: {contextid}", contextId);
 
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["contextid"] = contextId.ToString();
@@ -39,7 +41,7 @@ namespace Sufficit.Client.Controllers.Telephony
 
         public Task<DirectInwardDialing?> ById(Guid id, CancellationToken cancellationToken = default)
         {
-            logger.LogTrace("by id: {id}", id);
+            _logger.LogTrace("by id: {id}", id);
 
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
@@ -51,7 +53,7 @@ namespace Sufficit.Client.Controllers.Telephony
 
         public Task<DirectInwardDialing?> ByExtension(string extension, CancellationToken cancellationToken = default)
         {
-            logger.LogTrace("by extension: {extension}", extension);
+            _logger.LogTrace("by extension: {extension}", extension);
 
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["extension"] = extension.ToString();
@@ -63,19 +65,19 @@ namespace Sufficit.Client.Controllers.Telephony
 
         public Task<EndPointFullResponse<DirectInwardDialing>> FullSearch(DIDSearchParameters parameters, CancellationToken cancellationToken = default)
         {
-            logger.LogTrace("by full search parameters: {parameters}", parameters);
+            _logger.LogTrace("by full search parameters: {parameters}", parameters);
             var uri = new Uri($"{Controller}{Prefix}/fullsearch", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            message.Content = JsonContent.Create(parameters, null, _json);
             return Request<EndPointFullResponse<DirectInwardDialing>>(message, cancellationToken)!;
         }
 
         public Task<IEnumerable<DirectInwardDialing>> Search(DIDSearchParameters parameters, CancellationToken cancellationToken = default)
         {
-            logger.LogTrace("by search parameters: {parameters}", parameters);
+            _logger.LogTrace("by search parameters: {parameters}", parameters);
             var uri = new Uri($"{Controller}{Prefix}/search", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            message.Content = JsonContent.Create(parameters, null, _json);
             return RequestMany<DirectInwardDialing>(message, cancellationToken);
         }
 
@@ -86,7 +88,7 @@ namespace Sufficit.Client.Controllers.Telephony
         {
             var uri = new Uri($"{Controller}{Prefix}/owner", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            message.Content = JsonContent.Create(parameters, null, _json);
             return Request(message, cancellationToken);
         }
 
@@ -97,7 +99,7 @@ namespace Sufficit.Client.Controllers.Telephony
         {
             var uri = new Uri($"{Controller}{Prefix}/context", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            message.Content = JsonContent.Create(parameters, null, _json);
             return Request(message, cancellationToken);
         }
 
@@ -108,7 +110,7 @@ namespace Sufficit.Client.Controllers.Telephony
         {
             var uri = new Uri($"{Controller}{Prefix}/filter", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            message.Content = JsonContent.Create(parameters, null, _json);
             return Request(message, cancellationToken);
         }
 
@@ -119,7 +121,7 @@ namespace Sufficit.Client.Controllers.Telephony
         {
             var uri = new Uri($"{Controller}{Prefix}/extra", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            message.Content = JsonContent.Create(parameters, null, _json);
             return Request(message, cancellationToken);
         }
 
@@ -133,7 +135,7 @@ namespace Sufficit.Client.Controllers.Telephony
 
             var uri = new Uri($"{Controller}{Prefix}/destination?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(destination, null, jsonOptions);
+            message.Content = JsonContent.Create(destination, null, _json);
             return Request(message, cancellationToken);
         }
 
@@ -147,7 +149,7 @@ namespace Sufficit.Client.Controllers.Telephony
 
             var uri = new Uri($"{Controller}{Prefix}/properties?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(properties, null, jsonOptions);
+            message.Content = JsonContent.Create(properties, null, _json);
             return Request(message, cancellationToken);
         }
     }

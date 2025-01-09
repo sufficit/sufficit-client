@@ -1,16 +1,16 @@
 ﻿using Sufficit.Client.Controllers.Gateway;
-using Sufficit.Client.Controllers.Telephony;
+using Sufficit.Net.Http;
 
 namespace Sufficit.Client.Controllers
 {
-    public sealed class GatewayControllerSection : ControllerSection
+    public sealed class GatewayControllerSection : AuthenticatedControllerSection
     {
         public const string Controller = "/gateway";
 
-        public GatewayControllerSection(APIClientService service) : base(service) 
+        public GatewayControllerSection(IAuthenticatedControllerBase cb) : base(cb) 
         {
-            PhoneVox = new PhoneVoxControllerSection(service);
-            ReceitaNet = new ReceitaNetControllerSection(service);
+            PhoneVox = new PhoneVoxControllerSection(cb);
+            ReceitaNet = new ReceitaNetControllerSection(cb);
         }
 
         public PhoneVoxControllerSection PhoneVox { get; }

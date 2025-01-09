@@ -1,4 +1,6 @@
-﻿using Sufficit.EndPoints;
+﻿using Microsoft.Extensions.Logging;
+using Sufficit.EndPoints;
+using Sufficit.Net.Http;
 using Sufficit.Telephony;
 using System;
 using System.Collections;
@@ -13,12 +15,17 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Telephony
 {
-    public sealed class TelephonyMusicOnHoldControllerSection : ControllerSection
+    public sealed class TelephonyMusicOnHoldControllerSection : AuthenticatedControllerSection
     {
         private const string Controller = TelephonyControllerSection.Controller;
         private const string Prefix = "/moh";
 
-        public TelephonyMusicOnHoldControllerSection(APIClientService service) : base(service) { }
+        private readonly JsonSerializerOptions _json;
+
+        public TelephonyMusicOnHoldControllerSection(IAuthenticatedControllerBase cb) : base(cb)
+        {
+            _json = cb.Json;
+        }
 
         #region CLASSES
 
@@ -28,7 +35,7 @@ namespace Sufficit.Client.Controllers.Telephony
 
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(parameters, null, jsonOptions);
+            message.Content = JsonContent.Create(parameters, null, _json);
             return RequestMany<MusicOnHoldClass>(message, cancellationToken);
         }
 
@@ -38,7 +45,7 @@ namespace Sufficit.Client.Controllers.Telephony
 
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(info, null, jsonOptions);
+            message.Content = JsonContent.Create(info, null, _json);
             var response = await Request<EndPointResponse>(message, cancellationToken);
             if (response != null)
             {
