@@ -1,4 +1,5 @@
-﻿using Sufficit.Net.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Sufficit.Net.Http;
 using Sufficit.Notification;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace Sufficit.Client.Controllers.Notification
 
         public NotificationContactControllerSection Contact { get; }
 
+        [Authorize]
         public Task<IEnumerable<BoardNotification>> GetNotifications(CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/boardnotifications";

@@ -1,7 +1,10 @@
-﻿using Sufficit.Contacts;
+﻿using Sufficit.Audio;
+using Sufficit.Contacts;
+using Sufficit.Gateway.Wavoip;
 using Sufficit.Provisioning;
 using Sufficit.Sales;
 using Sufficit.Telephony;
+using Sufficit.Telephony.Audio;
 using Sufficit.Telephony.DIDs;
 using System;
 using System.Collections;
@@ -148,7 +151,10 @@ namespace Sufficit.Client
             }
 
             if (source.Filter != null)
-                query[nameof(source.Filter).ToLower()] = source.Filter.ToString();
+            {
+                query[$"{nameof(source.Filter).ToLower()}.{nameof(source.Filter.Text).ToLower()}"] = source.Filter.Text;
+                query[$"{nameof(source.Filter).ToLower()}.{nameof(source.Filter.ExactMatch).ToLower()}"] = source.Filter.ExactMatch.ToString().ToLower();
+            }
 
             if (source.Limit > 0)
                 query[nameof(source.Limit).ToLower()] = source.Limit.ToString();
@@ -225,6 +231,8 @@ namespace Sufficit.Client
             return (source as AttributeWithKeysSearchParameters).ToQueryString(query);
         }
 
+        #region TELEPHONY - ENDPOINT
+
         public static string ToQueryString(this EndPointPropertyRequest source)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
@@ -242,6 +250,30 @@ namespace Sufficit.Client
 
             return query.ToString() ?? string.Empty;
         }
+
+        #endregion
+        #region AUDIO - BACKGROUND
+
+        public static string ToQueryString(this BackgroundAudioSearchParameters source)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            if (source.Title != null)
+            {
+                query[$"{nameof(source.Title).ToLower()}.{nameof(source.Title.Text).ToLower()}"] = source.Title.Text;
+                query[$"{nameof(source.Title).ToLower()}.{nameof(source.Title.ExactMatch).ToLower()}"] = source.Title.ExactMatch.ToString().ToLower();
+            }
+
+            if (source.Description != null)
+            {
+                query[$"{nameof(source.Description).ToLower()}.{nameof(source.Description.Text).ToLower()}"] = source.Description.Text;
+                query[$"{nameof(source.Description).ToLower()}.{nameof(source.Description.ExactMatch).ToLower()}"] = source.Description.ExactMatch.ToString().ToLower();
+            }
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
 
         /* // using POST for now, so no needed to querystring
          

@@ -23,6 +23,7 @@ namespace Sufficit.Client.Controllers
 
         public TelephonyControllerSection(IAuthenticatedControllerBase cb) : base(cb)
         {
+            Asterisk = new TelephonyAsteriskControllerSection(cb);
             Audio = new TelephonyAudioControllerSection(cb);
             Balance = new TelephonyBalanceControllerSection(cb);
             Destination = new TelephonyDestinationControllerSection(cb);
@@ -45,6 +46,7 @@ namespace Sufficit.Client.Controllers
             return RequestStruct<Guid>(message, CancellationToken.None); 
         }
 
+        public TelephonyAsteriskControllerSection Asterisk { get; }
         public TelephonyAudioControllerSection Audio { get; }
         public TelephonyBalanceControllerSection Balance { get; }
         public TelephonyDestinationControllerSection Destination { get; }

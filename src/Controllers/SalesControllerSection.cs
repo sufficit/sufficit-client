@@ -1,17 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using Sufficit.Client.Controllers.Telephony;
-using Sufficit.Contacts;
-using Sufficit.Logging;
+﻿using Microsoft.AspNetCore.Authorization;
 using Sufficit.Net.Http;
 using Sufficit.Sales;
-using Sufficit.Telephony;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,6 +15,7 @@ namespace Sufficit.Client.Controllers
 
         public SalesControllerSection(IAuthenticatedControllerBase cb) : base(cb) { }
 
+        [Authorize]
         public Task<IEnumerable<ClientInformation>> GetClients(string? filter, uint? results, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/clients";
@@ -39,6 +32,8 @@ namespace Sufficit.Client.Controllers
             return RequestMany<ClientInformation>(message, cancellationToken);
         }
 
+
+        [Authorize(Roles = Sufficit.Sales.SalesManagerRole.NormalizedName)]
         public Task<IEnumerable<Contract>> GetContracts(ContractSearchParameters parameters, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/contract/search";

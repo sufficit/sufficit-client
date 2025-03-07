@@ -36,10 +36,11 @@ namespace Sufficit.Client
             Health = new HealthCheckController(_client);
             Health.OnChanged += OnHealthChanged;
 
-            var cb = new AuthenticatedControllerBase(tokens, _client, Json.Options, logger) { Healthy = Health.Healthy };
+            var cb = new AuthenticatedControllerBase(tokens, _client, Sufficit.Json.JsonSerializer.Options, logger) { Healthy = Health.Healthy };
 
             // setting controllers sub sections
             Access = new AccessControllerSection(cb);
+            Audio = new AudioControllerSection(cb);
             Contacts = new ContactsControllerSection(cb);
             Exchange = new ExchangeControllerSection(cb);
             Gateway = new GatewayControllerSection(cb);
@@ -56,6 +57,7 @@ namespace Sufficit.Client
 
         public HealthCheckController Health { get; }
         public AccessControllerSection Access { get; }
+        public AudioControllerSection Audio { get; }
         public ContactsControllerSection Contacts { get; }
         public ExchangeControllerSection Exchange { get; }
         public GatewayControllerSection Gateway { get; }

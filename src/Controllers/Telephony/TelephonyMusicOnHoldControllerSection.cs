@@ -9,9 +9,9 @@ using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Sufficit.Json;
 
 namespace Sufficit.Client.Controllers.Telephony
 {
@@ -20,7 +20,7 @@ namespace Sufficit.Client.Controllers.Telephony
         private const string Controller = TelephonyControllerSection.Controller;
         private const string Prefix = "/moh";
 
-        private readonly JsonSerializerOptions _json;
+        private readonly System.Text.Json.JsonSerializerOptions _json;
 
         public TelephonyMusicOnHoldControllerSection(IAuthenticatedControllerBase cb) : base(cb)
         {
@@ -86,7 +86,7 @@ namespace Sufficit.Client.Controllers.Telephony
             return RequestMany<MusicOnHoldStorageObject>(message, cancellationToken);
         }
 
-        public async Task Upload(Guid id, byte[] bytes, string filename, CancellationToken cancellationToken)
+        public async Task Upload(Guid id, byte[] bytes, string filename, string? contentType, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}{Prefix}/audio";
 
@@ -96,6 +96,9 @@ namespace Sufficit.Client.Controllers.Telephony
             var idContent = new StringContent(id.ToString());
             var filenameContent = new StringContent(filename);
             var fileStreamContent = new ByteArrayContent(bytes);
+
+            if (!string.IsNullOrWhiteSpace(contentType))
+                fileStreamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
 
             using var formData = new MultipartFormDataContent() {
                 { idContent, "id" },

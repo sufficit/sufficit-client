@@ -29,5 +29,17 @@ namespace Sufficit.Client.Controllers
             message.Content = JsonContent.Create(parameters, null, _json);
             return RequestMany<JsonLog>(message, cancellationToken);
         }
+
+        public Task<IEnumerable<JsonLog<T>>> GetEventsWithContent<T>(LogSearchParameters parameters, CancellationToken cancellationToken) where T : class
+        {
+            var uri = new Uri($"{Controller}/events", UriKind.Relative);
+
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(parameters, null, _json);
+            return RequestMany<JsonLog<T>>(message, cancellationToken);
+        }
+
+
+        protected override string[]? AnonymousPaths { get; } = { $"{Controller}/events" };
     }
 }

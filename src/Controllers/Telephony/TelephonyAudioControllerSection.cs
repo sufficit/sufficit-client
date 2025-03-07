@@ -1,11 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using Sufficit.Net.Http;
-using Sufficit.Telephony;
+using Sufficit.Telephony.Audio;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,7 +21,7 @@ namespace Sufficit.Client.Controllers.Telephony
             _logger = cb.Logger;
         }
 
-        public Task<IEnumerable<Sufficit.Telephony.Audio>> ByContext(Guid contextId, CancellationToken cancellationToken = default)
+        public Task<IEnumerable<AudioPlaceHolder>> ByContext(Guid contextId, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("by context: {contextid}", contextId);
 
@@ -32,17 +30,17 @@ namespace Sufficit.Client.Controllers.Telephony
 
             var uri = new Uri($"{Controller}{Prefix}/bycontext?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
-            return RequestMany<Sufficit.Telephony.Audio>(message, cancellationToken);
+            return RequestMany<AudioPlaceHolder>(message, cancellationToken);
         }
 
-        public Task<Sufficit.Telephony.Audio?> Find(AudioSearchParameters parameters, CancellationToken cancellationToken)
+        public Task<AudioPlaceHolder?> Find(AudioSearchParameters parameters, CancellationToken cancellationToken)
         {
             _logger.LogTrace("by parameters: {?}", parameters);
 
             var query = parameters.ToQueryString();
             var uri = new Uri($"{Controller}{Prefix}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
-            return Request<Sufficit.Telephony.Audio>(message, cancellationToken);
+            return Request<AudioPlaceHolder>(message, cancellationToken);
         }
     }
 }
