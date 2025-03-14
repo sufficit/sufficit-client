@@ -39,7 +39,9 @@ namespace Sufficit.Client.Controllers.Telephony
         {
             string requestEndpoint = $"{Controller}{Prefix}/byid";
 
-            var query = $"id={id}";
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString();
+
             var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return Request<EndPoint>(message, cancellationToken);
@@ -64,6 +66,39 @@ namespace Sufficit.Client.Controllers.Telephony
             string requestEndpoint = $"{Controller}{Prefix}/property";
 
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(parameters, null, _json);
+            return Request(message, cancellationToken);
+        }
+
+        #endregion
+        #region CALL AND PICKUP GROUPS
+
+        [Authorize]
+        public Task<EndPointGroups> Groups(Guid id, CancellationToken cancellationToken)
+        {
+            string requestEndpoint = $"{Controller}{Prefix}/groupsbyid";
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString();
+
+            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<EndPointGroups>(message, cancellationToken)!;
+        }
+
+        /// <summary>
+        ///     Update Groups for an EndPoint by Id
+        /// </summary>
+        [Authorize]
+        public Task Groups(Guid id, EndPointGroups parameters, CancellationToken cancellationToken)
+        {
+            string requestEndpoint = $"{Controller}{Prefix}/groupsbyid";
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString();
+
+            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(parameters, null, _json);
             return Request(message, cancellationToken);
