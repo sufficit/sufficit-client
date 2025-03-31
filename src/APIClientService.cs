@@ -4,6 +4,7 @@ using Sufficit.Client.Controllers;
 using Sufficit.Client.Controllers.Notification;
 using Sufficit.EndPoints.Configuration;
 using Sufficit.Identity;
+using Sufficit.Json;
 using Sufficit.Net.Http;
 using System;
 using System.Net.Http;
@@ -48,11 +49,13 @@ namespace Sufficit.Client
             Logging = new LoggingControllerSection(cb);
             Notification = new NotificationControllerSection(cb);
             Provisioning = new ProvisioningControllerSection(cb);
+            Reports = new ReportsControllerSection(cb);
             Resources = new ResourcesControllerSection(cb);
             Sales = new SalesControllerSection(cb);
             Telephony = new TelephonyControllerSection(cb);
-            
-            _logger.LogTrace("Sufficit API Client Service instantiated with base address: {address}", _client.BaseAddress);
+
+            var jsonOptions = options.Value.ToJson();
+            _logger.LogTrace("Sufficit API Client Service instantiated with options: {options}", jsonOptions);
         }
 
         public HealthCheckController Health { get; }
@@ -65,6 +68,7 @@ namespace Sufficit.Client
         public LoggingControllerSection Logging { get; }
         public NotificationControllerSection Notification { get; }
         public ProvisioningControllerSection Provisioning { get; }
+        public ReportsControllerSection Reports { get; }
         public ResourcesControllerSection Resources { get; }
         public SalesControllerSection Sales { get; }
         public TelephonyControllerSection Telephony { get; }

@@ -2,6 +2,7 @@
 using Sufficit.Contacts;
 using Sufficit.Gateway.Wavoip;
 using Sufficit.Provisioning;
+using Sufficit.Reports;
 using Sufficit.Sales;
 using Sufficit.Telephony;
 using Sufficit.Telephony.Audio;
@@ -269,6 +270,26 @@ namespace Sufficit.Client
                 query[$"{nameof(source.Description).ToLower()}.{nameof(source.Description.Text).ToLower()}"] = source.Description.Text;
                 query[$"{nameof(source.Description).ToLower()}.{nameof(source.Description.ExactMatch).ToLower()}"] = source.Description.ExactMatch.ToString().ToLower();
             }
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
+
+        #region REPORTS
+
+        public static string ToQueryString (this ReportParametersNew source)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            if (source.ContextId.HasValue && source.ContextId.Value != Guid.Empty)
+                query[nameof(source.ContextId).ToLower()] = source.ContextId.Value.ToString("N");
+
+            if (source.Start.HasValue && source.Start.Value > DateTime.MinValue)
+                query[$"{nameof(source.Start).ToLower()}"] = source.Start.Value.ToString("o");
+
+            if (source.End.HasValue && source.End.Value >  DateTime.MinValue)
+                query[$"{nameof(source.End).ToLower()}"] = source.End.Value.ToString("o");
 
             return query.ToString() ?? string.Empty;
         }
