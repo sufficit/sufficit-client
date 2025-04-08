@@ -16,7 +16,7 @@ namespace Sufficit.Client.Controllers
 
         public ReportsControllerSection(IAuthenticatedControllerBase cb) : base(cb) { }   
 
-        public Task<BilledCallsByDIDReport> BilledCallsByDIDReport (ReportParametersNew parameters, CancellationToken cancellationToken = default)
+        public Task<BilledCallsByDIDReport> BilledCallsByDIDReport (ReportRequestParameters parameters, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}";
             var query = parameters.ToQueryString();
@@ -27,18 +27,18 @@ namespace Sufficit.Client.Controllers
             return Request<BilledCallsByDIDReport>(message, cancellationToken)!;
         }
 
-        public Task<ReportStatus?> GetStatus(Guid id, CancellationToken cancellationToken = default)
+        public Task<ReportProgress?> GetProgress(Guid id, CancellationToken cancellationToken = default)
         {
-            string requestEndpoint = $"{Controller}/status";
+            string requestEndpoint = $"{Controller}/progress";
 
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
 
             var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
-            return Request<ReportStatus>(message, cancellationToken)!;
+            return Request<ReportProgress>(message, cancellationToken)!;
         }
 
-        protected override string[]? AnonymousPaths { get; } = { $"{Controller}/status" };
+        protected override string[]? AnonymousPaths { get; } = { $"{Controller}/progress" };
     }
 }
