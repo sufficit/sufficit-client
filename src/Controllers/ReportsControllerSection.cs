@@ -26,5 +26,19 @@ namespace Sufficit.Client.Controllers
 
             return Request<BilledCallsByDIDReport>(message, cancellationToken)!;
         }
+
+        public Task<ReportStatus?> GetStatus(Guid id, CancellationToken cancellationToken = default)
+        {
+            string requestEndpoint = $"{Controller}/status";
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString();
+
+            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<ReportStatus>(message, cancellationToken)!;
+        }
+
+        protected override string[]? AnonymousPaths { get; } = { $"{Controller}/status" };
     }
 }

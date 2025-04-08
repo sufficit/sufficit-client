@@ -6,6 +6,7 @@
 		<LangVersion>8.0</LangVersion>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<RootNamespace>Sufficit.Client</RootNamespace>
+		<Configurations>Debug;Release;Packing</Configurations>
 	</PropertyGroup>
 	
     <PropertyGroup Label="Sufficit Versioning">
