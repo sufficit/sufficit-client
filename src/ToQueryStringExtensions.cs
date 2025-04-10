@@ -285,18 +285,26 @@ namespace Sufficit.Client
             if (source.Id.HasValue && source.Id.Value != Guid.Empty)
                 query[nameof(source.Id).ToLower()] = source.Id.Value.ToString("N");
 
+            if (source.Await.HasValue)
+                query[$"{nameof(source.Await).ToLower()}"] = source.Await.Value.ToString().ToLower();
+
             if (source.ModelId.HasValue && source.ModelId.Value != Guid.Empty)
                 query[nameof(source.ModelId).ToLower()] = source.ModelId.Value.ToString("N");
 
-            return (source as ReportParametersNew).ToQueryString(query);
+            // Missing extra parameters
+
+            return (source as ReportParameters).ToQueryString(query);
         }
 
-        public static string ToQueryString (this ReportParametersNew source, NameValueCollection? query = null)
+        public static string ToQueryString (this ReportParameters source, NameValueCollection? query = null)
         {
             query ??= System.Web.HttpUtility.ParseQueryString(string.Empty);
 
             if (source.ContextId.HasValue && source.ContextId.Value != Guid.Empty)
                 query[nameof(source.ContextId).ToLower()] = source.ContextId.Value.ToString("N");
+
+            if (source.ProviderId.HasValue && source.ProviderId.Value != Guid.Empty)
+                query[nameof(source.ProviderId).ToLower()] = source.ProviderId.Value.ToString("N");
 
             if (source.Start.HasValue && source.Start.Value > DateTime.MinValue)
                 query[$"{nameof(source.Start).ToLower()}"] = source.Start.Value.ToString("o");
@@ -307,8 +315,6 @@ namespace Sufficit.Client
             if (source.OffSet.HasValue)
                 query[$"{nameof(source.OffSet).ToLower()}"] = source.OffSet.Value.ToString();
 
-            if (source.Await.HasValue)
-                query[$"{nameof(source.Await).ToLower()}"] = source.Await.Value.ToString().ToLower();
 
             return query.ToString() ?? string.Empty;
         }

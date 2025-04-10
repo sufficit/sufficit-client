@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Sufficit.Client.Controllers;
 using Sufficit.Client.Controllers.Notification;
+using Sufficit.Client.Controllers.Reports;
 using Sufficit.EndPoints.Configuration;
 using Sufficit.Identity;
 using Sufficit.Json;
