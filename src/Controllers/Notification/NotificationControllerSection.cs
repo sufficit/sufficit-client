@@ -36,6 +36,9 @@ namespace Sufficit.Client.Controllers.Notification
             return RequestMany<BoardNotification>(message, cancellationToken);
         }
 
+        /// <summary>
+        ///     Get Available Events for notifications, UI use and filter
+        /// </summary>
         public Task<IEnumerable<EventInfo>> GetEvents(CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/events";
@@ -44,7 +47,7 @@ namespace Sufficit.Client.Controllers.Notification
             return RequestMany<EventInfo>(message, cancellationToken);
         }
 
-        public Task Subscribe(SubscribeRequest request, CancellationToken cancellationToken)
+        public Task Subscribe (SubscribeRequest request, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}/subscribe", UriKind.Relative);
 

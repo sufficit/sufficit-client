@@ -94,7 +94,7 @@ namespace Sufficit.Client.Controllers
             return (await RequestStruct<bool>(message, cancellationToken)) ?? false;
         }
 
-        public async Task<Guid?> Update(ContactWithAttributes item, CancellationToken cancellationToken)
+        public async Task<Guid?> Update (ContactWithAttributes item, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}";
 
@@ -105,7 +105,7 @@ namespace Sufficit.Client.Controllers
             return (Guid?)response?.Data;
         }
 
-        public async Task<EndPointResponse?> Update(Guid contextid, Stream avatar, CancellationToken cancellationToken)
+        public async Task<EndPointResponse?> Update (Guid contextid, Stream avatar, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/avatar";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);

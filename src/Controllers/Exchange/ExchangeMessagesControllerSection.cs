@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers
 {
-    public sealed class ExchangeMessagesControllerSection : AuthenticatedControllerSection
+    public sealed class ExchangeMessagesControllerSection : AuthenticatedControllerSection, IMessagesController
     {
         private const string Controller = ExchangeControllerSection.Controller;
         private const string Prefix = "/messages";
@@ -23,17 +23,32 @@ namespace Sufficit.Client.Controllers
             _json = cb.Json;
         }
 
+        /// <inheritdoc cref="IMessagesController.GetDetails(MessageDetailsSearchParameters, CancellationToken) "/>
         [Authorize(Sufficit.Identity.ManagerRole.NormalizedName)]
-        public Task<IEnumerable<MessageDetails>> GetMessages (MessageDetailsSearchParameters parameters, CancellationToken cancellationToken)
+        public Task<IEnumerable<MessageDetails>> GetDetails (MessageDetailsSearchParameters parameters, CancellationToken cancellationToken)
         {          
             var uri = new Uri($"{Controller}{Prefix}", UriKind.Relative);
-
             var content = JsonContent.Create(parameters, null, _json);
             var message = new HttpRequestMessage(HttpMethod.Post, uri)
             {
                 Content = content
             };
             return RequestMany<MessageDetails>(message, cancellationToken);
+        }
+
+        /// <inheritdoc cref="IMessagesController.GetDetails(Guid, bool?, CancellationToken) "/>
+        [Authorize(Sufficit.Identity.ManagerRole.NormalizedName)]
+        public Task<MessageDetails?> GetDetails(Guid id, bool? content = default, CancellationToken cancellationToken = default)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString();
+
+            if (content.HasValue)
+                query["content"] = content.ToString()!.ToLower();
+
+            var uri = new Uri($"{Controller}{Prefix}/ByMessageId?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<MessageDetails>(message, cancellationToken);
         }
     }
 }
