@@ -45,6 +45,7 @@ namespace Sufficit.Client
             Audio = new AudioControllerSection(cb);
             Contacts = new ContactsControllerSection(cb);
             Exchange = new ExchangeControllerSection(cb);
+            Finance = new FinanceControllerSection(cb);
             Gateway = new GatewayControllerSection(cb);
             Identity = new IdentityControllerSection(cb);
             Logging = new LoggingControllerSection(cb);
@@ -64,6 +65,7 @@ namespace Sufficit.Client
         public AudioControllerSection Audio { get; }
         public ContactsControllerSection Contacts { get; }
         public ExchangeControllerSection Exchange { get; }
+        public FinanceControllerSection Finance { get; }
         public GatewayControllerSection Gateway { get; }
         public IdentityControllerSection Identity { get; }
         public LoggingControllerSection Logging { get; }
