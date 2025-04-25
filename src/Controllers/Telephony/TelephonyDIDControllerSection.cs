@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Telephony
 {
-    public sealed class TelephonyDIDControllerSection : AuthenticatedControllerSection
+    public sealed class TelephonyDIDControllerSection : AuthenticatedControllerSection, DIDControllerInterface
     {
         private const string Controller = TelephonyControllerSection.Controller;
         private const string Prefix = "/did";
@@ -27,7 +27,7 @@ namespace Sufficit.Client.Controllers.Telephony
             _json = cb.Json;
         }
 
-        public Task<IEnumerable<DirectInwardDialing>> ByContext(Guid contextId, CancellationToken cancellationToken = default)
+        public Task<IEnumerable<DirectInwardDialing>> GetByContext(Guid contextId, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("by context: {contextid}", contextId);
 
@@ -39,7 +39,7 @@ namespace Sufficit.Client.Controllers.Telephony
             return RequestMany<DirectInwardDialing>(message, cancellationToken);
         }
 
-        public Task<DirectInwardDialing?> ById(Guid id, CancellationToken cancellationToken = default)
+        public Task<DirectInwardDialing?> GetById(Guid id, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("by id: {id}", id);
 
@@ -51,7 +51,7 @@ namespace Sufficit.Client.Controllers.Telephony
             return Request<DirectInwardDialing>(message, cancellationToken);
         }
 
-        public Task<DirectInwardDialing?> ByExtension(string extension, CancellationToken cancellationToken = default)
+        public Task<DirectInwardDialing?> GetByExtension(string extension, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("by extension: {extension}", extension);
 
