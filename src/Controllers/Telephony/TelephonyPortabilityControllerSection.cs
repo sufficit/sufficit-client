@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Telephony
 {
-    public sealed class TelephonyPortabilityControllerSection : AuthenticatedControllerSection, PortabilityControllerInterface
+    public sealed class TelephonyPortabilityControllerSection : AuthenticatedControllerSection
     {
         private const string Controller = TelephonyControllerSection.Controller;
         private const string Prefix = "/portability";
