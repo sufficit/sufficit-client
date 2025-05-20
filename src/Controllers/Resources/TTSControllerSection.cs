@@ -59,7 +59,7 @@ namespace Sufficit.Client.Controllers.Telephony
             return ttsresponse;
         }
 
-        public async Task<TTSResponseMeta> Meta(TTSRequest request, CancellationToken cancellationToken)
+        public async Task<TTSResponseMeta> Meta (TTSRequest request, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}{Prefix}/meta";
 
