@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 using Sufficit.EndPoints;
+using Sufficit.Identity;
 using Sufficit.Net.Http;
 using Sufficit.Telephony;
 using Sufficit.Telephony.DIDs;
@@ -27,7 +29,7 @@ namespace Sufficit.Client.Controllers.Telephony
             _json = cb.Json;
         }
 
-        public Task<IEnumerable<DirectInwardDialing>> GetByContext(Guid contextId, CancellationToken cancellationToken = default)
+        public Task<IEnumerable<DirectInwardDialing>> ByContext(Guid contextId, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("by context: {contextid}", contextId);
 
@@ -39,7 +41,7 @@ namespace Sufficit.Client.Controllers.Telephony
             return RequestMany<DirectInwardDialing>(message, cancellationToken);
         }
 
-        public Task<DirectInwardDialing?> GetById(Guid id, CancellationToken cancellationToken = default)
+        public Task<DirectInwardDialing?> ById(Guid id, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("by id: {id}", id);
 
@@ -51,7 +53,7 @@ namespace Sufficit.Client.Controllers.Telephony
             return Request<DirectInwardDialing>(message, cancellationToken);
         }
 
-        public Task<DirectInwardDialing?> GetByExtension(string extension, CancellationToken cancellationToken = default)
+        public Task<DirectInwardDialing?> ByExtension(string extension, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("by extension: {extension}", extension);
 
@@ -61,6 +63,33 @@ namespace Sufficit.Client.Controllers.Telephony
             var uri = new Uri($"{Controller}{Prefix}/byextension?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return Request<DirectInwardDialing>(message, cancellationToken);
+        }
+
+        [Authorize(Roles = AdministratorRole.NormalizedName)]
+        public Task Remove(Guid id, CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("remove by id: {id}", id);
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString();
+
+            var uri = new Uri($"{Controller}{Prefix}/byid?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Delete, uri);
+            return Request(message, cancellationToken);
+        }
+
+
+        [Authorize(Roles = AdministratorRole.NormalizedName)]
+        public Task Remove(string extension, CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("remove by extension: {extension}", extension);
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["extension"] = extension;
+
+            var uri = new Uri($"{Controller}{Prefix}/byextension?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Delete, uri);
+            return Request(message, cancellationToken);
         }
 
         public Task<EndPointFullResponse<DirectInwardDialing>> FullSearch(DIDSearchParameters parameters, CancellationToken cancellationToken = default)
