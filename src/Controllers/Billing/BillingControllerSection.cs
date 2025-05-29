@@ -8,9 +8,9 @@ namespace Sufficit.Client.Controllers.Billing
 
         public BillingControllerSection(IAuthenticatedControllerBase cb) : base(cb)
         {
-            EletronicInvoice = new EletronicInvoiceControllerSection(cb);
+            ElectronicInvoice = new ElectronicInvoiceControllerSection(cb);
         }
 
-        public EletronicInvoiceControllerSection EletronicInvoice { get; }
+        public ElectronicInvoiceControllerSection ElectronicInvoice { get; }
     }
 }

@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Billing
 {
-    public sealed class EletronicInvoiceControllerSection : AuthenticatedControllerSection, IElectronicInvoiceController
+    public sealed class ElectronicInvoiceControllerSection : AuthenticatedControllerSection, IElectronicInvoiceController
     {
         private const string Controller = BillingControllerSection.Controller;
         private const string Prefix = $"/{nameof(ElectronicInvoice)}";
@@ -23,7 +23,7 @@ namespace Sufficit.Client.Controllers.Billing
         private readonly ILogger _logger;
         private readonly JsonSerializerOptions _json;
 
-        public EletronicInvoiceControllerSection(IAuthenticatedControllerBase cb) : base(cb)
+        public ElectronicInvoiceControllerSection(IAuthenticatedControllerBase cb) : base(cb)
         {
             _logger = cb.Logger;
             _json = cb.Json;
