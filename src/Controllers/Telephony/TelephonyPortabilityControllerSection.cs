@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Telephony
 {
-    public sealed class TelephonyPortabilityControllerSection : AuthenticatedControllerSection
+    public sealed class TelephonyPortabilityControllerSection : AuthenticatedControllerSection, IPortabilityController
     {
         private const string Controller = TelephonyControllerSection.Controller;
         private const string Prefix = "/portability";
@@ -61,24 +61,26 @@ namespace Sufficit.Client.Controllers.Telephony
         }
 
         [Authorize(Roles = $"{AdministratorRole.NormalizedName},{ManagerRole.NormalizedName},{TelephonyAdminRole.NormalizedName}")]
-        public Task AddOrUpdate (PortabilityProcess item, CancellationToken cancellationToken)
+        public async Task<int> AddOrUpdate (PortabilityProcess item, CancellationToken cancellationToken)
         {
             _logger.LogTrace("add or update item: {item}", item.ToJsonOrDefault());
             var uri = new Uri($"{Controller}{Prefix}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(item, null, _json);
-            return Request<EndPointResponse>(message, cancellationToken);
+            var response = await Request<EndPointResponse>(message, cancellationToken);
+            return response?.Success ?? false ? 1 : 0;
         }
 
         [Authorize(Roles = $"{AdministratorRole.NormalizedName}")]
-        public Task Remove(Guid id, CancellationToken cancellationToken)
+        public async Task<int> Remove(Guid id, CancellationToken cancellationToken)
         {
             _logger.LogTrace("remove by id: {id}", id);
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
             var uri = new Uri($"{Controller}{Prefix}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Delete, uri);
-            return Request(message, cancellationToken);
+            var response = await Request<EndPointResponse>(message, cancellationToken);
+            return response?.Success ?? false ? 1 : 0;
         }
 
         protected override string[]? AnonymousPaths { get; } = { $"{Controller}{Prefix}/byid" };
