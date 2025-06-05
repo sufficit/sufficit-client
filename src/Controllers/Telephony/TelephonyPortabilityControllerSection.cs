@@ -61,14 +61,14 @@ namespace Sufficit.Client.Controllers.Telephony
         }
 
         [Authorize(Roles = $"{AdministratorRole.NormalizedName},{ManagerRole.NormalizedName},{TelephonyAdminRole.NormalizedName}")]
-        public async Task<int> AddOrUpdate (PortabilityProcess item, CancellationToken cancellationToken)
+        public async Task<PortabilityProcess?> AddOrUpdate (PortabilityProcess item, CancellationToken cancellationToken)
         {
             _logger.LogTrace("add or update item: {item}", item.ToJsonOrDefault());
             var uri = new Uri($"{Controller}{Prefix}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(item, null, _json);
-            var response = await Request<EndPointResponse>(message, cancellationToken);
-            return response?.Success ?? false ? 1 : 0;
+            var response = await Request<EndPointResponse<PortabilityProcess>>(message, cancellationToken);
+            return response?.Success ?? false ? response.Data : null;
         }
 
         [Authorize(Roles = $"{AdministratorRole.NormalizedName}")]

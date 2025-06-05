@@ -4,6 +4,7 @@ using Sufficit.Client.Controllers;
 using Sufficit.Client.Controllers.Billing;
 using Sufficit.Client.Controllers.Notification;
 using Sufficit.Client.Controllers.Reports;
+using Sufficit.Client.Controllers.Storage;
 using Sufficit.EndPoints.Configuration;
 using Sufficit.Identity;
 using Sufficit.Json;
@@ -56,6 +57,7 @@ namespace Sufficit.Client
             Reports = new ReportsControllerSection(cb);
             Resources = new ResourcesControllerSection(cb);
             Sales = new SalesControllerSection(cb);
+            Storage = new StorageControllerSection(cb);
             Telephony = new TelephonyControllerSection(cb);
 
             var jsonOptions = options.Value.ToJson();
@@ -77,6 +79,8 @@ namespace Sufficit.Client
         public ReportsControllerSection Reports { get; }
         public ResourcesControllerSection Resources { get; }
         public SalesControllerSection Sales { get; }
+
+        public StorageControllerSection Storage { get; }
         public TelephonyControllerSection Telephony { get; }
     }
 }
