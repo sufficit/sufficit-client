@@ -25,7 +25,7 @@ namespace Sufficit.Client.Controllers.Storage
         public IEnumerable<StorageObjectRecord> Search (StorageObjectMetadataSearchParameters parameters, CancellationToken cancellationToken)
             => throw new NotImplementedException("Method not implemented in StorageControllerSection.");
 
-        public async Task AddOrUpdate (StorageObjectRecord item, CancellationToken cancellationToken)
+        public Task AddOrUpdate (StorageObjectRecord item, CancellationToken cancellationToken)
             => throw new NotImplementedException("Method not implemented in StorageControllerSection.");
 
         public Task RemoveIfExists (Guid id, CancellationToken cancellationToken)
