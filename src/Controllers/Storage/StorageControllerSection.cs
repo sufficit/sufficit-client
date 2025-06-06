@@ -17,7 +17,7 @@ namespace Sufficit.Client.Controllers.Storage
         public const string Controller = "/storage";
 
         public StorageControllerSection (IAuthenticatedControllerBase cb) : base(cb)
-            => throw new NotImplementedException("Method not implemented in StorageControllerSection.");
+        {}
 
         public Task<StorageObjectRecord?> ById (Guid id, CancellationToken cancellationToken)
             => throw new NotImplementedException("Method not implemented in StorageControllerSection.");
