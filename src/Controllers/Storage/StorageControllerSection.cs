@@ -1,4 +1,5 @@
-﻿using Sufficit.Json;
+﻿using Sufficit.EndPoints;
+using Sufficit.Json;
 using Sufficit.Net.Http;
 using Sufficit.Storage;
 using System;
@@ -31,7 +32,7 @@ namespace Sufficit.Client.Controllers.Storage
         public Task RemoveIfExists (Guid id, CancellationToken cancellationToken)
             => throw new NotImplementedException("Method not implemented in StorageControllerSection.");
 
-        public async Task Upload (StorageObjectRecord record, byte[] bytes, CancellationToken cancellationToken)
+        public async Task<StorageObjectRecord> Upload (StorageObjectRecord record, byte[] bytes, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/object";
 
@@ -51,7 +52,8 @@ namespace Sufficit.Client.Controllers.Storage
             };
 
             message.Content = formData;
-            await Request(message, cancellationToken);
+            var response = await Request<EndPointResponse<StorageObjectRecord>>(message, cancellationToken);
+            return response?.Data ?? throw new InvalidOperationException("Upload failed, no data returned.");
         }
 
         public Task Delete(Guid id, CancellationToken cancellationToken)
