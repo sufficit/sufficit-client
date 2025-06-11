@@ -2,3 +2,4 @@ src/obj/
 src/bin/
 .vs/
 Sufficit.Client.sln
+*-local.csproj
