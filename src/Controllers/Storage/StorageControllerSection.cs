@@ -67,7 +67,8 @@ namespace Sufficit.Client.Controllers.Storage
             if (nocache != null) 
                 query["nocache"] = nocache;
 
-            return $"{_cb.Client.BaseAddress}{Controller}/object?{query}";
+            var basepath = _cb.Client.BaseAddress!.ToString().TrimEnd('/');
+            return $"{basepath}{Controller}/object?{query}";
         }
 
         public async Task<byte[]?> Download(Guid id, string? nocache = null, CancellationToken cancellationToken = default)
