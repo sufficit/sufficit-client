@@ -75,6 +75,9 @@ namespace Sufficit.Client.Controllers.Storage
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
 
+            if (nocache != null)
+                query["nocache"] = nocache;
+
             string requestEndpoint = $"{Controller}/object?{query}";
             var uri = new Uri(requestEndpoint, UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
