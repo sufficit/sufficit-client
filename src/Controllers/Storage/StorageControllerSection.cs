@@ -13,9 +13,12 @@ namespace Sufficit.Client.Controllers.Storage
     public sealed class StorageControllerSection : AuthenticatedControllerSection
     {
         public const string Controller = "/storage";
+        private readonly IAuthenticatedControllerBase _cb;
 
         public StorageControllerSection (IAuthenticatedControllerBase cb) : base(cb)
-        {}
+        {
+            _cb = cb;
+        }
 
         public Task<StorageObjectRecord?> ById (Guid id, CancellationToken cancellationToken)
             => throw new NotImplementedException("Method not implemented in StorageControllerSection.");
@@ -56,7 +59,18 @@ namespace Sufficit.Client.Controllers.Storage
         public Task Delete(Guid id, CancellationToken cancellationToken)
             => throw new NotImplementedException("Method not implemented in StorageControllerSection.");
 
-        public async Task<byte[]?> Download(Guid id, CancellationToken cancellationToken)
+        public string DownloadLink(Guid id, string? nocache = null)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString();
+
+            if (nocache != null) 
+                query["nocache"] = nocache;
+
+            return $"{_cb.Client.BaseAddress}{Controller}/object?{query}";
+        }
+
+        public async Task<byte[]?> Download(Guid id, string? nocache = null, CancellationToken cancellationToken = default)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
