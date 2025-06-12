@@ -85,6 +85,5 @@ namespace Sufficit.Client.Controllers.Storage
 
             return await RequestBytes(message, cancellationToken);
         }
-
     }
 }
