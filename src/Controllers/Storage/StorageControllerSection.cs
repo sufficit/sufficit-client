@@ -4,10 +4,7 @@ using Sufficit.Net.Http;
 using Sufficit.Storage;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
-using System.Net.Mime;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -59,7 +56,17 @@ namespace Sufficit.Client.Controllers.Storage
         public Task Delete(Guid id, CancellationToken cancellationToken)
             => throw new NotImplementedException("Method not implemented in StorageControllerSection.");
 
-        public Task Download(Guid id, CancellationToken cancellationToken)
-            => throw new NotImplementedException("Method not implemented in StorageControllerSection.");
+        public async Task<byte[]?> Download(Guid id, CancellationToken cancellationToken)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString();
+
+            string requestEndpoint = $"{Controller}/object?{query}";
+            var uri = new Uri(requestEndpoint, UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            return await RequestBytes(message, cancellationToken);
+        }
+
     }
 }
