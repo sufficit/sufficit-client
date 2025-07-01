@@ -66,12 +66,13 @@ namespace Sufficit.Client.Controllers.Telephony
         }
 
         [Authorize(Roles = AdministratorRole.NormalizedName)]
-        public Task Remove(Guid id, CancellationToken cancellationToken = default)
+        public Task Remove(Guid id, string? reason = null, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("remove by id: {id}", id);
 
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
+            query["reason"] = reason;
 
             var uri = new Uri($"{Controller}{Prefix}/byid?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Delete, uri);
@@ -80,12 +81,13 @@ namespace Sufficit.Client.Controllers.Telephony
 
 
         [Authorize(Roles = AdministratorRole.NormalizedName)]
-        public Task Remove(string extension, CancellationToken cancellationToken = default)
+        public Task Remove(string extension, string? reason = null, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("remove by extension: {extension}", extension);
 
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["extension"] = extension;
+            query["reason"] = reason;
 
             var uri = new Uri($"{Controller}{Prefix}/byextension?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Delete, uri);
