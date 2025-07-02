@@ -10,7 +10,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sufficit.Client.Controllers
+namespace Sufficit.Client.Controllers.Finance
 {
     public sealed class BankSlipControllerSection : AuthenticatedControllerSection, IBankSlipController
     {

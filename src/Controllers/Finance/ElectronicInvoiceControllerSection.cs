@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
-using Sufficit.Billing;
+using Sufficit.Finance;
 using Sufficit.EndPoints;
 using Sufficit.Identity;
 using Sufficit.Json;
@@ -13,11 +13,11 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sufficit.Client.Controllers.Billing
+namespace Sufficit.Client.Controllers.Finance
 {
     public sealed class ElectronicInvoiceControllerSection : AuthenticatedControllerSection, IElectronicInvoiceController
     {
-        private const string Controller = BillingControllerSection.Controller;
+        private const string Controller = FinanceControllerSection.Controller;
         private const string Prefix = $"/{nameof(ElectronicInvoice)}";
 
         private readonly ILogger _logger;

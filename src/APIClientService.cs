@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sufficit.Client.Controllers;
-using Sufficit.Client.Controllers.Billing;
+using Sufficit.Client.Controllers.Finance;
 using Sufficit.Client.Controllers.Notification;
 using Sufficit.Client.Controllers.Reports;
 using Sufficit.Client.Controllers.Storage;
@@ -45,7 +45,6 @@ namespace Sufficit.Client
             // setting controllers sub sections
             Access = new AccessControllerSection(cb);
             Audio = new AudioControllerSection(cb);
-            Billing = new BillingControllerSection(cb);
             Contacts = new ContactsControllerSection(cb);
             Exchange = new ExchangeControllerSection(cb);
             Finance = new FinanceControllerSection(cb);
@@ -67,7 +66,6 @@ namespace Sufficit.Client
         public HealthCheckController Health { get; }
         public AccessControllerSection Access { get; }
         public AudioControllerSection Audio { get; }
-        public BillingControllerSection Billing { get; }
         public ContactsControllerSection Contacts { get; }
         public ExchangeControllerSection Exchange { get; }
         public FinanceControllerSection Finance { get; }

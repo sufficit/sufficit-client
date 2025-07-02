@@ -1,6 +1,6 @@
 ﻿using Sufficit.Net.Http;
 
-namespace Sufficit.Client.Controllers
+namespace Sufficit.Client.Controllers.Finance
 {
     public sealed class FinanceControllerSection : AuthenticatedControllerSection
     {
@@ -9,8 +9,11 @@ namespace Sufficit.Client.Controllers
         public FinanceControllerSection(IAuthenticatedControllerBase cb) : base(cb)
         {
             BankSlip = new BankSlipControllerSection(cb);
+            ElectronicInvoice = new ElectronicInvoiceControllerSection(cb);
         }
 
         public BankSlipControllerSection BankSlip { get; }
+
+        public ElectronicInvoiceControllerSection ElectronicInvoice { get; }
     }
 }
