@@ -209,12 +209,12 @@ namespace Sufficit.Client.Controllers
         /// <returns>A task that represents the asynchronous operation. The task result contains  an enumerable collection of
         /// strings representing the user markers.</returns>
         [Authorize]
-        public async Task<IEnumerable<string>> GetUserMarkers(CancellationToken cancellationToken)
+        public async Task<IEnumerable<MarkerAttributeGroup>> GetUserMarkers(CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/usermarkers";
             var uri = new Uri(requestEndpoint, UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
-            return await RequestManyStruct<string>(message, cancellationToken);
+            return await RequestManyStruct<MarkerAttributeGroup>(message, cancellationToken);
         }
 
         protected override string[]? AnonymousPaths { get; } = { $"{Controller}/contactid", $"{Controller}/byid" };
