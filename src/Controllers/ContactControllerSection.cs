@@ -169,7 +169,6 @@ namespace Sufficit.Client.Controllers
 
         #endregion
 
-
         public async Task<bool> CanUpdate(Guid contactid, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/canupdate";
@@ -198,6 +197,24 @@ namespace Sufficit.Client.Controllers
             return await Request<EndPointResponse>(message, cancellationToken);
         }
 
-        protected override string[]? AnonymousPaths { get; } = { "/contact/contactid", "/contact/byid" };
+        /// <summary>
+        /// Retrieves a collection of user markers from the server.
+        /// </summary>
+        /// <remarks>This method sends an HTTP GET request to the server to fetch user markers. The
+        /// returned collection contains the markers as strings. If no markers are available,  the collection will be
+        /// empty.</remarks>
+        /// <param name="cancellationToken">A token that can be used to cancel the operation. If the operation is canceled,  the returned task will be
+        /// in a canceled state.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains  an enumerable collection of
+        /// strings representing the user markers.</returns>
+        public async Task<IEnumerable<string>> GetUserMarkers(CancellationToken cancellationToken)
+        {
+            string requestEndpoint = $"{Controller}/usermarkers";
+            var uri = new Uri(requestEndpoint, UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return await RequestManyStruct<string>(message, cancellationToken);
+        }
+
+        protected override string[]? AnonymousPaths { get; } = { $"{Controller}/contactid", $"{Controller}/byid" };
     }
 }
