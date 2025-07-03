@@ -1,4 +1,5 @@
-﻿using Sufficit.Contacts;
+﻿using Microsoft.AspNetCore.Authorization;
+using Sufficit.Contacts;
 using Sufficit.EndPoints;
 using Sufficit.Net.Http;
 using System;
@@ -207,6 +208,7 @@ namespace Sufficit.Client.Controllers
         /// in a canceled state.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains  an enumerable collection of
         /// strings representing the user markers.</returns>
+        [Authorize]
         public async Task<IEnumerable<string>> GetUserMarkers(CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/usermarkers";
