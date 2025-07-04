@@ -1,10 +1,11 @@
-﻿using Sufficit.Contacts;
+﻿using Sufficit.Client.Controllers;
+using Sufficit.Contacts;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sufficit.Client.Controllers
+namespace Sufficit.Client
 {
     public static class ContactsControllerSectionExtensions
     {
