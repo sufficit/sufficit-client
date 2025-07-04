@@ -79,26 +79,25 @@ namespace Sufficit.Client.Controllers
         #region ATTRIBUTES
 
         /// <summary>
-        /// Retrieves a collection of attributes associated with the specified contact.
+        /// Retrieves a collection of contact attributes based on the specified search parameters.
         /// </summary>
-        /// <remarks>This method sends an HTTP GET request to retrieve the attributes of a contact. Ensure
-        /// that the provided  <paramref name="contactid"/> is valid and corresponds to an existing contact in the
-        /// system.</remarks>
-        /// <param name="contactid">The unique identifier of the contact whose attributes are to be retrieved.</param>
-        /// <param name="cancellationToken">A token to monitor for cancellation requests. This allows the operation to be canceled if needed.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains an enumerable collection of 
-        /// <see cref="Sufficit.Contacts.Attribute"/> objects associated with the specified contact.</returns>
-        public Task<IEnumerable<Sufficit.Contacts.Attribute>> GetAttributes(Guid contactid, CancellationToken cancellationToken)
+        /// <remarks>This method sends a POST request to the "attributes" endpoint of the controller to
+        /// retrieve the contact attributes. Ensure that the <paramref name="parameters"/> object contains valid keys
+        /// and criteria for the search.</remarks>
+        /// <param name="parameters">The search parameters used to filter the contact attributes. This must include the necessary keys and
+        /// criteria for the search.</param>
+        /// <param name="cancellationToken">A token that can be used to cancel the operation. If the operation is canceled, the returned task will be in
+        /// a canceled state.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains an enumerable collection of <see
+        /// cref="ContactAttribute"/> objects matching the search criteria.</returns>
+        public Task<IEnumerable<ContactAttribute>> GetAttributes (AttributeWithKeysSearchParameters parameters, CancellationToken cancellationToken)
         {
-            string requestEndpoint = $"{Controller}/attributes";
-            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query[nameof(contactid)] = contactid.ToString();
-
-            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
-            var message = new HttpRequestMessage(HttpMethod.Get, uri);
-            return RequestMany<Sufficit.Contacts.Attribute>(message, cancellationToken);
+            var uri = new Uri($"{Controller}/attributes", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(parameters, null, _json);
+            return RequestMany<ContactAttribute>(message, cancellationToken);
         }
-
+               
         /// <summary>
         /// Retrieves the first contact attribute that matches the specified search parameters.
         /// </summary>
@@ -108,15 +107,15 @@ namespace Sufficit.Client.Controllers
         /// <param name="parameters">The search parameters used to filter contact attributes. Must not be <see langword="null"/>.</param>
         /// <param name="cancellationToken">A token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the first matching  <see
-        /// cref="Sufficit.Contacts.Attribute"/> if found; otherwise, <see langword="null"/>.</returns>
-        public Task<Sufficit.Contacts.Attribute?> GetFirstAttribute(ContactAttributeSearchParameters parameters, CancellationToken cancellationToken = default)
+        /// cref="ContactAttribute"/> if found; otherwise, <see langword="null"/>.</returns>
+        public Task<ContactAttribute?> GetFirstAttribute(AttributeWithKeysSearchParameters parameters, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}/attribute";
             var query = parameters.ToQueryString();
 
             var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
-            return Request<Sufficit.Contacts.Attribute>(message, cancellationToken);
+            return Request<ContactAttribute>(message, cancellationToken);
         }
 
         /// <summary>
