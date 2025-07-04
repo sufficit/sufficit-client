@@ -71,8 +71,16 @@ namespace Sufficit.Client.Controllers
             var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(item, null, _json);
+
             var response = await Request<EndPointResponse>(message, cancellationToken);
-            return (Guid?)response?.Data;
+
+            if (response?.Data is JsonElement json && json.ValueKind == JsonValueKind.String)
+            {
+                var guidString = json.GetString();
+                if (Guid.TryParse(guidString, out var parsedGuid))
+                    return parsedGuid;
+            }
+            return null;
         }
 
         #endregion
