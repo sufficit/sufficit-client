@@ -156,7 +156,7 @@ namespace Sufficit.Client.Controllers
         /// <returns></returns>
         public async Task RemoveAttribute(Guid contactid, string key, string description, CancellationToken cancellationToken = default)
         {
-            string requestEndpoint = $"{Controller}/attribute/value";
+            string requestEndpoint = $"{Controller}/attribute";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query[nameof(contactid)] = contactid.ToString();
             query[nameof(key)] = key;
@@ -164,6 +164,21 @@ namespace Sufficit.Client.Controllers
 
             var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Delete, uri);
+            await Request(message, cancellationToken);
+        }
+
+
+        public async Task CreateOrUpdateAttribute(Guid contactid, Sufficit.Contacts.Attribute attribute, CancellationToken cancellationToken = default)
+        {
+            string requestEndpoint = $"{Controller}/attribute";
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query[nameof(contactid)] = contactid.ToString();
+
+            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(attribute, null, _json);
+
             await Request(message, cancellationToken);
         }
 
