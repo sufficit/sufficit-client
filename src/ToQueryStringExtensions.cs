@@ -91,6 +91,7 @@ namespace Sufficit.Client
         {
             var query = collection ?? System.Web.HttpUtility.ParseQueryString(string.Empty);
 
+            // AttributeWithKeysSearchParameters
             if (source.Keys != null)
             {
                 foreach (var key in source.Keys)
@@ -98,19 +99,6 @@ namespace Sufficit.Client
             }
 
             return (source as AttributeSearchParameters).ToQueryString(query);
-        }
-
-        #endregion
-        #region CONTACTS - ContactAttributeSearchParameters
-
-        public static string ToQueryString(this ContactAttributeSearchParameters source, NameValueCollection? collection = null)
-        {
-            var query = collection ?? System.Web.HttpUtility.ParseQueryString(string.Empty);
-
-            if (source.ContactId != null)
-                query[nameof(source.ContactId).ToLower()] = source.ContactId.ToString();
-
-            return (source as AttributeWithKeysSearchParameters).ToQueryString(query);
         }
 
         #endregion
