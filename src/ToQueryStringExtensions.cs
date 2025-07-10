@@ -6,6 +6,7 @@ using Sufficit.Reports;
 using Sufficit.Sales;
 using Sufficit.Telephony;
 using Sufficit.Telephony.Audio;
+using Sufficit.Telephony.Call;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -240,6 +241,43 @@ namespace Sufficit.Client
 
             if (!string.IsNullOrWhiteSpace(source.UniqueId))
                 query[nameof(source.UniqueId).ToLower()] = source.UniqueId;
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
+        #region TELEPHONY - CALL - CallInfoRequest
+
+        public static string ToQueryString(this CallInfoRequest source)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            if (!string.IsNullOrWhiteSpace(source.LinkedId))
+                query[nameof(source.LinkedId).ToLower()] = source.LinkedId;
+
+            if (!string.IsNullOrWhiteSpace(source.UniqueId))
+                query[nameof(source.UniqueId).ToLower()] = source.UniqueId;
+
+            if (!string.IsNullOrWhiteSpace(source.Id))
+                query[nameof(source.Id).ToLower()] = source.Id;
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
+        #region TELEPHONY - CALL - TranscriptRequest
+
+        public static string ToQueryString(this TranscriptRequest source)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            query[nameof(source.LinkedId).ToLower()] = source.LinkedId;
+
+            if (!string.IsNullOrWhiteSpace(source.GGML) && source.GGML != "small")
+                query[nameof(source.GGML).ToLower()] = source.GGML;
+
+            if (source.Force)
+                query[nameof(source.Force).ToLower()] = source.Force.ToString().ToLower();
 
             return query.ToString() ?? string.Empty;
         }

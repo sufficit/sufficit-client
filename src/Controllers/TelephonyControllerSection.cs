@@ -26,6 +26,7 @@ namespace Sufficit.Client.Controllers
             Asterisk = new TelephonyAsteriskControllerSection(cb);
             Audio = new TelephonyAudioControllerSection(cb);
             Billing = new TelephonyBillingControllerSection(cb);
+            Call = new TelephonyCallControllerSection(cb);
             CallGroup = new TelephonyCallGroupControllerSection(cb);
             Destination = new TelephonyDestinationControllerSection(cb);
             DID = new TelephonyDIDControllerSection(cb);
@@ -51,6 +52,7 @@ namespace Sufficit.Client.Controllers
         public TelephonyAsteriskControllerSection Asterisk { get; }
         public TelephonyAudioControllerSection Audio { get; }
         public TelephonyBillingControllerSection Billing { get; }
+        public TelephonyCallControllerSection Call { get; }
         public TelephonyCallGroupControllerSection CallGroup { get; }
         public TelephonyDestinationControllerSection Destination { get; }
         public TelephonyDIDControllerSection DID { get; }
