@@ -1,7 +1,8 @@
 # Copilot Instructions
-<!-- Version: 3.2 -->
+<!-- Version: 3.5 -->
 
-### Common Guidelines
+## Common Guidelines
+* whenever you find a newer Copilot Instructions file, merge the Common Guidelines content and adjust the version;
 * code comments should always be in English;
 * response to user queries should be in IDE current language;
 * avoid to change code that was not related to the query;
@@ -9,7 +10,19 @@
 * for extensions methods use always "source" as default parameter name
 * use one file for each class
 * for #region tags: no blank lines between consecutive regions, but always add one blank line after region opening and one blank line before region closing
+* do not try to build if you just changed the code comments or documentation files;
 
-### Project Specific Guidelines
+## Documentation Guidelines
+* for github repository readme.md files, use the following structure:
+  - Title
+  - About (description, etc.)
+  - Features
+  - Installation
+  - Usage (always on separated readme file, one for each case; testing, etc.)
+  - License
+  - Support (development@sufficit.com.br, etc.)
+  - Related (references, thanks, etc.)
+	 
+## Project Specific Guidelines
 * whenever you need to create a new query string (ParseQueryString) from a complex class, use ToQueryStringExtensions
 * on ControllerSection(s) for the requests that doesn't require authentication, use the `AnonymousPaths` property to define the paths that can be accessed without authentication;
