@@ -6,6 +6,7 @@ using Sufficit.Reports;
 using Sufficit.Sales;
 using Sufficit.Telephony;
 using Sufficit.Telephony.Audio;
+using Sufficit.Telephony.Call;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -179,6 +180,104 @@ namespace Sufficit.Client
                 query["contextId"] = source.ContextId.ToString();
             if (!string.IsNullOrWhiteSpace(source.Title))
                 query["title"] = source.Title!.ToString();
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
+        #region TELEPHONY - BILLING - BalanceNotifyRequest
+
+        public static string ToQueryString(this BalanceNotifyRequest source)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            query[nameof(source.ContextId).ToLower()] = source.ContextId.ToString();
+
+            if (source.Force)
+                query[nameof(source.Force).ToLower()] = source.Force.ToString().ToLower();
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
+        #region TELEPHONY - BILLING - BillingSearchParameters
+
+        public static string ToQueryString(this BillingSearchParameters source)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            if (source.ContextId.HasValue)
+                query[nameof(source.ContextId).ToLower()] = source.ContextId.Value.ToString();
+
+            if (source.Start.HasValue)
+                query[nameof(source.Start).ToLower()] = source.Start.Value.ToString(DATETIMEFORMAT);
+
+            if (source.End.HasValue)
+                query[nameof(source.End).ToLower()] = source.End.Value.ToString(DATETIMEFORMAT);
+
+            if (!string.IsNullOrWhiteSpace(source.UniqueId))
+                query[nameof(source.UniqueId).ToLower()] = source.UniqueId;
+
+            if (source.Extension != null)
+            {
+                query[$"{nameof(source.Extension).ToLower()}.{nameof(source.Extension.Text).ToLower()}"] = source.Extension.Text;
+                query[$"{nameof(source.Extension).ToLower()}.{nameof(source.Extension.ExactMatch).ToLower()}"] = source.Extension.ExactMatch.ToString().ToLower();
+            }
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
+        #region TELEPHONY - BILLING - BillingValueRequestParameters
+
+        public static string ToQueryString(this BillingValueRequestParameters source)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            query[nameof(source.ContextId).ToLower()] = source.ContextId.ToString();
+
+            if (!string.IsNullOrWhiteSpace(source.LinkedId))
+                query[nameof(source.LinkedId).ToLower()] = source.LinkedId;
+
+            if (!string.IsNullOrWhiteSpace(source.UniqueId))
+                query[nameof(source.UniqueId).ToLower()] = source.UniqueId;
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
+        #region TELEPHONY - CALL - CallInfoRequest
+
+        public static string ToQueryString(this CallInfoRequest source)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            if (!string.IsNullOrWhiteSpace(source.LinkedId))
+                query[nameof(source.LinkedId).ToLower()] = source.LinkedId;
+
+            if (!string.IsNullOrWhiteSpace(source.UniqueId))
+                query[nameof(source.UniqueId).ToLower()] = source.UniqueId;
+
+            if (!string.IsNullOrWhiteSpace(source.Id))
+                query[nameof(source.Id).ToLower()] = source.Id;
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
+        #region TELEPHONY - CALL - TranscriptRequest
+
+        public static string ToQueryString(this TranscriptRequest source)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            query[nameof(source.LinkedId).ToLower()] = source.LinkedId;
+
+            if (!string.IsNullOrWhiteSpace(source.GGML) && source.GGML != "small")
+                query[nameof(source.GGML).ToLower()] = source.GGML;
+
+            if (source.Force)
+                query[nameof(source.Force).ToLower()] = source.Force.ToString().ToLower();
 
             return query.ToString() ?? string.Empty;
         }
