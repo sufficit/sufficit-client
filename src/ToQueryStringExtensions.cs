@@ -184,6 +184,67 @@ namespace Sufficit.Client
         }
 
         #endregion
+        #region TELEPHONY - BILLING - BalanceNotifyRequest
+
+        public static string ToQueryString(this BalanceNotifyRequest source)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            query[nameof(source.ContextId).ToLower()] = source.ContextId.ToString();
+
+            if (source.Force)
+                query[nameof(source.Force).ToLower()] = source.Force.ToString().ToLower();
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
+        #region TELEPHONY - BILLING - BillingSearchParameters
+
+        public static string ToQueryString(this BillingSearchParameters source)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            if (source.ContextId.HasValue)
+                query[nameof(source.ContextId).ToLower()] = source.ContextId.Value.ToString();
+
+            if (source.Start.HasValue)
+                query[nameof(source.Start).ToLower()] = source.Start.Value.ToString(DATETIMEFORMAT);
+
+            if (source.End.HasValue)
+                query[nameof(source.End).ToLower()] = source.End.Value.ToString(DATETIMEFORMAT);
+
+            if (!string.IsNullOrWhiteSpace(source.UniqueId))
+                query[nameof(source.UniqueId).ToLower()] = source.UniqueId;
+
+            if (source.Extension != null)
+            {
+                query[$"{nameof(source.Extension).ToLower()}.{nameof(source.Extension.Text).ToLower()}"] = source.Extension.Text;
+                query[$"{nameof(source.Extension).ToLower()}.{nameof(source.Extension.ExactMatch).ToLower()}"] = source.Extension.ExactMatch.ToString().ToLower();
+            }
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
+        #region TELEPHONY - BILLING - BillingValueRequestParameters
+
+        public static string ToQueryString(this BillingValueRequestParameters source)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            query[nameof(source.ContextId).ToLower()] = source.ContextId.ToString();
+
+            if (!string.IsNullOrWhiteSpace(source.LinkedId))
+                query[nameof(source.LinkedId).ToLower()] = source.LinkedId;
+
+            if (!string.IsNullOrWhiteSpace(source.UniqueId))
+                query[nameof(source.UniqueId).ToLower()] = source.UniqueId;
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
         #region TELEPHONY - DestinationSearchParameters
 
         public static string ToQueryString(this DestinationSearchParameters source)
