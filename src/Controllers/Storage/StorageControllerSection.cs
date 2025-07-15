@@ -30,7 +30,7 @@ namespace Sufficit.Client.Controllers.Storage
             var uri = new Uri(requestEndpoint, UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
 
-            return Request<StorageObjectRecord?>(message, cancellationToken);
+            return Request<StorageObjectRecord>(message, cancellationToken);
         }
 
         public IEnumerable<StorageObjectRecord> Search (StorageObjectMetadataSearchParameters parameters, CancellationToken cancellationToken)
