@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Sufficit.Client.Controllers;
 using Sufficit.Client.Controllers.Finance;
+using Sufficit.Client.Controllers.Identity;
 using Sufficit.Client.Controllers.Notification;
 using Sufficit.Client.Controllers.Reports;
 using Sufficit.Client.Controllers.Storage;
@@ -70,7 +71,7 @@ namespace Sufficit.Client
         public ExchangeControllerSection Exchange { get; }
         public FinanceControllerSection Finance { get; }
         public GatewayControllerSection Gateway { get; }
-        public IdentityControllerSection Identity { get; }
+        public Controllers.Identity.IdentityControllerSection Identity { get; }
         public LoggingControllerSection Logging { get; }
         public NotificationControllerSection Notification { get; }
         public ProvisioningControllerSection Provisioning { get; }
