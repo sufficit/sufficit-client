@@ -1,5 +1,6 @@
 using Sufficit.Identity;
 using Sufficit.Net.Http;
+using Sufficit.EndPoints;
 using System.Text.Json;
 using System.Net.Http.Json;
 using System;
@@ -59,9 +60,9 @@ namespace Sufficit.Client.Controllers.Identity
         {
             string requestEndpoint = $"{Controller}{Prefix}/description";
 
-            var message = new HttpRequestMessage(HttpMethod.Post, requestEndpoint);
+            var uri = new Uri(requestEndpoint, UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
 
-            // Try using JSON content instead of form-encoded content to avoid URL encoding issues
             var payload = new TokenDescriptionUpdateRequest()
             {
                 Key = key,
@@ -80,13 +81,38 @@ namespace Sufficit.Client.Controllers.Identity
         /// <returns>Task representing the operation</returns>
         public async Task RevokeToken(string key, CancellationToken cancellationToken = default)
         {
-            string requestEndpoint = $"{Controller}{Prefix}/reference";
-            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query["key"] = key;
+            string requestEndpoint = $"{Controller}{Prefix}";
 
-            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
+            var uri = new Uri(requestEndpoint, UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Delete, uri);
+            
+            // Add token key in custom header to avoid URL encoding issues
+            message.Headers.Add("X-Token-Key", key);
 
+            await Request(message, cancellationToken);
+        }
+
+        /// <summary>
+        /// Extends the expiration time of a specific token
+        /// </summary>
+        /// <param name="key">Token key to extend</param>
+        /// <param name="expiration">New expiration date/time</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Task representing the operation</returns>
+        public async Task ExtendToken(string key, DateTime? expiration, CancellationToken cancellationToken = default)
+        {
+            string requestEndpoint = $"{Controller}{Prefix}/expiration";
+
+            var uri = new Uri(requestEndpoint, UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+
+            var payload = new TokenExpirationUpdateRequest()
+            {
+                Key = key,
+                Expiration = expiration
+            };
+
+            message.Content = JsonContent.Create(payload, null, _json);
             await Request(message, cancellationToken);
         }
 
@@ -100,7 +126,7 @@ namespace Sufficit.Client.Controllers.Identity
         {
             string requestEndpoint = $"{Controller}{Prefix}/requestlink";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            
+
             if (!string.IsNullOrWhiteSpace(returnUrl))
                 query["returnUrl"] = returnUrl;
 
@@ -110,7 +136,31 @@ namespace Sufficit.Client.Controllers.Identity
         }
 
         /// <summary>
-        /// Redirects to the token request page (for use in browser scenarios)
+        /// Introspects a token using OAuth 2.0 Token Introspection
+        /// </summary>
+        /// <param name="token">Token to introspect</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Token introspection response</returns>
+        public async Task<TokenIntrospectionResponse?> IntrospectToken(string token, CancellationToken cancellationToken = default)
+        {
+            string requestEndpoint = $"{Controller}{Prefix}/introspect";
+
+            var uri = new Uri(requestEndpoint, UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+
+            var payload = new TokenValidationRequest()
+            {
+                Token = token
+            };
+
+            message.Content = JsonContent.Create(payload, null, _json);
+            
+            var response = await Request<EndPointResponse<TokenIntrospectionResponse>>(message, cancellationToken);
+            return response?.Data;
+        }
+
+        /// <summary>
+        /// Gets the token request URL for browser redirect scenarios
         /// </summary>
         /// <param name="returnUrl">Optional return URL after authorization</param>
         /// <returns>Redirect URL</returns>
@@ -122,7 +172,6 @@ namespace Sufficit.Client.Controllers.Identity
             if (!string.IsNullOrWhiteSpace(returnUrl))
                 query["returnUrl"] = returnUrl;
 
-            // Retorna URL relativa que será usada pelo NavigationManager
             return $"{requestEndpoint}?{query}";
         }
     }
