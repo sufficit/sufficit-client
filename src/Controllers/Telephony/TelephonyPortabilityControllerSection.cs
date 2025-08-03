@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Sufficit.EndPoints;
 using Sufficit.Identity;
@@ -67,6 +67,21 @@ namespace Sufficit.Client.Controllers.Telephony
             var uri = new Uri($"{Controller}{Prefix}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(item, null, _json);
+            var response = await Request<EndPointResponse<PortabilityProcess>>(message, cancellationToken);
+            return response?.Success ?? false ? response.Data : null;
+        }
+
+        [Authorize]
+        public async Task<PortabilityProcess?> Status (PortabilityProcessStatusUpdateRequest parameters, CancellationToken cancellationToken)
+        {
+            _logger.LogTrace("update status: {parameters}", parameters.ToJsonOrDefault());
+            var uri = new Uri($"{Controller}{Prefix}/status", UriKind.Relative);
+#if NET5_0_OR_GREATER
+            var message = new HttpRequestMessage(HttpMethod.Patch, uri);
+#else
+            var message = new HttpRequestMessage(HttpMethod.Put, uri);
+#endif
+            message.Content = JsonContent.Create(parameters, null, _json);
             var response = await Request<EndPointResponse<PortabilityProcess>>(message, cancellationToken);
             return response?.Success ?? false ? response.Data : null;
         }
