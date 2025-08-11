@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sufficit.Client.Controllers;
 using Sufficit.Client.Controllers.Finance;
@@ -57,6 +57,7 @@ namespace Sufficit.Client
             Reports = new ReportsControllerSection(cb);
             Resources = new ResourcesControllerSection(cb);
             Sales = new SalesControllerSection(cb);
+            Statistics = new StatisticsControllerSection(cb);
             Storage = new StorageControllerSection(cb);
             Telephony = new TelephonyControllerSection(cb);
 
@@ -71,14 +72,14 @@ namespace Sufficit.Client
         public ExchangeControllerSection Exchange { get; }
         public FinanceControllerSection Finance { get; }
         public GatewayControllerSection Gateway { get; }
-        public Controllers.Identity.IdentityControllerSection Identity { get; }
+        public IdentityControllerSection Identity { get; }
         public LoggingControllerSection Logging { get; }
         public NotificationControllerSection Notification { get; }
         public ProvisioningControllerSection Provisioning { get; }
         public ReportsControllerSection Reports { get; }
         public ResourcesControllerSection Resources { get; }
         public SalesControllerSection Sales { get; }
-
+        public StatisticsControllerSection Statistics { get; }
         public StorageControllerSection Storage { get; }
         public TelephonyControllerSection Telephony { get; }
     }

@@ -44,6 +44,15 @@
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
 		<PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
+	
+	<ItemGroup>
+	  <Compile Remove="Documentation\**" />
+	  <EmbeddedResource Remove="Documentation\**" />
+	  <None Remove="Documentation\**" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	</ItemGroup>
 
 	<ItemGroup Label="Sufficit Pack Items">
 		<None Include="../icon.png">
@@ -144,7 +153,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Controllers\Telephony\Asterisk\" />
-	  <Folder Include="Documentation\" />
 	</ItemGroup>
 	
 </Project>

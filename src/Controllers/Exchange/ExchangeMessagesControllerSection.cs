@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Sufficit.Exchange;
 using Sufficit.Net.Http;
 using System;
