@@ -1,6 +1,7 @@
 ﻿using Sufficit.Audio;
 using Sufficit.Contacts;
 using Sufficit.Exchange;
+using Sufficit.Notification;
 using Sufficit.Provisioning;
 using Sufficit.Reports;
 using Sufficit.Sales;
@@ -105,7 +106,7 @@ namespace Sufficit.Client
         #endregion
         #region CONTACTS - ContactSearchParameters
 
-        public static string ToQueryString(this ContactSearchParameters source, NameValueCollection? collection = null)
+        public static string ToQueryString(this Sufficit.Contacts.ContactSearchParameters source, NameValueCollection? collection = null)
         {
             var query = collection ?? System.Web.HttpUtility.ParseQueryString(string.Empty);
 
@@ -116,6 +117,37 @@ namespace Sufficit.Client
                 query[nameof(source.Limit).ToLower()] = source.Limit.ToString();
 
             return (source as AttributeWithKeysSearchParameters).ToQueryString(query);
+        }
+
+        #endregion
+        #region NOTIFICATION - ContactSearchParameters
+
+        public static string ToQueryString(this Sufficit.Notification.ContactSearchParameters source, NameValueCollection? collection = null)
+        {
+            var query = collection ?? System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            if (source.ContextId != null)
+                query[nameof(source.ContextId).ToLower()] = source.ContextId.ToString();
+
+            if (source.Valid.HasValue)
+                query[nameof(source.Valid).ToLower()] = source.Valid.Value.ToString().ToLowerInvariant();
+
+            if (source.Channel != 0)
+                query[nameof(source.Channel).ToLower()] = ((int)source.Channel).ToString();
+
+            if (source.Destination != null)
+            {
+                if (!string.IsNullOrWhiteSpace(source.Destination.Text))
+                    query["destination"] = source.Destination.Text;
+            }
+
+            if (source.Filter != null)
+            {
+                if (!string.IsNullOrWhiteSpace(source.Filter.Text))
+                    query["filter"] = source.Filter.Text;
+            }
+
+            return query.ToString() ?? string.Empty;
         }
 
         #endregion
