@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,11 +38,8 @@ namespace Sufficit.Client.Controllers
         {
             string requestEndpoint = $"{Controller}/{category}/{period}/{metricName}/{subtype}/{contextId}/{timestamp:O}";
             var message = new HttpRequestMessage(HttpMethod.Delete, requestEndpoint);
-            
-            using var response = await SendAsync(message, cancellationToken);
-            await response.EnsureSuccess(cancellationToken);
-            
-            return await response.Content.ReadFromJsonAsync<int>(cancellationToken);
+                        
+            return await RequestStruct<int>(message, cancellationToken) ?? 0;
         }
 
         /// <summary>
@@ -92,10 +88,7 @@ namespace Sufficit.Client.Controllers
             var message = new HttpRequestMessage(HttpMethod.Post, requestEndpoint);
             message.Content = JsonContent.Create(parameters);
             
-            using var response = await SendAsync(message, cancellationToken);
-            await response.EnsureSuccess(cancellationToken);
-            
-            return await response.Content.ReadFromJsonAsync<int>(cancellationToken);
+            return await RequestStruct<int>(message, cancellationToken) ?? 0;
         }
 
         /// <summary>
@@ -112,10 +105,7 @@ namespace Sufficit.Client.Controllers
             var message = new HttpRequestMessage(HttpMethod.Post, requestEndpoint);
             message.Content = JsonContent.Create(metric);
             
-            using var response = await SendAsync(message, cancellationToken);
-            await response.EnsureSuccess(cancellationToken);
-            
-            return await response.Content.ReadFromJsonAsync<int>(cancellationToken);
+            return await RequestStruct<int>(message, cancellationToken) ?? 0;
         }
 
         /// <summary>
@@ -132,10 +122,7 @@ namespace Sufficit.Client.Controllers
             var message = new HttpRequestMessage(HttpMethod.Post, requestEndpoint);
             message.Content = JsonContent.Create(metrics);
             
-            using var response = await SendAsync(message, cancellationToken);
-            await response.EnsureSuccess(cancellationToken);
-            
-            return await response.Content.ReadFromJsonAsync<int>(cancellationToken);
+            return await RequestStruct<int>(message, cancellationToken) ?? 0;
         }
 
         /// <summary>
@@ -149,10 +136,7 @@ namespace Sufficit.Client.Controllers
             string requestEndpoint = $"{Controller}/cleanup";
             var message = new HttpRequestMessage(HttpMethod.Post, requestEndpoint);
             
-            using var response = await SendAsync(message, cancellationToken);
-            await response.EnsureSuccess(cancellationToken);
-            
-            return await response.Content.ReadFromJsonAsync<int>(cancellationToken);
+            return await RequestStruct<int>(message, cancellationToken) ?? 0;
         }
 
         /// <summary>
@@ -173,10 +157,7 @@ namespace Sufficit.Client.Controllers
             
             var message = new HttpRequestMessage(HttpMethod.Get, requestEndpoint);
             
-            using var response = await SendAsync(message, cancellationToken);
-            await response.EnsureSuccess(cancellationToken);
-            
-            return await response.Content.ReadFromJsonAsync<int>(cancellationToken);
+            return await RequestStruct<int>(message, cancellationToken) ?? 0;
         }
 
         /// <summary>

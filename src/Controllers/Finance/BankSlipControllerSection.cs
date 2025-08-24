@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Sufficit.Finance;
 using Sufficit.Identity;
 using Sufficit.Net.Http;
@@ -24,7 +24,6 @@ namespace Sufficit.Client.Controllers.Finance
             _json = cb.Json;
         }
 
-        ////// <inheritdoc cref="IMessagesController.GetDetails(MessageDetailsSearchParameters, CancellationToken) "/>
         [Authorize(Roles = $"{FinancialManagerRole.NormalizedName},{FinancialRole.NormalizedName},{ManagerRole.NormalizedName},{AdministratorRole.NormalizedName}")]
         public Task<IEnumerable<BankSlipInfo>> Search(BankSlipSearchParameters parameters, CancellationToken cancellationToken)
         {

@@ -2,9 +2,6 @@
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
 	<PropertyGroup Label="Sufficit Targeting">
 		<TargetFrameworks>netstandard2.0;net7.0;net8.0;net9.0</TargetFrameworks>
-		<Nullable>enable</Nullable>
-		<LangVersion>10.0</LangVersion>
-		<ImplicitUsings>disable</ImplicitUsings>
 		<RootNamespace>Sufficit.Client</RootNamespace>
 		<Configurations>Debug;Release;Packing</Configurations>
 	</PropertyGroup>
@@ -76,81 +73,80 @@
 		</None>
 	</ItemGroup>
 
-	<PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+	<!-- #region Sufficit Versioning Options V:202508231708 -->
+
+	<PropertyGroup Label="Sufficit Versioning Options" Condition="'$(TargetFramework)' == 'netstandard2.0'">
+		<PkgVersion>[9.*,10.0.0)</PkgVersion>
 		<NoWarn>$(NoWarn);nullable</NoWarn>
+
+		<!-- Set language version per framework to ensure compatibility with generated global usings -->
+		<LangVersion>10.0</LangVersion>
 	</PropertyGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="[3.*,4.0.0)" />
-	</ItemGroup>
+	<PropertyGroup Label="Sufficit Versioning Options" Condition=" '$(TargetFramework)' == 'net6.0' ">
+		<PkgVersion>[*,7.0.0)</PkgVersion>
+		<LangVersion>10.0</LangVersion>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
-		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="[9.*,10.0.0)" />
-	</ItemGroup>
+	<PropertyGroup Label="Sufficit Versioning Options" Condition=" '$(TargetFramework)' == 'net7.0' ">
+		<PkgVersion>[*,8.0.0)</PkgVersion>
+		<LangVersion>10.0</LangVersion>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
-		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="[8.*,9.0.0)" />
-	</ItemGroup>
+	<PropertyGroup Label="Sufficit Versioning Options" Condition=" '$(TargetFramework)' == 'net8.0' ">
+		<PkgVersion>[8.*,10.0.0)</PkgVersion>
+		<LangVersion>10.0</LangVersion>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
-		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="[7.*,8.0.0)" />
-	</ItemGroup>
+	<PropertyGroup Label="Sufficit Versioning Options" Condition=" '$(TargetFramework)' == 'net9.0' ">
+		<PkgVersion>[9.*,10.0.0)</PkgVersion>
+		<LangVersion>10.0</LangVersion>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
-		<PackageReference Include="Microsoft.AspNetCore.Http.Connections.Common" Version="[*,9.0.0)" />
-		<PackageReference Include="Microsoft.AspNetCore.Metadata" Version="[*,9.0.0)" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="[*,9.0.0)" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="[*,9.0.0)" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="[*,9.0.0)" />
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="[*,9.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="[*,9.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" version="[*,9.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" version="[*,9.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.Http" Version="[*,9.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.Logging" version="[*,9.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" version="[*,9.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.Options" Version="[*,9.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="[*,9.0.0)" />
-		<PackageReference Include="System.Text.Json" Version="[*,9.0.0)" />
-	</ItemGroup>
-
-	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'net8.0' Or '$(TargetFramework)' == 'net9.0' ">
-		<PackageReference Include="Microsoft.AspNetCore.Http.Connections.Common" Version="[*,10.0.0)" />
-		<PackageReference Include="Microsoft.AspNetCore.Metadata" Version="[*,10.0.0)" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="[*,10.0.0)" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="[*,10.0.0)" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="[*,10.0.0)" />
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="[*,10.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="[*,10.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" version="[*,10.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" version="[*,10.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.Http" Version="[*,10.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.Logging" version="[*,10.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" version="[*,10.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.Options" Version="[*,10.0.0)" />
-		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="[*,10.0.0)" />
-		<PackageReference Include="System.Text.Json" Version="[*,10.0.0)" />
-	</ItemGroup>
+	<!-- #endregion -->
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.*" />
-		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.*" />		
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.1.*" Condition=" '$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net7.0' " />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.*" Condition=" '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net9.0' OR '$(TargetFramework)' == 'netstandard2.0' " />
+		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="[3.*,4.0.0)" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
+		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="$(PkgVersion)" Condition=" '$(TargetFramework)' != 'netstandard2.0' " />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.*" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Connections.Common" Version="$(PkgVersion)" />
+		<PackageReference Include="Microsoft.AspNetCore.Metadata" Version="$(PkgVersion)" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="$(PkgVersion)" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="$(PkgVersion)" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="$(PkgVersion)" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="$(PkgVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(PkgVersion)" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" version="$(PkgVersion)" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" version="$(PkgVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="$(PkgVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Logging" version="$(PkgVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" version="$(PkgVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="$(PkgVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(PkgVersion)" />
+		<PackageReference Include="System.Text.Json" Version="[8.0.5,9.0.0)" Condition=" '$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net7.0' " />
+		<PackageReference Include="System.Text.Json" Version="$(PkgVersion)" Condition=" '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net9.0' OR '$(TargetFramework)' == 'netstandard2.0' " />
 	</ItemGroup>
+	
+	<ItemGroup Label="Sufficit Dependencies">
+		<ProjectReference Include="..\..\sufficit-base\src\Sufficit.Base.csproj" Condition="Exists('..\\..\\sufficit-base\\src\\Sufficit.Base.csproj')" />
+		<PackageReference Include="Sufficit.Base" Version="1.*" Condition="!Exists('..\\..\\sufficit-base\\src\\Sufficit.Base.csproj') " />
 
-	<ItemGroup Label="Sufficit Dependencies on Packing" Condition=" '$(Configuration)' == 'Packing' ">
-		<PackageReference Include="Sufficit.Base" Version="1.*" />
-		<PackageReference Include="Sufficit.Identity.Core" Version="1.*" />
-		<PackageReference Include="Sufficit.Net.Http" Version="1.*" />
-		<PackageReference Include="Sufficit.Telephony.EventsPanel.Core" Version="1.*" />
+		<ProjectReference Include="..\..\sufficit-identity-core\src\Sufficit.Identity.Core.csproj" Condition="Exists('..\\..\\sufficit-identity-core\\src\\Sufficit.Identity.Core.csproj')" />
+		<PackageReference Include="Sufficit.Identity.Core" Version="1.*" Condition="!Exists('..\\..\\sufficit-identity-core\\src\\Sufficit.Identity.Core.csproj') " />
+
+		<ProjectReference Include="..\..\sufficit-net-http\src\Sufficit.Net.Http.csproj" Condition="Exists('..\\..\\sufficit-net-http\\src\\Sufficit.Net.Http.csproj')" />
+		<PackageReference Include="Sufficit.Net.Http" Version="1.*" Condition="!Exists('..\\..\\sufficit-net-http\\src\\Sufficit.Net.Http.csproj') " />
+
+		<ProjectReference Include="..\..\sufficit-telephony-eventspanel-core\src\Sufficit.Telephony.EventsPanel.Core.csproj" Condition="Exists('..\\..\\sufficit-telephony-eventspanel-core\\src\\Sufficit.Telephony.EventsPanel.Core.csproj')" />
+		<PackageReference Include="Sufficit.Telephony.EventsPanel.Core" Version="1.*" Condition="!Exists('..\\..\\sufficit-telephony-eventspanel-core\\src\\Sufficit.Telephony.EventsPanel.Core.csproj') " />
 	</ItemGroup>
-
-	<ItemGroup Label="Sufficit Local Dependencies" Condition=" '$(Configuration)' != 'Packing' ">
-		<ProjectReference Include="..\..\sufficit-base\src\Sufficit.Base.csproj" />
-		<ProjectReference Include="..\..\sufficit-identity-core\src\Sufficit.Identity.Core.csproj" />
-		<ProjectReference Include="..\..\sufficit-net-http\src\Sufficit.Net.Http.csproj" />		
-		<ProjectReference Include="..\..\sufficit-telephony-eventspanel-core\src\Sufficit.Telephony.EventsPanel.Core.csproj" />
-	</ItemGroup>
-
+	
 	<ItemGroup>
 	  <Folder Include="Controllers\Telephony\Asterisk\" />
 	</ItemGroup>
