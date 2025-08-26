@@ -81,7 +81,7 @@
 		<NoWarn>$(NoWarn);nullable</NoWarn>
 
 		<!-- Set language version per framework to ensure compatibility with generated global usings -->
-		<LangVersion>9.0</LangVersion>
+		<LangVersion>10.0</LangVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Sufficit Versioning Options" Condition=" '$(TargetFramework)' == 'net6.0' ">
