@@ -4,3 +4,4 @@ src/bin/
 Sufficit.Client.sln
 *-local.csproj
 token.txt
+/.token
