@@ -1,5 +1,6 @@
 ﻿using Sufficit.Exchange;
 using Sufficit.Exchange.EMail;
+using Sufficit.Exchange.Templates;
 using Sufficit.Net.Http;
 using System;
 using System.Collections.Generic;
@@ -20,9 +21,15 @@ namespace Sufficit.Client.Controllers
         {
             _json = cb.Json;
             Messages = new ExchangeMessagesControllerSection(cb);
+            Templates = new MessageTemplateControllerSection(cb);
+            Reads = new ExchangeReadsControllerSection(cb);
         }
     
         public ExchangeMessagesControllerSection Messages { get; }
+
+        public MessageTemplateControllerSection Templates { get; }
+
+        public ExchangeReadsControllerSection Reads { get; }
 
         /// <inheritdoc cref="IExchangeController.GetViews(ReadReceiptSearchParameters, CancellationToken) "/>
         public Task<IEnumerable<EMailTrackingInfo>> GetViews (ReadReceiptSearchParameters parameters, CancellationToken cancellationToken)
@@ -44,9 +51,9 @@ namespace Sufficit.Client.Controllers
             return Request(message, cancellationToken);
         }
 
-        protected override string[]? AnonymousPaths { get; } = { 
+        protected override string[]? AnonymousPaths { get; } = [ 
             $"{Controller}/views",
             $"{Controller}/unsubscribe"
-        };
+        ];
     }
 }

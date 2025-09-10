@@ -24,7 +24,7 @@ namespace Sufficit.Client.Controllers
         }
 
         /// <inheritdoc cref="IMessagesController.GetDetails(MessageDetailsSearchParameters, CancellationToken) "/>
-        [Authorize(Sufficit.Identity.ManagerRole.NormalizedName)]
+        [Authorize(Roles = $"{Sufficit.Identity.ManagerRole.NormalizedName},{Sufficit.Identity.AdministratorRole.NormalizedName}")]
         public Task<IEnumerable<MessageDetails>> GetDetails (MessageDetailsSearchParameters parameters, CancellationToken cancellationToken)
         {          
             var uri = new Uri($"{Controller}{Prefix}", UriKind.Relative);
@@ -37,7 +37,7 @@ namespace Sufficit.Client.Controllers
         }
 
         /// <inheritdoc cref="IMessagesController.GetDetails(Guid, bool?, CancellationToken) "/>
-        [Authorize(Sufficit.Identity.ManagerRole.NormalizedName)]
+        [Authorize(Roles = $"{Sufficit.Identity.ManagerRole.NormalizedName},{Sufficit.Identity.AdministratorRole.NormalizedName}")]
         public Task<MessageDetails?> GetDetails(Guid id, bool? content = default, CancellationToken cancellationToken = default)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
@@ -49,6 +49,17 @@ namespace Sufficit.Client.Controllers
             var uri = new Uri($"{Controller}{Prefix}/ByMessageId?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return Request<MessageDetails>(message, cancellationToken);
+        }
+
+        /// <summary>
+        /// Get messages by reference ID
+        /// </summary>
+        [Authorize(Roles = $"{Sufficit.Identity.ManagerRole.NormalizedName},{Sufficit.Identity.AdministratorRole.NormalizedName}")]
+        public Task<IEnumerable<MessageDetails>?> GetByReferenceId(Guid id, CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/ByReferenceId/{id}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestMany<MessageDetails>(message, cancellationToken);
         }
     }
 }
