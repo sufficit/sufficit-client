@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Sufficit.EndPoints;
 using Sufficit.Net.Http;
 using Sufficit.Telephony;
 using Sufficit.Telephony.Asterisk;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Telephony
 {
-    public sealed class TelephonyIVRControllerSection : AuthenticatedControllerSection, IVRControllerInterface
+    public sealed class TelephonyIVRControllerSection : AuthenticatedControllerSection
     {
         private const string Controller = TelephonyControllerSection.Controller;
         private const string Prefix = "/ivr";
@@ -27,6 +28,64 @@ namespace Sufficit.Client.Controllers.Telephony
             _json = cb.Json;
         }
 
+        /// <summary>
+        /// Get single IVR by search parameters
+        /// </summary>
+        public Task<IVR?> Find(IVRSearchParameters parameters, CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("find by parameters: {?}", parameters);
+
+            var uri = new Uri($"{Controller}{Prefix}/Find", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(parameters, null, _json);
+            return Request<IVR>(message, cancellationToken);
+        }
+
+        /// <summary>
+        /// Remove / Delete a single IVR
+        /// </summary>
+        public Task Remove(Guid ivrId, CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("remove ivr: {ivrid}", ivrId);
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["ivrid"] = ivrId.ToString();
+
+            var uri = new Uri($"{Controller}{Prefix}?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Delete, uri);
+            return Request(message, cancellationToken);
+        }
+
+        /// <summary>
+        /// Add or Update an IVR
+        /// </summary>
+        public Task<EndPointResponse<IVR>> AddOrUpdate(IVR ivr, CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("add or update ivr: {id}", ivr.Id);
+
+            var uri = new Uri($"{Controller}{Prefix}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(ivr, null, _json);
+            return Request<EndPointResponse<IVR>>(message, cancellationToken);
+        }
+
+        /// <summary>
+        /// Search IVRs with parameters
+        /// </summary>
+        public Task<IEnumerable<IVR>> Search(IVRSearchParameters parameters, CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("search by parameters: {?}", parameters);
+
+            var uri = new Uri($"{Controller}{Prefix}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(parameters, null, _json);
+            return RequestMany<IVR>(message, cancellationToken);
+        }
+
+        /// <summary>
+        /// Get IVRs by context
+        /// </summary>
+        [Obsolete("Use Search with ContextId parameter instead")]
         public Task<IEnumerable<IVR>> ByContext(Guid contextId, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("by context: {contextid}", contextId);
@@ -39,20 +98,10 @@ namespace Sufficit.Client.Controllers.Telephony
             return RequestMany<IVR>(message, cancellationToken);
         }
 
-        public Task<IVR?> Find(ClientIVRSearchParameters parameters, CancellationToken cancellationToken = default)
-            => Find((IVRSearchParameters)parameters, cancellationToken);
-
-        public Task<IVR?> Find(IVRSearchParameters parameters, CancellationToken cancellationToken)
-        {
-            _logger.LogTrace("by parameters: {?}", parameters);
-
-            var query = ClientIVRSearchParameters.ToQueryString(parameters);
-            var uri = new Uri($"{Controller}{Prefix}?{query}", UriKind.Relative);
-            var message = new HttpRequestMessage(HttpMethod.Get, uri);
-            return Request<IVR>(message, cancellationToken);
-        }
-
-        public Task<IEnumerable<IVROption>> GetOptions(Guid ivrId, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Get IVR options
+        /// </summary>
+        public Task<IEnumerable<AsteriskMenuOption>> GetOptions(Guid ivrId, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("options by id: {?}", ivrId);
 
@@ -61,10 +110,13 @@ namespace Sufficit.Client.Controllers.Telephony
 
             var uri = new Uri($"{Controller}{Prefix}/options?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
-            return RequestMany<IVROption>(message, cancellationToken);
+            return RequestMany<AsteriskMenuOption>(message, cancellationToken);
         }
 
-        public Task Update(Guid ivrId, IEnumerable<AsteriskMenuOption>? options, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Update IVR options
+        /// </summary>
+        public Task PostOptions(Guid ivrId, IEnumerable<AsteriskMenuOption>? options, CancellationToken cancellationToken = default)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["ivrid"] = ivrId.ToString();
@@ -72,14 +124,6 @@ namespace Sufficit.Client.Controllers.Telephony
             var uri = new Uri($"{Controller}{Prefix}/options?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(options, null, _json);
-            return Request(message, cancellationToken);
-        }
-
-        public Task Update (IVR ivr, CancellationToken cancellationToken = default)
-        {
-            var uri = new Uri($"{Controller}{Prefix}", UriKind.Relative);
-            var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(ivr, null, _json);
             return Request(message, cancellationToken);
         }
     }
