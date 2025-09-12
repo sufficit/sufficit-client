@@ -58,14 +58,15 @@ namespace Sufficit.Client.Controllers.Telephony
         /// <summary>
         /// Add or Update an IVR
         /// </summary>
-        public Task<EndPointResponse<IVR>?> AddOrUpdate(IVR ivr, CancellationToken cancellationToken = default)
+        public async Task<IVR?> AddOrUpdate(IVR ivr, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("add or update ivr: {id}", ivr.Id);
 
             var uri = new Uri($"{Controller}{Prefix}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(ivr, null, _json);
-            return Request<EndPointResponse<IVR>>(message, cancellationToken);
+            var response = await Request<EndPointResponse<IVR>>(message, cancellationToken);
+            return response?.Success ?? false ? response.Data : null;
         }
 
         /// <summary>
@@ -75,7 +76,7 @@ namespace Sufficit.Client.Controllers.Telephony
         {
             _logger.LogTrace("search by parameters: {?}", parameters);
 
-            var uri = new Uri($"{Controller}{Prefix}", UriKind.Relative);
+            var uri = new Uri($"{Controller}{Prefix}/Search", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(parameters, null, _json);
             return RequestMany<IVR>(message, cancellationToken);

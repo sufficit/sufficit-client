@@ -2,7 +2,6 @@
 using Sufficit.Net.Http;
 using Sufficit.Notification;
 using Sufficit.Exchange;
-using Sufficit.Client;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
@@ -29,12 +28,13 @@ namespace Sufficit.Client.Controllers.Notification
         /// <summary>
         ///     Validate a contact destination and channel
         /// </summary>
-        public Task<EndPointResponse<ContactValidationResponse>> Validate(ContactValidationRequest parameters, CancellationToken cancellationToken = default)
+        public async Task<ContactValidationResponse?> Validate(ContactValidationRequest parameters, CancellationToken cancellationToken = default)
         {       
             var uri = new Uri($"{Controller}{Prefix}/validate", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(parameters, null, _json);
-            return Request<EndPointResponse<ContactValidationResponse>>(message, cancellationToken)!;
+            message.Content = JsonContent.Create(parameters, null, _json);            
+            var response = await Request<ContactValidationResponse>(message, cancellationToken);
+            return response;
         }
 
         /// <summary>
