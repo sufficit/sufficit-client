@@ -9,7 +9,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sufficit.Client.Controllers
+namespace Sufficit.Client.Controllers.Exchange
 {
     public sealed class ExchangeMessagesControllerSection : AuthenticatedControllerSection, IMessagesController
     {
@@ -55,7 +55,7 @@ namespace Sufficit.Client.Controllers
         /// Get messages by reference ID
         /// </summary>
         [Authorize(Roles = $"{Sufficit.Identity.ManagerRole.NormalizedName},{Sufficit.Identity.AdministratorRole.NormalizedName}")]
-        public Task<IEnumerable<MessageDetails>?> GetByReferenceId(Guid id, CancellationToken cancellationToken)
+        public Task<IEnumerable<MessageDetails>> GetByReferenceId(Guid id, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}{Prefix}/ByReferenceId/{id}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);

@@ -54,7 +54,7 @@ namespace Sufficit.Client.Controllers.Exchange
         /// Create or update message template
         /// </summary>
         [Authorize(Roles = $"{Sufficit.Identity.ManagerRole.NormalizedName},{Sufficit.Identity.AdministratorRole.NormalizedName}")]
-        public Task<MessageTemplate> CreateOrUpdate(MessageTemplate template, CancellationToken cancellationToken)
+        public Task<MessageTemplate?> CreateOrUpdate(MessageTemplate template, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}{Prefix}/CreateOrUpdate", UriKind.Relative);
             var content = JsonContent.Create(template, null, _json);
@@ -69,11 +69,11 @@ namespace Sufficit.Client.Controllers.Exchange
         /// Delete message template
         /// </summary>
         [Authorize(Roles = $"{Sufficit.Identity.ManagerRole.NormalizedName},{Sufficit.Identity.AdministratorRole.NormalizedName}")]
-        public Task<bool> Delete(Guid id, CancellationToken cancellationToken)
+        public Task<bool?> Delete(Guid id, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}{Prefix}/ById/{id}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Delete, uri);
-            return Request<bool>(message, cancellationToken);
+            return RequestStruct<bool>(message, cancellationToken);
         }
 
         /// <summary>
@@ -102,11 +102,11 @@ namespace Sufficit.Client.Controllers.Exchange
         /// Set template approval status
         /// </summary>
         [Authorize(Roles = $"{Sufficit.Identity.ManagerRole.NormalizedName},{Sufficit.Identity.AdministratorRole.NormalizedName}")]
-        public Task<bool> SetApproval(Guid id, bool approved, CancellationToken cancellationToken)
+        public Task<bool?> SetApproval(Guid id, bool approved, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}{Prefix}/SetApproval/{id}/{approved}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            return Request<bool>(message, cancellationToken);
+            return RequestStruct<bool>(message, cancellationToken);
         }
     }
 }

@@ -4,10 +4,8 @@ using Sufficit.Net.Http;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Exchange
 {
@@ -36,7 +34,13 @@ namespace Sufficit.Client.Controllers.Exchange
             var response = await SendAsync(message, cancellationToken);
             response.EnsureSuccessStatusCode();
 
+            // Conditional compilation for .NET Standard 2.0 compatibility
+#if NETSTANDARD2_0
+            var stream = await response.Content.ReadAsStreamAsync();
+#else
             var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+#endif
+
             await foreach (var item in JsonSerializer.DeserializeAsyncEnumerable<IReadReceipt>(stream, _json, cancellationToken))
             {
                 if (item != null)

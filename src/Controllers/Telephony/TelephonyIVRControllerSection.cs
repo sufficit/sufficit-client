@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 using Sufficit.EndPoints;
 using Sufficit.Net.Http;
 using Sufficit.Telephony;
@@ -59,7 +58,7 @@ namespace Sufficit.Client.Controllers.Telephony
         /// <summary>
         /// Add or Update an IVR
         /// </summary>
-        public Task<EndPointResponse<IVR>> AddOrUpdate(IVR ivr, CancellationToken cancellationToken = default)
+        public Task<EndPointResponse<IVR>?> AddOrUpdate(IVR ivr, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("add or update ivr: {id}", ivr.Id);
 
@@ -79,22 +78,6 @@ namespace Sufficit.Client.Controllers.Telephony
             var uri = new Uri($"{Controller}{Prefix}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(parameters, null, _json);
-            return RequestMany<IVR>(message, cancellationToken);
-        }
-
-        /// <summary>
-        /// Get IVRs by context
-        /// </summary>
-        [Obsolete("Use Search with ContextId parameter instead")]
-        public Task<IEnumerable<IVR>> ByContext(Guid contextId, CancellationToken cancellationToken = default)
-        {
-            _logger.LogTrace("by context: {contextid}", contextId);
-
-            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query["contextid"] = contextId.ToString();
-
-            var uri = new Uri($"{Controller}{Prefix}/bycontext?{query}", UriKind.Relative);
-            var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return RequestMany<IVR>(message, cancellationToken);
         }
 

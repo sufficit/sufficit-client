@@ -1,25 +1,21 @@
-﻿using Sufficit.Exchange;
+using Sufficit.Exchange;
 using Sufficit.Exchange.EMail;
-using Sufficit.Exchange.Templates;
 using Sufficit.Net.Http;
 using System;
 using System.Collections.Generic;
-using System.Net.Http.Json;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Text.Json;
+using Sufficit.Client.Controllers.Exchange;
 
 namespace Sufficit.Client.Controllers
 {
     public sealed class ExchangeControllerSection : AuthenticatedControllerSection, IExchangeController
     {
         public const string Controller = "/exchange";
-        private readonly JsonSerializerOptions _json;
 
         public ExchangeControllerSection(IAuthenticatedControllerBase cb) : base(cb)
         {
-            _json = cb.Json;
             Messages = new ExchangeMessagesControllerSection(cb);
             Templates = new MessageTemplateControllerSection(cb);
             Reads = new ExchangeReadsControllerSection(cb);
@@ -51,9 +47,11 @@ namespace Sufficit.Client.Controllers
             return Request(message, cancellationToken);
         }
 
-        protected override string[]? AnonymousPaths { get; } = [ 
+        // Collection expressions are not available in C# 10.0, use array initializer instead
+        protected override string[]? AnonymousPaths { get; } = new[]
+        {
             $"{Controller}/views",
             $"{Controller}/unsubscribe"
-        ];
+        };
     }
 }
