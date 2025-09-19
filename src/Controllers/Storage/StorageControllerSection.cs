@@ -33,7 +33,7 @@ namespace Sufficit.Client.Controllers.Storage
             return Request<StorageObjectRecord>(message, cancellationToken);
         }
 
-        public async Task<Task<IEnumerable<StorageObjectRecord>>> Search(StorageObjectMetadataSearchParameters parameters, CancellationToken cancellationToken)
+        public async Task<IEnumerable<StorageObjectRecord>> Search(StorageObjectMetadataSearchParameters parameters, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/search";
             var uri = new Uri(requestEndpoint, UriKind.Relative);
