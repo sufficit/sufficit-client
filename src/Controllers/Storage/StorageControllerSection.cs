@@ -26,27 +26,26 @@ namespace Sufficit.Client.Controllers.Storage
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
 
-            string requestEndpoint = $"{Controller}/ById?{query}";
+            string requestEndpoint = $"{Controller}/byid?{query}";
             var uri = new Uri(requestEndpoint, UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
 
             return Request<StorageObjectRecord>(message, cancellationToken);
         }
 
-        public IEnumerable<StorageObjectRecord> Search (StorageObjectMetadataSearchParameters parameters, CancellationToken cancellationToken)
+        public Task<IEnumerable<StorageObjectRecord>> Search (StorageObjectMetadataSearchParameters parameters, CancellationToken cancellationToken)
         {
-            string requestEndpoint = $"{Controller}/Search";
+            string requestEndpoint = $"{Controller}/search";
             var uri = new Uri(requestEndpoint, UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(parameters, null, _cb.Json);
 
-            var task = RequestMany<StorageObjectRecord>(message, cancellationToken);
-            return task.GetAwaiter().GetResult();
+            return RequestMany<StorageObjectRecord>(message, cancellationToken);
         }
 
         public Task AddOrUpdate (StorageObjectRecord item, CancellationToken cancellationToken)
         {
-            string requestEndpoint = $"{Controller}/Record";
+            string requestEndpoint = $"{Controller}/record";
             var uri = new Uri(requestEndpoint, UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(item, null, _cb.Json);
@@ -64,7 +63,7 @@ namespace Sufficit.Client.Controllers.Storage
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
 
-            string requestEndpoint = $"{Controller}/Record?{query}";
+            string requestEndpoint = $"{Controller}/record?{query}";
             var uri = new Uri(requestEndpoint, UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Delete, uri);
 
@@ -105,7 +104,7 @@ namespace Sufficit.Client.Controllers.Storage
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
 
-            string requestEndpoint = $"{Controller}/Object?{query}";
+            string requestEndpoint = $"{Controller}/object?{query}";
             var uri = new Uri(requestEndpoint, UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Delete, uri);
 
