@@ -33,14 +33,14 @@ namespace Sufficit.Client.Controllers.Storage
             return Request<StorageObjectRecord>(message, cancellationToken);
         }
 
-        public Task<IEnumerable<StorageObjectRecord>> Search (StorageObjectMetadataSearchParameters parameters, CancellationToken cancellationToken)
+        public async Task<Task<IEnumerable<StorageObjectRecord>>> Search(StorageObjectMetadataSearchParameters parameters, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/search";
             var uri = new Uri(requestEndpoint, UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(parameters, null, _cb.Json);
 
-            return RequestMany<StorageObjectRecord>(message, cancellationToken);
+            return await RequestMany<StorageObjectRecord>(message, cancellationToken);
         }
 
         public Task AddOrUpdate (StorageObjectRecord item, CancellationToken cancellationToken)
