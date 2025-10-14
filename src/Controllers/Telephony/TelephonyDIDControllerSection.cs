@@ -112,6 +112,15 @@ namespace Sufficit.Client.Controllers.Telephony
             return RequestMany<DirectInwardDialing>(message, cancellationToken);
         }
 
+        public Task<DirectInwardDialing> AddOrUpdate(DirectInwardDialing item, CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("add or update: {item}", item);
+            var uri = new Uri($"{Controller}{Prefix}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(item, null, _json);
+            return Request<DirectInwardDialing>(message, cancellationToken)!;
+        }
+
         /// <summary>
         /// Update Owner information
         /// </summary>
