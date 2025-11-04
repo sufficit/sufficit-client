@@ -299,7 +299,7 @@ namespace Sufficit.Client
         #endregion
         #region TELEPHONY - CALL - TranscriptRequest
 
-        public static string ToQueryString(this TranscriptRequest source)
+        public static string ToQueryString(this TelephonyCallTranscriptRequest source)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
 

@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Sufficit.Identity;
 using Sufficit.Net.Http;
-using Sufficit.Resources.Whisper;
 using Sufficit.Telephony;
 using Sufficit.Telephony.Asterisk;
 using Sufficit.Telephony.Call;
@@ -113,14 +112,14 @@ namespace Sufficit.Client.Controllers.Telephony
         /// <summary>
         /// Get call transcript
         /// </summary>
-        public async Task<WhisperResponse> GetTranscript(TranscriptRequest request, CancellationToken cancellationToken)
+        public async Task<TelephonyCallTranscript?> GetTranscript(TelephonyCallTranscriptRequest request, CancellationToken cancellationToken)
         {
             _logger.LogTrace("getting call transcript: {linkedid}", request.LinkedId);
 
             string query = request.ToQueryString();
             var uri = new Uri($"{Controller}/{Section}/transcript?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
-            return await Request<WhisperResponse>(message, cancellationToken) ?? new WhisperResponse();
+            return await Request<TelephonyCallTranscript>(message, cancellationToken);
         }
 
         #endregion
