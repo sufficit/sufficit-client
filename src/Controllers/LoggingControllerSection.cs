@@ -21,22 +21,22 @@ namespace Sufficit.Client.Controllers
             _json = cb.Json;
         }
 
-        public Task<IEnumerable<JsonLog>> GetEventsWithContent(LogSearchParameters parameters, CancellationToken cancellationToken)
+        public Task<IEnumerable<GenericLog<string>>> GetEventsWithContent(LogSearchParameters parameters, CancellationToken cancellationToken)
         {          
             var uri = new Uri($"{Controller}/events", UriKind.Relative);
 
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(parameters, null, _json);
-            return RequestMany<JsonLog>(message, cancellationToken);
+            return RequestMany<GenericLog<string>>(message, cancellationToken);
         }
 
-        public Task<IEnumerable<JsonLog<T>>> GetEventsWithContent<T>(LogSearchParameters parameters, CancellationToken cancellationToken) where T : class
+        public Task<IEnumerable<GenericLog<T>>> GetEventsWithContent<T>(LogSearchParameters parameters, CancellationToken cancellationToken) where T : class
         {
             var uri = new Uri($"{Controller}/events", UriKind.Relative);
 
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(parameters, null, _json);
-            return RequestMany<JsonLog<T>>(message, cancellationToken);
+            return RequestMany<GenericLog<T>>(message, cancellationToken);
         }
 
 
