@@ -362,7 +362,9 @@ namespace Sufficit.Client
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query[nameof(source.ContextId).ToLower()] = source.ContextId.ToString();
-            query[nameof(source.Start).ToLower()] = source.Start.ToString(DATETIMEFORMAT);
+
+            if (source.Start.HasValue)
+                query[nameof(source.Start).ToLower()] = source.Start.Value.ToString(DATETIMEFORMAT);
 
             if (source.End.HasValue)
                 query[nameof(source.End).ToLower()] = source.End.Value.ToString(DATETIMEFORMAT);
