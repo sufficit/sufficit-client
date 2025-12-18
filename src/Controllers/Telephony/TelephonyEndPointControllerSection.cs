@@ -25,6 +25,7 @@ namespace Sufficit.Client.Controllers.Telephony
             _json = cb.Json;
         }
 
+        [Authorize]
         public Task<IEnumerable<EndPoint>> GetEndPoints(EndPointSearchParameters parameters, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}{Prefix}/search";
@@ -35,12 +36,26 @@ namespace Sufficit.Client.Controllers.Telephony
             return RequestMany<EndPoint>(message, cancellationToken);
         }
 
+        [Authorize]
         public Task<EndPoint?> GetEndPoint(Guid id, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}{Prefix}/byid";
 
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
+
+            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<EndPoint>(message, cancellationToken);
+        }
+
+        [Authorize]
+        public Task<EndPoint?> GetEndPoint(string extension, CancellationToken cancellationToken)
+        {
+            string requestEndpoint = $"{Controller}{Prefix}/byextension";
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["extension"] = extension;
 
             var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
