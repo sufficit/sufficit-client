@@ -2,6 +2,7 @@
 using Sufficit.Net.Http;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -30,15 +31,14 @@ namespace Sufficit.Client.Controllers
             return RequestMany<GenericLog<string>>(message, cancellationToken);
         }
 
-        public Task<IEnumerable<GenericLog<T>>> GetEventsWithContent<T>(LogSearchParameters parameters, CancellationToken cancellationToken) where T : class
+        public async Task<IEnumerable<GenericLog<T>>> GetEventsWithContent<T>(LogSearchParameters parameters, CancellationToken cancellationToken) where T : class
         {
-            var uri = new Uri($"{Controller}/events", UriKind.Relative);
+            // Get base results with content as string (API always returns content as JSON string)
+            var stringResults = await GetEventsWithContent(parameters, cancellationToken);
 
-            var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(parameters, null, _json);
-            return RequestMany<GenericLog<T>>(message, cancellationToken);
+            // Convert each item by deserializing the content string to type T
+            return stringResults.Select(item => item.FromJsonLog<T>(_json));
         }
-
 
         protected override string[]? AnonymousPaths { get; } = { $"{Controller}/events" };
     }
