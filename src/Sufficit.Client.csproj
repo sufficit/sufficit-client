@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
 	<PropertyGroup Label="Sufficit Targeting">
-		<TargetFrameworks>netstandard2.0;net7.0;net8.0;net9.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net7.0;net9.0</TargetFrameworks>
 		<RootNamespace>Sufficit.Client</RootNamespace>
 		<Configurations>Debug;Release;Packing</Configurations>
 	</PropertyGroup>
@@ -98,13 +98,6 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
-	<PropertyGroup Label="Sufficit Versioning Options" Condition=" '$(TargetFramework)' == 'net8.0' ">
-		<PkgVersion>[8.*,10.0.0)</PkgVersion>
-		<PkgVersionUntil8>[*,10.0.0)</PkgVersionUntil8>
-		<LangVersion>10.0</LangVersion>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
-
 	<PropertyGroup Label="Sufficit Versioning Options" Condition=" '$(TargetFramework)' == 'net9.0' ">
 		<PkgVersion>[9.*,10.0.0)</PkgVersion>
 		<PkgVersionUntil8>[*,10.0.0)</PkgVersionUntil8>
@@ -116,7 +109,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.1.*" Condition=" '$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net7.0' " />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.*" Condition=" '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net9.0' OR '$(TargetFramework)' == 'netstandard2.0' " />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.*" Condition=" '$(TargetFramework)' == 'net9.0' OR '$(TargetFramework)' == 'netstandard2.0' " />
 		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="[3.*,4.0.0)" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
 		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="$(PkgVersion)" Condition=" '$(TargetFramework)' != 'netstandard2.0' " />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.*" />
@@ -126,7 +119,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="$(PkgVersion)" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="$(PkgVersion)" />
 		
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="[*,9.0.0)" Condition=" '$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net7.0' OR '$(TargetFramework)' == 'net8.0'" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="[*,9.0.0)" Condition=" '$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net7.0'" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="$(PkgVersion)" Condition=" '$(TargetFramework)' == 'net9.0' OR '$(TargetFramework)' == 'netstandard2.0' " />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(PkgVersion)" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" version="$(PkgVersion)" />
@@ -137,7 +130,7 @@
 		<PackageReference Include="Microsoft.Extensions.Options" Version="$(PkgVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(PkgVersion)" />
 		<PackageReference Include="System.Text.Json" Version="[8.0.5,9.0.0)" Condition=" '$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net7.0' " />
-		<PackageReference Include="System.Text.Json" Version="$(PkgVersion)" Condition=" '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net9.0' OR '$(TargetFramework)' == 'netstandard2.0' " />
+		<PackageReference Include="System.Text.Json" Version="$(PkgVersion)" Condition=" '$(TargetFramework)' == 'net9.0' OR '$(TargetFramework)' == 'netstandard2.0' " />
 	</ItemGroup>
 	
 	<ItemGroup Label="Sufficit Dependencies">
@@ -152,6 +145,9 @@
 
 		<ProjectReference Include="..\..\sufficit-telephony-eventspanel-core\src\Sufficit.Telephony.EventsPanel.Core.csproj" Condition="Exists('..\\..\\sufficit-telephony-eventspanel-core\\src\\Sufficit.Telephony.EventsPanel.Core.csproj')" />
 		<PackageReference Include="Sufficit.Telephony.EventsPanel.Core" Version="1.*" Condition="!Exists('..\\..\\sufficit-telephony-eventspanel-core\\src\\Sufficit.Telephony.EventsPanel.Core.csproj') " />
+
+		<ProjectReference Include="..\..\sufficit-json\src\Sufficit.Json.csproj" Condition="Exists('..\\..\\sufficit-json\\src\\Sufficit.Json.csproj')" />
+		<PackageReference Include="Sufficit.Json" Version="1.*" Condition="!Exists('..\\..\\sufficit-json\\src\\Sufficit.Json.csproj') " />
 	</ItemGroup>
 	
 	<ItemGroup>

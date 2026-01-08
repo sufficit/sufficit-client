@@ -53,13 +53,18 @@ public async Task<IEnumerable<GenericLog<T>>> GetEventsWithContent<T>(LogSearchP
 ## Benefícios
 - **Redução de Duplicação**: Eliminação de código repetitivo de conversão
 - **Manutenibilidade**: Lógica centralizada em extensão reutilizável
-- **Consistência**: Mesmo padrão usado em `Sufficit.EFData` (que já tinha implementação similar)
+- **Consistência**: Mesmo padrão usado em `Sufficit.EFData` (que mantém suas próprias extensões)
 - **Performance**: Uso de LINQ mais eficiente que loop manual
 
 ## Compatibilidade
 - Mantém compatibilidade total com APIs existentes
 - Não quebra mudanças para consumidores do método
 - Funciona com todos os tipos `T` que são classes
+
+## Arquitetura Final
+- **`Sufficit.Base`**: Contém apenas `FromJsonLog<T>` (conversão string → typed)
+- **`Sufficit.EFData`**: Mantém `ToJsonLog<T>` e `FromJsonLog` (conversões bidirecionais para EF)
+- **`Sufficit.Client`**: Usa a extensão do Base para conversões necessárias
 
 ## Testes
 - Projeto compila com sucesso em todas as plataformas alvo (.NET 7.0, 8.0, 9.0, netstandard2.0)
