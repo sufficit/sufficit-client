@@ -5,3 +5,6 @@ Sufficit.Client.sln
 *-local.csproj
 token.txt
 /.token
+test/bin/
+test/obj/
+test/appsettings.json
