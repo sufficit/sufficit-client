@@ -104,7 +104,7 @@ namespace Sufficit.Client.IntegrationTests
             var task = new ScheduleTask
             {
                 Id = _testTaskId,
-                Method = "Sufficit.Tests.TestJob, Sufficit.Tests",
+                Method = "Sufficit.Telephony.TestJob, Sufficit.Standard",
                 Active = false, // Disabled to prevent actual execution
                 Minutes = "00",
                 Hours = "00"
@@ -131,7 +131,7 @@ namespace Sufficit.Client.IntegrationTests
             var task = new ScheduleTask
             {
                 Id = _testTaskId,
-                Method = "Sufficit.Tests.TestJob, Sufficit.Tests",
+                Method = "Sufficit.Telephony.TestJob, Sufficit.Standard",
                 Active = false,
                 Minutes = "00",
                 Hours = "00"
@@ -162,7 +162,7 @@ namespace Sufficit.Client.IntegrationTests
             var task = new ScheduleTask
             {
                 Id = _testTaskId,
-                Method = "Sufficit.Tests.TestJob, Sufficit.Tests",
+                Method = "Sufficit.Telephony.TestJob, Sufficit.Standard",
                 Active = false,
                 Minutes = "00",
                 Hours = "00"
@@ -190,7 +190,7 @@ namespace Sufficit.Client.IntegrationTests
             var task = new ScheduleTask
             {
                 Id = _testTaskId,
-                Method = "Sufficit.Tests.TestJob, Sufficit.Tests",
+                Method = "Sufficit.Telephony.TestJob, Sufficit.Standard",
                 Active = false,
                 Minutes = "00",
                 Hours = "00"
@@ -217,7 +217,7 @@ namespace Sufficit.Client.IntegrationTests
             var task = new ScheduleTask
             {
                 Id = _testTaskId,
-                Method = "Sufficit.Tests.TestJob, Sufficit.Tests",
+                Method = "Sufficit.Telephony.TestJob, Sufficit.Standard",
                 Active = false,
                 Minutes = "00",
                 Hours = "00"
@@ -245,7 +245,7 @@ namespace Sufficit.Client.IntegrationTests
             var task = new ScheduleTask
             {
                 Id = taskId,
-                Method = "Sufficit.Tests.TestJob, Sufficit.Tests",
+                Method = "Sufficit.Telephony.TestJob, Sufficit.Standard",
                 Active = false,
                 Minutes = "00",
                 Hours = "00"

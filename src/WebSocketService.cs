@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sufficit.CheckUp;
 using Sufficit.EndPoints.Configuration;
+using Sufficit.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,15 +17,20 @@ namespace Sufficit.Client
     {
         private readonly IOptions<EndPointsAPIOptions> _options;
         private readonly ILogger _logger;
+        private readonly ITokenProvider _tokenProvider;
         public readonly HubConnection _connection;
 
-        public WebSocketService(IOptions<EndPointsAPIOptions> options, ILogger<WebSocketService> logger)
+        public WebSocketService(IOptions<EndPointsAPIOptions> options, ILogger<WebSocketService> logger, ITokenProvider tokenProvider)
         {
             _options = options;
             _logger = logger;
+            _tokenProvider = tokenProvider;
 
             _connection = new HubConnectionBuilder()
-                .WithUrl($"{_options.Value.BaseUrl}/ws")
+                .WithUrl($"{_options.Value.BaseUrl}/ws", httpConnectionOptions =>
+                {
+                    httpConnectionOptions.AccessTokenProvider = async () => await _tokenProvider.GetTokenAsync();
+                })
 
                 // Só começa a reconectar se iniciou a 1ª conexão com sucesso
                 .WithAutomaticReconnect(new TimeSpan[] { TimeSpan.FromSeconds(10) })
@@ -39,7 +45,7 @@ namespace Sufficit.Client
             _logger.LogTrace("WebSocketService Instantiated.");
         }
 
-        public async void Test()
+        public async Task StartAsync()
         {
             try
             {
@@ -76,7 +82,6 @@ namespace Sufficit.Client
         public event EventHandler? OnChanged;
 
         public HubConnectionState State => _connection.State;
-
 
         #region IMPLEMENTS INTERFACE CHECKUP METHODS
 

@@ -14,6 +14,6 @@ namespace Sufficit.Client
 
         HubConnectionState State { get; }
 
-        void Test();
+        Task StartAsync();
     }
 }

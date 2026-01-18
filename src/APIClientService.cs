@@ -32,7 +32,7 @@ namespace Sufficit.Client
         public void OnHealthChanged (object? _, bool __) 
             => OnChanged?.Invoke(this, new EventArgs());
 
-        public APIClientService(IOptions<EndPointsAPIOptions> options, ITokenProvider tokens, ILogger<APIClientService> logger)            
+        public APIClientService(IOptions<EndPointsAPIOptions> options, ITokenProvider tokens, ILogger<APIClientService> logger)
         {          
             _logger = logger; 
             _client = new PreConfiguredHttpClient(options.Value);
