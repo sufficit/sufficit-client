@@ -10,11 +10,14 @@ namespace Sufficit.Client.Controllers
         public GatewayControllerSection(IAuthenticatedControllerBase cb) : base(cb) 
         {
             PhoneVox = new PhoneVoxControllerSection(cb);
+            ReceitaFederal = new ReceitaFederalControllerSection(cb);
             ReceitaNet = new ReceitaNetControllerSection(cb);
             Wavoip = new WavoipControllerSection(cb);
         }
 
         public PhoneVoxControllerSection PhoneVox { get; }
+
+        public ReceitaFederalControllerSection ReceitaFederal { get; }
 
         public ReceitaNetControllerSection ReceitaNet { get; }
 
