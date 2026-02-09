@@ -24,10 +24,8 @@ namespace Sufficit.Client.Controllers.Gateway
         {
             _logger.LogTrace("person by document: {document}", document);
 
-            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query["document"] = document;
-
-            var uri = new Uri($"{Controller}{Prefix}/person?{query}", UriKind.Relative);
+            var encodedDocument = Uri.EscapeDataString(document);
+            var uri = new Uri($"{Controller}{Prefix}/person?document={encodedDocument}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return Request<Person>(message, cancellationToken);
         }
