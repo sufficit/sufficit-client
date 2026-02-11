@@ -98,6 +98,50 @@ namespace Sufficit.Client.Controllers.Telephony
             return response?.Success ?? false ? 1 : 0;
         }
 
-        protected override string[]? AnonymousPaths { get; } = { $"{Controller}{Prefix}/byid" };
+        [Authorize(Roles = $"{AdministratorRole.NormalizedName},{ManagerRole.NormalizedName}")]
+        public async Task<int> AddOrUpdateNote(PortabilityNote note, CancellationToken cancellationToken)
+        {
+            _logger.LogTrace("add or update note for process id: {processId}, text: {text}, public: {public}, timestamp: {timestamp}", 
+                note.ProcessId, note.Text, note.Public, note.Timestamp);
+            
+            var uri = new Uri($"{Controller}{Prefix}/notes", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri)
+            {
+                Content = JsonContent.Create(note, null, _json)
+            };
+            
+            var response = await Request<EndPointResponse>(message, cancellationToken);
+            return response?.Success ?? false ? 1 : 0;
+        }
+
+        public async Task<ICollection<PortabilityNote>> GetNotes(Guid id, bool? @public, CancellationToken cancellationToken)
+        {
+            _logger.LogTrace("get notes for process id: {id}, public: {public}", id, @public);
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString();
+            if (@public.HasValue)
+                query["public"] = @public.Value.ToString().ToLowerInvariant();
+            
+            var uri = new Uri($"{Controller}{Prefix}/notes?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            var response = await Request<EndPointResponse<ICollection<PortabilityNote>>>(message, cancellationToken);
+            return response?.Success ?? false && response.Data != null ? response.Data : new List<PortabilityNote>();
+        }
+
+        [Authorize(Roles = $"{AdministratorRole.NormalizedName},{ManagerRole.NormalizedName}")]
+        public async Task<int> RemoveNote(Guid id, DateTime timestamp, CancellationToken cancellationToken)
+        {
+            _logger.LogTrace("remove note from process id: {id}, timestamp: {timestamp}", id, timestamp);
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString();
+            query["timestamp"] = timestamp.ToString("o"); // ISO 8601 format
+            
+            var uri = new Uri($"{Controller}{Prefix}/notes?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Delete, uri);
+            var response = await Request<EndPointResponse>(message, cancellationToken);
+            return response?.Success ?? false ? 1 : 0;
+        }
+
+        protected override string[]? AnonymousPaths { get; } = { $"{Controller}{Prefix}/byid", $"{Controller}{Prefix}/notes" };
     }
 }
