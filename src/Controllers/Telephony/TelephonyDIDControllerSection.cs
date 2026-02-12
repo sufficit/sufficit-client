@@ -192,5 +192,19 @@ namespace Sufficit.Client.Controllers.Telephony
             message.Content = JsonContent.Create(properties, null, _json);
             return Request(message, cancellationToken);
         }
+
+        public Task<DateTime?> Activity(string extension, int days = 0, CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("activity: {extension}, {days}", extension, days);
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["extension"] = extension;
+            if (days > 0)
+                query["days"] = days.ToString();
+
+            var uri = new Uri($"{Controller}{Prefix}/activity?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestStruct<DateTime>(message, cancellationToken);
+        }
     }
 }
