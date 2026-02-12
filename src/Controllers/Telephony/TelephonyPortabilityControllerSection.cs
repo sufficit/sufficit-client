@@ -142,6 +142,6 @@ namespace Sufficit.Client.Controllers.Telephony
             return response?.Success ?? false ? 1 : 0;
         }
 
-        protected override string[]? AnonymousPaths { get; } = { $"{Controller}{Prefix}/byid", $"{Controller}{Prefix}/notes" };
+        protected override string[]? AnonymousPaths { get; } = { $"{Controller}{Prefix}/byid" };
     }
 }
