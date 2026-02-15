@@ -142,6 +142,12 @@ namespace Sufficit.Client.Controllers.Telephony
             return response?.Success ?? false ? 1 : 0;
         }
 
+        protected override IReadOnlyDictionary<string, string[]>? AnonymousPathsByMethod { get; } =
+            new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
+            {
+                [$"{Controller}{Prefix}/notes"] = new[] { HttpMethod.Get.Method }
+            };
+
         protected override string[]? AnonymousPaths { get; } = { $"{Controller}{Prefix}/byid" };
     }
 }
