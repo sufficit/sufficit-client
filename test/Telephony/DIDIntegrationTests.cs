@@ -18,6 +18,7 @@ namespace Sufficit.Client.IntegrationTests.Telephony
         private readonly APIClientService _apiClient;
         private readonly IConfiguration _configuration;
         private readonly string _baseUrl;
+        private readonly string _knownDidExtension;
 
         public DIDIntegrationTests(ITestOutputHelper output)
         {
@@ -31,6 +32,9 @@ namespace Sufficit.Client.IntegrationTests.Telephony
 
             _baseUrl = _configuration["Sufficit:EndPoints:BaseAddress"]
                 ?? throw new InvalidOperationException("EndPoints BaseAddress not configured in appsettings.json");
+
+            _knownDidExtension = _configuration["Sufficit:TestData:Telephony:DID:KnownExtension"]
+                ?? throw new InvalidOperationException("DID KnownExtension not configured in appsettings.json (Sufficit:TestData:Telephony:DID:KnownExtension)");
 
             var token = _configuration["Sufficit:Authentication:Tokens:Manager"]
                 ?? throw new InvalidOperationException("Manager token not configured in appsettings.json");
@@ -52,7 +56,7 @@ namespace Sufficit.Client.IntegrationTests.Telephony
         [Fact]
         public async Task Activity_ShouldReturnDate_WhenExists()
         {
-            var extension = "558000420162";
+            var extension = _knownDidExtension;
             var cancellationToken = CancellationToken.None;
 
             _output.WriteLine($"Testing DID Activity for extension: {extension}");
@@ -73,7 +77,7 @@ namespace Sufficit.Client.IntegrationTests.Telephony
         [Fact]
         public async Task Activity_WithDays_ShouldReturnDate_WhenExists()
         {
-            var extension = "558000420162";
+            var extension = _knownDidExtension;
             var days = 30;
             var cancellationToken = CancellationToken.None;
 
