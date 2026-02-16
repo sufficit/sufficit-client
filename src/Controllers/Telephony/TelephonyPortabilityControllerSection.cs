@@ -145,6 +145,8 @@ namespace Sufficit.Client.Controllers.Telephony
         protected override IReadOnlyDictionary<string, string[]>? AnonymousPathsByMethod { get; } =
             new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
             {
+                // Notes endpoint supports anonymous reads (public notes), but authenticated callers
+                // should still be able to send a token to read private notes (optional auth).
                 [$"{Controller}{Prefix}/notes"] = new[] { HttpMethod.Get.Method }
             };
 
