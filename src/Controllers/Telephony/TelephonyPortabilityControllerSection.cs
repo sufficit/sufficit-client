@@ -116,12 +116,17 @@ namespace Sufficit.Client.Controllers.Telephony
 
         public async Task<ICollection<PortabilityNote>> GetNotes(Guid id, bool? @public, CancellationToken cancellationToken)
         {
+            if (id == Guid.Empty)
+                throw new ArgumentException("Process id cannot be empty.", nameof(id));
+
             _logger.LogTrace("get notes for process id: {id}, public: {public}", id, @public);
+
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["id"] = id.ToString();
+
             if (@public.HasValue)
                 query["public"] = @public.Value.ToString().ToLowerInvariant();
-            
+
             var uri = new Uri($"{Controller}{Prefix}/notes?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             var response = await Request<EndPointResponse<ICollection<PortabilityNote>>>(message, cancellationToken);
