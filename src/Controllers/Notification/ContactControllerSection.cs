@@ -78,7 +78,9 @@ namespace Sufficit.Client.Controllers.Notification
         [Authorize]
         public Task RemoveContact(Guid id, CancellationToken cancellationToken = default)
         {
-            var uri = new Uri($"{Controller}{Prefix}/{id}", UriKind.Relative);
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query[nameof(id)] = id.ToString();
+            var uri = new Uri($"{Controller}{Prefix}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Delete, uri);
             return Request(message, cancellationToken);
         }
