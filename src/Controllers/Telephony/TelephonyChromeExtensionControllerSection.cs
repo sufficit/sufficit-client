@@ -17,6 +17,18 @@ namespace Sufficit.Client.Controllers.Telephony
         public TelephonyChromeExtensionControllerSection(IAuthenticatedControllerBase cb) : base(cb) { }
 
         /// <summary>
+        /// Returns the SIP configuration for the current user's Chrome softphone,
+        /// including runtime parameters such as <see cref="SipRuntimeConfig.ReconnectWatchdogErrorWindowMs"/>.
+        /// </summary>
+        [Authorize]
+        public Task<ChromeExtensionConfig?> GetConfig(CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/Config", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<ChromeExtensionConfig>(message, cancellationToken);
+        }
+
+        /// <summary>
         /// Lists all available endpoints (extensions) for the authenticated user.
         /// Managers with TelephonyClientDirective on Guid.Empty see endpoints across all their known contexts.
         /// Optionally pass <paramref name="contextId"/> to filter by a specific context.
