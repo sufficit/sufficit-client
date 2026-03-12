@@ -30,6 +30,7 @@ namespace Sufficit.Client.Controllers
             CallGroup = new TelephonyCallGroupControllerSection(cb);
             Destination = new TelephonyDestinationControllerSection(cb);
             DID = new TelephonyDIDControllerSection(cb);
+            ChromeExtension = new TelephonyChromeExtensionControllerSection(cb);
             EndPoint = new TelephonyEndPointControllerSection(cb);
             EventsPanel = new TelephonyEventsPanelControllerSection(cb);
             IVR = new TelephonyIVRControllerSection(cb); 
@@ -54,6 +55,7 @@ namespace Sufficit.Client.Controllers
         public TelephonyBillingControllerSection Billing { get; }
         public TelephonyCallControllerSection Call { get; }
         public TelephonyCallGroupControllerSection CallGroup { get; }
+        public TelephonyChromeExtensionControllerSection ChromeExtension { get; }
         public TelephonyDestinationControllerSection Destination { get; }
         public TelephonyDIDControllerSection DID { get; }
         public TelephonyEndPointControllerSection EndPoint { get; }
