@@ -1,4 +1,6 @@
-﻿using Sufficit.EndPoints;
+﻿using Microsoft.AspNetCore.Authorization;
+using Sufficit.EndPoints;
+using Sufficit.Identity;
 using Sufficit.Json;
 using Sufficit.Net.Http;
 using Sufficit.Storage;
@@ -72,6 +74,24 @@ namespace Sufficit.Client.Controllers.Storage
                 var response = task.Result;
                 if (response?.Success != true)
                     throw new InvalidOperationException($"RemoveIfExists failed: {response?.Message ?? "Unknown error"}");
+            }, cancellationToken);
+        }
+
+        public Task MoveContext(Guid id, Guid contextId, CancellationToken cancellationToken)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString();
+            query["contextId"] = contextId.ToString();
+
+            string requestEndpoint = $"{Controller}/movecontext?{query}";
+            var uri = new Uri(requestEndpoint, UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+
+            return Request<EndPointResponse>(message, cancellationToken).ContinueWith(task =>
+            {
+                var response = task.Result;
+                if (response?.Success != true)
+                    throw new InvalidOperationException($"MoveContext failed: {response?.Message ?? "Unknown error"}");
             }, cancellationToken);
         }
 

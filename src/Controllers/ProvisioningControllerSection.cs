@@ -25,7 +25,7 @@ namespace Sufficit.Client.Controllers
             _json = cb.Json;
         }
 
-        [Authorize(Roles = "provisioning")]
+        [Authorize(Roles = ProvisioningRole.NormalizedName)]
         public Task Delete(string key, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(key)) 
@@ -39,7 +39,7 @@ namespace Sufficit.Client.Controllers
             return Request(message, cancellationToken);
         }
 
-        [Authorize(Roles = "provisioning")]
+        [Authorize(Roles = ProvisioningRole.NormalizedName)]
         public Task Delete(string macaddress, string key, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(macaddress))
@@ -57,8 +57,7 @@ namespace Sufficit.Client.Controllers
             return Request(message, cancellationToken);
         }
 
-
-        [Authorize(Roles = "provisioning")]
+        [Authorize(Roles = ProvisioningRole.NormalizedName)]
         public Task Update(Device device, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}/device", UriKind.Relative);
@@ -67,7 +66,7 @@ namespace Sufficit.Client.Controllers
             return Request(message, cancellationToken);
         }
 
-        [Authorize(Roles = "provisioning")]
+        [Authorize(Roles = ProvisioningRole.NormalizedName)]
         public Task Update(DeviceAttribute device, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}/attribute", UriKind.Relative);
@@ -76,7 +75,7 @@ namespace Sufficit.Client.Controllers
             return Request(message, cancellationToken);
         }
 
-        [Authorize(Roles = "provisioning")]
+        [Authorize(Roles = ProvisioningRole.NormalizedName)]
         public Task<IEnumerable<Device>> Search(DeviceSearchParameters parameters, CancellationToken cancellationToken)
         {
             var query = parameters.ToQueryString();
@@ -85,7 +84,7 @@ namespace Sufficit.Client.Controllers
             return RequestMany<Device>(message, cancellationToken);
         }
 
-        [Authorize(Roles = "provisioning")]
+        [Authorize(Roles = ProvisioningRole.NormalizedName)]
         public Task<Device?> ByMAC(string macaddress, CancellationToken cancellationToken)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
@@ -96,7 +95,7 @@ namespace Sufficit.Client.Controllers
             return Request<Device>(message, cancellationToken);
         }
 
-        [Authorize(Roles = "provisioning")]
+        [Authorize(Roles = ProvisioningRole.NormalizedName)]
         public Task<IEnumerable<DeviceAttribute>> AttributesByMAC(string macaddress, CancellationToken cancellationToken)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
