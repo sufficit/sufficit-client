@@ -56,7 +56,7 @@ namespace Sufficit.Client.Controllers.Identity
         /// <param name="description">New description for the token</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Task representing the operation</returns>
-        public async Task UpdateTokenDescription(string key, string? description, CancellationToken cancellationToken = default)
+        public async Task<bool> UpdateTokenDescription(string key, string? description, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}{Prefix}/description";
 
@@ -70,7 +70,8 @@ namespace Sufficit.Client.Controllers.Identity
             };
 
             message.Content = JsonContent.Create(payload, null, _json);
-            await Request(message, cancellationToken);
+            var response = await Request<EndPointResponse>(message, cancellationToken);
+            return response?.Success == true;
         }
 
         /// <summary>
@@ -99,7 +100,7 @@ namespace Sufficit.Client.Controllers.Identity
         /// <param name="expiration">New expiration date/time</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Task representing the operation</returns>
-        public async Task ExtendToken(string key, DateTime? expiration, CancellationToken cancellationToken = default)
+        public async Task<bool> ExtendToken(string key, DateTime? expiration, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}{Prefix}/expiration";
 
@@ -113,7 +114,8 @@ namespace Sufficit.Client.Controllers.Identity
             };
 
             message.Content = JsonContent.Create(payload, null, _json);
-            await Request(message, cancellationToken);
+            var response = await Request<EndPointResponse>(message, cancellationToken);
+            return response?.Success == true;
         }
 
         /// <summary>
