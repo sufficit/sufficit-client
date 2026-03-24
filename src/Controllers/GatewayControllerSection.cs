@@ -13,6 +13,7 @@ namespace Sufficit.Client.Controllers
             ReceitaFederal = new ReceitaFederalControllerSection(cb);
             ReceitaNet = new ReceitaNetControllerSection(cb);
             Wavoip = new WavoipControllerSection(cb);
+            Zabbix = new ZabbixControllerSection(cb);
         }
 
         public PhoneVoxControllerSection PhoneVox { get; }
@@ -22,5 +23,7 @@ namespace Sufficit.Client.Controllers
         public ReceitaNetControllerSection ReceitaNet { get; }
 
         public WavoipControllerSection Wavoip { get; }
+
+        public ZabbixControllerSection Zabbix { get; }
     }
 }
