@@ -27,6 +27,7 @@ namespace Sufficit.Client.Controllers
             Audio = new TelephonyAudioControllerSection(cb);
             Billing = new TelephonyBillingControllerSection(cb);
             Call = new TelephonyCallControllerSection(cb);
+            Carrier = new TelephonyCarrierControllerSection(cb);
             CallGroup = new TelephonyCallGroupControllerSection(cb);
             Destination = new TelephonyDestinationControllerSection(cb);
             DID = new TelephonyDIDControllerSection(cb);
@@ -36,6 +37,7 @@ namespace Sufficit.Client.Controllers
             IVR = new TelephonyIVRControllerSection(cb); 
             MusicOnHold = new TelephonyMusicOnHoldControllerSection(cb);
             Portability = new TelephonyPortabilityControllerSection(cb);
+            VoiceMail = new TelephonyVoiceMailControllerSection(cb);
             WebRTC = new TelephonyWebRTCControllerSection(cb);
 
             _logger = cb.Logger;
@@ -54,6 +56,7 @@ namespace Sufficit.Client.Controllers
         public TelephonyAudioControllerSection Audio { get; }
         public TelephonyBillingControllerSection Billing { get; }
         public TelephonyCallControllerSection Call { get; }
+        public TelephonyCarrierControllerSection Carrier { get; }
         public TelephonyCallGroupControllerSection CallGroup { get; }
         public TelephonyChromeExtensionControllerSection ChromeExtension { get; }
         public TelephonyDestinationControllerSection Destination { get; }
@@ -63,6 +66,7 @@ namespace Sufficit.Client.Controllers
         public TelephonyIVRControllerSection IVR { get; }
         public TelephonyMusicOnHoldControllerSection MusicOnHold { get; }
         public TelephonyPortabilityControllerSection Portability { get; }
+        public TelephonyVoiceMailControllerSection VoiceMail { get; }
         public TelephonyWebRTCControllerSection WebRTC { get; }
 
 
@@ -92,7 +96,7 @@ namespace Sufficit.Client.Controllers
 
         public async Task<IEnumerable<IIdTitlePair>> Carriers (CancellationToken cancellationToken = default)
         {
-            string requestEndpoint = $"{Controller}/carriers";
+            string requestEndpoint = $"{Controller}/carrier";
             string uri = $"{requestEndpoint}";
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return await RequestMany<Contact>(message, cancellationToken);
