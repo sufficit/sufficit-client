@@ -48,6 +48,32 @@ namespace Sufficit.Client.Controllers.Notification
             return RequestMany<EventInfo>(message, cancellationToken);
         }
 
+        [Authorize]
+        public async Task<IEnumerable<Subscriber>> GetSubscribers(SubscribersSearchParameters parameters, CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}/subscribers", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(parameters, null, _json);
+
+            using var response = await SendAsync(message, cancellationToken);
+            await response.EnsureSuccess(cancellationToken);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                return Array.Empty<Subscriber>();
+
+            var subscribers = await response.Content.ReadFromJsonAsync<IEnumerable<Subscriber>>(_json, cancellationToken);
+            return subscribers ?? Array.Empty<Subscriber>();
+        }
+
+        [Authorize]
+        public Task RemoveSubscriber(Subscription subscription, CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}/subscribers/remove", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(subscription, null, _json);
+            return Request(message, cancellationToken);
+        }
+
         public Task Subscribe (SubscribeRequest request, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}/subscribe", UriKind.Relative);
