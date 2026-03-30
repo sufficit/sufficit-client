@@ -447,6 +447,18 @@ namespace Sufficit.Client
             if (source.ContextId != null)
                 query[nameof(source.ContextId).ToLower()] = source.ContextId.ToString();
 
+            if (source.Key != null)
+            {
+                query[$"{nameof(source.Key).ToLower()}.{nameof(source.Key.Text).ToLower()}"] = source.Key.Text;
+                query[$"{nameof(source.Key).ToLower()}.{nameof(source.Key.ExactMatch).ToLower()}"] = source.Key.ExactMatch.ToString().ToLowerInvariant();
+            }
+
+            if (source.Status.HasValue)
+                query[nameof(source.Status).ToLower()] = source.Status.Value.ToString();
+
+            if (source.Active.HasValue)
+                query[nameof(source.Active).ToLower()] = source.Active.Value.ToString().ToLowerInvariant();
+
             if (source.Start != null)
             {
                 if (source.Start.Start.HasValue)
@@ -477,8 +489,104 @@ namespace Sufficit.Client
                 query[$"{nameof(source.Filter).ToLower()}.{nameof(source.Filter.ExactMatch).ToLower()}"] = source.Filter.ExactMatch.ToString().ToLower();
             }
 
-            if (source.Limit > 0)
-                query[nameof(source.Limit).ToLower()] = source.Limit.ToString();
+            if (source.Limit.HasValue && source.Limit.Value > 0)
+                query[nameof(source.Limit).ToLower()] = source.Limit.Value.ToString();
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
+        #region SALES - ContractPeriodSearchParameters
+
+        public static string ToQueryString(this ContractPeriodSearchParameters source, NameValueCollection? collection = null)
+        {
+            var query = collection ?? System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            if (source.ContractId.HasValue)
+                query[nameof(source.ContractId).ToLower()] = source.ContractId.Value.ToString();
+
+            if (source.ContextId.HasValue)
+                query[nameof(source.ContextId).ToLower()] = source.ContextId.Value.ToString();
+
+            if (source.Status.HasValue)
+                query[nameof(source.Status).ToLower()] = source.Status.Value.ToString();
+
+            if (source.Period != null)
+            {
+                if (source.Period.Start.HasValue)
+                    query["period.start"] = source.Period.Start.Value.ToString(DATETIMEFORMAT);
+
+                if (source.Period.End.HasValue)
+                    query["period.end"] = source.Period.End.Value.ToString(DATETIMEFORMAT);
+
+                if (source.Period.Inclusive)
+                    query["period.inclusive"] = source.Period.Inclusive.ToString().ToLowerInvariant();
+            }
+
+            if (source.Limit.HasValue && source.Limit.Value > 0)
+                query[nameof(source.Limit).ToLower()] = source.Limit.Value.ToString();
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
+        #region SALES - ContractInterruptionSearchParameters
+
+        public static string ToQueryString(this ContractInterruptionSearchParameters source, NameValueCollection? collection = null)
+        {
+            var query = collection ?? System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            if (source.ContractId.HasValue)
+                query[nameof(source.ContractId).ToLower()] = source.ContractId.Value.ToString();
+
+            if (source.ContextId.HasValue)
+                query[nameof(source.ContextId).ToLower()] = source.ContextId.Value.ToString();
+
+            if (source.Type.HasValue)
+                query[nameof(source.Type).ToLower()] = source.Type.Value.ToString();
+
+            if (source.Active.HasValue)
+                query[nameof(source.Active).ToLower()] = source.Active.Value.ToString().ToLowerInvariant();
+
+            if (source.Period != null)
+            {
+                if (source.Period.Start.HasValue)
+                    query["period.start"] = source.Period.Start.Value.ToString(DATETIMEFORMAT);
+
+                if (source.Period.End.HasValue)
+                    query["period.end"] = source.Period.End.Value.ToString(DATETIMEFORMAT);
+
+                if (source.Period.Inclusive)
+                    query["period.inclusive"] = source.Period.Inclusive.ToString().ToLowerInvariant();
+            }
+
+            if (source.Limit.HasValue && source.Limit.Value > 0)
+                query[nameof(source.Limit).ToLower()] = source.Limit.Value.ToString();
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
+        #region SALES - ContractAdjustmentSearchParameters
+
+        public static string ToQueryString(this ContractAdjustmentSearchParameters source, NameValueCollection? collection = null)
+        {
+            var query = collection ?? System.Web.HttpUtility.ParseQueryString(string.Empty);
+
+            if (source.ContractId.HasValue)
+                query[nameof(source.ContractId).ToLower()] = source.ContractId.Value.ToString();
+
+            if (source.ContextId.HasValue)
+                query[nameof(source.ContextId).ToLower()] = source.ContextId.Value.ToString();
+
+            if (source.PeriodId.HasValue)
+                query[nameof(source.PeriodId).ToLower()] = source.PeriodId.Value.ToString();
+
+            if (source.Type.HasValue)
+                query[nameof(source.Type).ToLower()] = source.Type.Value.ToString();
+
+            if (source.Limit.HasValue && source.Limit.Value > 0)
+                query[nameof(source.Limit).ToLower()] = source.Limit.Value.ToString();
 
             return query.ToString() ?? string.Empty;
         }
