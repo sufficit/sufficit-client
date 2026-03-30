@@ -36,6 +36,7 @@ namespace Sufficit.Client.Controllers
             EventsPanel = new TelephonyEventsPanelControllerSection(cb);
             IVR = new TelephonyIVRControllerSection(cb); 
             MusicOnHold = new TelephonyMusicOnHoldControllerSection(cb);
+            OutboundExperimental = new TelephonyOutboundExperimentalControllerSection(cb);
             Portability = new TelephonyPortabilityControllerSection(cb);
             VoiceMail = new TelephonyVoiceMailControllerSection(cb);
             WebRTC = new TelephonyWebRTCControllerSection(cb);
@@ -65,6 +66,7 @@ namespace Sufficit.Client.Controllers
         public TelephonyEventsPanelControllerSection EventsPanel { get; }
         public TelephonyIVRControllerSection IVR { get; }
         public TelephonyMusicOnHoldControllerSection MusicOnHold { get; }
+        public TelephonyOutboundExperimentalControllerSection OutboundExperimental { get; }
         public TelephonyPortabilityControllerSection Portability { get; }
         public TelephonyVoiceMailControllerSection VoiceMail { get; }
         public TelephonyWebRTCControllerSection WebRTC { get; }

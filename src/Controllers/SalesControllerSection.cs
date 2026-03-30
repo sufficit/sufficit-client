@@ -117,5 +117,32 @@ namespace Sufficit.Client.Controllers
             var message = new HttpRequestMessage(HttpMethod.Delete, uri);
             return Request(message, cancellationToken);
         }
+
+        [Authorize(Roles = Sufficit.Sales.SalesManagerRole.NormalizedName)]
+        public Task<ContractPeriod?> ClosePeriod(ContractPeriodOperationRequest request, CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}/contract/period/close", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(request, null, _json);
+            return Request<ContractPeriod>(message, cancellationToken);
+        }
+
+        [Authorize(Roles = Sufficit.Sales.SalesManagerRole.NormalizedName)]
+        public Task<ContractPeriod?> ReopenPeriod(ContractPeriodOperationRequest request, CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}/contract/period/reopen", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(request, null, _json);
+            return Request<ContractPeriod>(message, cancellationToken);
+        }
+
+        [Authorize(Roles = Sufficit.Sales.SalesManagerRole.NormalizedName)]
+        public Task<ContractPeriod?> ForceRecalculatePeriod(ContractPeriodOperationRequest request, CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}/contract/period/recalculate", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(request, null, _json);
+            return Request<ContractPeriod>(message, cancellationToken);
+        }
     }
 }
