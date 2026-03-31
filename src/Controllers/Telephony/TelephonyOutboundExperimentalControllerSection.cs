@@ -165,5 +165,17 @@ namespace Sufficit.Client.Controllers.Telephony
         /// </summary>
         public Task<CustomerTrunkProvisioningPreview?> ProvisioningPreview(Guid trunkId, CancellationToken cancellationToken = default)
             => Request<CustomerTrunkProvisioningPreview>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/provisioningpreview?trunkId={trunkId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
+        ///     Applies the generated realtime PJSIP objects for one customer trunk.
+        /// </summary>
+        public Task<CustomerTrunkProvisioningSyncResult?> ProvisioningSync(Guid trunkId, CancellationToken cancellationToken = default)
+            => Request<CustomerTrunkProvisioningSyncResult>(new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/provisioningsync?trunkId={trunkId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
+        ///     Removes namespaced realtime PJSIP objects for one customer trunk.
+        /// </summary>
+        public Task<CustomerTrunkProvisioningSyncResult?> ProvisioningDeprovision(Guid trunkId, CancellationToken cancellationToken = default)
+            => Request<CustomerTrunkProvisioningSyncResult>(new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/provisioningdeprovision?trunkId={trunkId}", UriKind.Relative)), cancellationToken);
     }
 }
