@@ -1,4 +1,5 @@
 using Sufficit.Net.Http;
+using Sufficit.Telephony;
 using Sufficit.Telephony.Outbound;
 using System;
 using System.Collections.Generic;
@@ -30,25 +31,25 @@ namespace Sufficit.Client.Controllers.Telephony
         /// <summary>
         ///     Lists customer-managed outbound trunks for one context.
         /// </summary>
-        public Task<IEnumerable<OutboundCustomerTrunk>> GetCustomerTrunks(Guid contextId, CancellationToken cancellationToken = default)
-            => RequestMany<OutboundCustomerTrunk>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/customertrunks?contextId={contextId}", UriKind.Relative)), cancellationToken);
+        public Task<IEnumerable<CustomerTrunk>> GetCustomerTrunks(Guid contextId, CancellationToken cancellationToken = default)
+            => RequestMany<CustomerTrunk>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/customertrunks?contextId={contextId}", UriKind.Relative)), cancellationToken);
 
         /// <summary>
         ///     Gets one customer-managed outbound trunk.
         /// </summary>
-        public Task<OutboundCustomerTrunk?> GetCustomerTrunk(Guid trunkId, CancellationToken cancellationToken = default)
-            => Request<OutboundCustomerTrunk>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/customertrunk?trunkId={trunkId}", UriKind.Relative)), cancellationToken);
+        public Task<CustomerTrunk?> GetCustomerTrunk(Guid trunkId, CancellationToken cancellationToken = default)
+            => Request<CustomerTrunk>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/customertrunk?trunkId={trunkId}", UriKind.Relative)), cancellationToken);
 
         /// <summary>
         ///     Creates or updates one customer-managed outbound trunk.
         /// </summary>
-        public Task<OutboundCustomerTrunk?> AddOrUpdateCustomerTrunk(OutboundCustomerTrunk item, CancellationToken cancellationToken = default)
+        public Task<CustomerTrunk?> AddOrUpdateCustomerTrunk(CustomerTrunk item, CancellationToken cancellationToken = default)
         {
             var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/customertrunk", UriKind.Relative))
             {
                 Content = JsonContent.Create(item, null, _json)
             };
-            return Request<OutboundCustomerTrunk>(message, cancellationToken);
+            return Request<CustomerTrunk>(message, cancellationToken);
         }
 
         /// <summary>
@@ -162,7 +163,7 @@ namespace Sufficit.Client.Controllers.Telephony
         /// <summary>
         ///     Generates a provisioning preview for one customer trunk.
         /// </summary>
-        public Task<OutboundCustomerTrunkProvisioningPreview?> ProvisioningPreview(Guid trunkId, CancellationToken cancellationToken = default)
-            => Request<OutboundCustomerTrunkProvisioningPreview>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/provisioningpreview?trunkId={trunkId}", UriKind.Relative)), cancellationToken);
+        public Task<CustomerTrunkProvisioningPreview?> ProvisioningPreview(Guid trunkId, CancellationToken cancellationToken = default)
+            => Request<CustomerTrunkProvisioningPreview>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/provisioningpreview?trunkId={trunkId}", UriKind.Relative)), cancellationToken);
     }
 }
