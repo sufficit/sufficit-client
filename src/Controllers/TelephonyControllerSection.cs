@@ -34,6 +34,7 @@ namespace Sufficit.Client.Controllers
             ChromeExtension = new TelephonyChromeExtensionControllerSection(cb);
             EndPoint = new TelephonyEndPointControllerSection(cb);
             EventsPanel = new TelephonyEventsPanelControllerSection(cb);
+            InterconnectionExperimental = new TelephonyInterconnectionExperimentalControllerSection(cb);
             IVR = new TelephonyIVRControllerSection(cb); 
             MusicOnHold = new TelephonyMusicOnHoldControllerSection(cb);
             OutboundExperimental = new TelephonyOutboundExperimentalControllerSection(cb);
@@ -64,6 +65,7 @@ namespace Sufficit.Client.Controllers
         public TelephonyDIDControllerSection DID { get; }
         public TelephonyEndPointControllerSection EndPoint { get; }
         public TelephonyEventsPanelControllerSection EventsPanel { get; }
+        public TelephonyInterconnectionExperimentalControllerSection InterconnectionExperimental { get; }
         public TelephonyIVRControllerSection IVR { get; }
         public TelephonyMusicOnHoldControllerSection MusicOnHold { get; }
         public TelephonyOutboundExperimentalControllerSection OutboundExperimental { get; }

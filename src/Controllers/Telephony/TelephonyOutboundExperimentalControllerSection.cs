@@ -65,6 +65,12 @@ namespace Sufficit.Client.Controllers.Telephony
             => RequestMany<OutboundServiceAssignment>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/serviceassignments?contextId={contextId}", UriKind.Relative)), cancellationToken);
 
         /// <summary>
+        ///     Imports a disabled snapshot of legacy outbound trunks into the experimental assignment catalog.
+        /// </summary>
+        public Task<OutboundLegacyImportResult?> ImportLegacyAssignments(Guid contextId, CancellationToken cancellationToken = default)
+            => Request<OutboundLegacyImportResult>(new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/importlegacyassignments?contextId={contextId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
         ///     Gets one outbound service assignment by id.
         /// </summary>
         public Task<OutboundServiceAssignment?> GetAssignment(Guid assignmentId, CancellationToken cancellationToken = default)

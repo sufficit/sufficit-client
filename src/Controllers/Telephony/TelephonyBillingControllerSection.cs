@@ -213,5 +213,50 @@ namespace Sufficit.Client.Controllers.Telephony
         }
 
         #endregion
+
+        #region TRANSFER METHODS
+
+        /// <summary>
+        ///     Transfers call balance from one client context to another.
+        /// </summary>
+        public Task<BalanceTransferResult?> CallCreditTransfer(BalanceTransferRequest request, CancellationToken cancellationToken = default)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, $"{Controller}/{Section}/Transfer")
+            {
+                Content = JsonContent.Create(request)
+            };
+            return Request<BalanceTransferResult>(message, cancellationToken);
+        }
+
+        /// <summary>
+        ///     Reverts a call balance transfer by restoring both balance records.
+        /// </summary>
+        public Task<BalanceTransferResult?> CallCreditTransferRevert(BalanceTransferResult transfer, CancellationToken cancellationToken = default)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Delete, $"{Controller}/{Section}/Transfer/{transfer.Id}")
+            {
+                Content = JsonContent.Create(transfer)
+            };
+            return Request<BalanceTransferResult>(message, cancellationToken);
+        }
+
+        /// <summary>
+        ///     Returns recent call balance transfer history.
+        ///     Filters by contextId (source) or userId; omit both to use the current user.
+        /// </summary>
+        public Task<IEnumerable<BalanceTransferResult>?> GetTransfers(
+            Guid? contextId = null, Guid? userId = null, int limit = 30,
+            CancellationToken cancellationToken = default)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            if (contextId.HasValue) query["contextId"] = contextId.Value.ToString();
+            if (userId.HasValue)    query["userId"]    = userId.Value.ToString();
+            query["limit"] = limit.ToString();
+            var uri     = new Uri($"{Controller}/{Section}/Transfers?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestMany<BalanceTransferResult>(message, cancellationToken);
+        }
+
+        #endregion
     }
 }
