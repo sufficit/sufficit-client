@@ -24,7 +24,10 @@ namespace Sufficit.Client.Controllers.Gateway
         {
             _logger = cb.Logger;
             _json = cb.Json;
+            Compatibility = new ReceitaNetCompatibilityControllerSection(cb);
         }
+
+        public ReceitaNetCompatibilityControllerSection Compatibility { get; }
 
         public Task<RNOptions?> GetById(Guid id, CancellationToken cancellationToken = default)
         {
@@ -55,6 +58,26 @@ namespace Sufficit.Client.Controllers.Gateway
             var uri = new Uri($"{Controller}{Prefix}/options", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(options, null, _json);
+            return Request(message, cancellationToken);
+        }
+
+        public Task<ReceitaNetCompatibilityDefaults?> GetCompatibilityDefaults(Guid id, CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("compatibility defaults by id: {id}", id);
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString();
+
+            var uri = new Uri($"{Controller}{Prefix}/compatibilitydefaults?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<ReceitaNetCompatibilityDefaults>(message, cancellationToken);
+        }
+
+        public Task Update(ReceitaNetCompatibilityDefaults defaults, CancellationToken cancellationToken = default)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/compatibilitydefaults", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(defaults, null, _json);
             return Request(message, cancellationToken);
         }
 

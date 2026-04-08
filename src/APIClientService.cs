@@ -5,6 +5,7 @@ using Sufficit.Client.Controllers.Finance;
 using Sufficit.Client.Controllers.Identity;
 using Sufficit.Client.Controllers.Notification;
 using Sufficit.Client.Controllers.Reports;
+using Sufficit.Client.Controllers.Resources;
 using Sufficit.Client.Controllers.Storage;
 using Sufficit.EndPoints.Configuration;
 using Sufficit.Identity;

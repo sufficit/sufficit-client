@@ -1,4 +1,5 @@
-﻿using Sufficit.Client.Controllers.Telephony;
+﻿using Sufficit.Client.Controllers.Resources;
+using Sufficit.Client.Controllers.Telephony;
 using Sufficit.Net.Http;
 using System;
 using System.Collections.Generic;
@@ -15,9 +16,11 @@ namespace Sufficit.Client.Controllers
 
         public ResourcesControllerSection (IAuthenticatedControllerBase cb) : base(cb)
         {
+            Fail2Ban = new Fail2BanControllerSection(cb);
             TTS = new TTSControllerSection(cb);
         }
 
+        public Fail2BanControllerSection Fail2Ban { get; }
         public TTSControllerSection TTS { get; }
 
         public Task<byte[]?> HTMLToPDF(string html, CancellationToken cancellationToken = default)

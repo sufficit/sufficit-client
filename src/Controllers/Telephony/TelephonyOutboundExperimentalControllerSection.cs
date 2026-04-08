@@ -65,10 +65,16 @@ namespace Sufficit.Client.Controllers.Telephony
             => RequestMany<OutboundServiceAssignment>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/serviceassignments?contextId={contextId}", UriKind.Relative)), cancellationToken);
 
         /// <summary>
-        ///     Imports a disabled snapshot of legacy outbound trunks into the experimental assignment catalog.
+        ///     Imports a disabled snapshot of the legacy outbound catalog into the experimental assignment and route-rule tables.
         /// </summary>
         public Task<OutboundLegacyImportResult?> ImportLegacyAssignments(Guid contextId, CancellationToken cancellationToken = default)
             => Request<OutboundLegacyImportResult>(new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/importlegacyassignments?contextId={contextId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
+        ///     Lists imported outbound route rules for one assignment.
+        /// </summary>
+        public Task<IEnumerable<OutboundRouteRule>> GetRouteRules(Guid assignmentId, CancellationToken cancellationToken = default)
+            => RequestMany<OutboundRouteRule>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/routerules?assignmentId={assignmentId}", UriKind.Relative)), cancellationToken);
 
         /// <summary>
         ///     Gets one outbound service assignment by id.
@@ -171,6 +177,12 @@ namespace Sufficit.Client.Controllers.Telephony
         /// </summary>
         public Task<CustomerTrunkProvisioningPreview?> ProvisioningPreview(Guid trunkId, CancellationToken cancellationToken = default)
             => Request<CustomerTrunkProvisioningPreview>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/provisioningpreview?trunkId={trunkId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
+        ///     Resolves the live operational state for one customer trunk.
+        /// </summary>
+        public Task<CustomerTrunkOperationalStatus?> OperationalStatus(Guid trunkId, CancellationToken cancellationToken = default)
+            => Request<CustomerTrunkOperationalStatus>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/operationalstatus?trunkId={trunkId}", UriKind.Relative)), cancellationToken);
 
         /// <summary>
         ///     Applies the generated realtime PJSIP objects for one customer trunk.

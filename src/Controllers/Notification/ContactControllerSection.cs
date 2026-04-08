@@ -55,7 +55,7 @@ namespace Sufficit.Client.Controllers.Notification
         [Authorize]
         public Task<Contact?> GetContact(Guid id, CancellationToken cancellationToken = default)
         {
-            var uri = new Uri($"{Controller}{Prefix}/{id}", UriKind.Relative);
+            var uri = new Uri($"{Controller}{Prefix}?id={id}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return Request<Contact>(message, cancellationToken);
         }

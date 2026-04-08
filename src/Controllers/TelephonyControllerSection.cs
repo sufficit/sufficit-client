@@ -39,6 +39,7 @@ namespace Sufficit.Client.Controllers
             MusicOnHold = new TelephonyMusicOnHoldControllerSection(cb);
             OutboundExperimental = new TelephonyOutboundExperimentalControllerSection(cb);
             Portability = new TelephonyPortabilityControllerSection(cb);
+            Routes = new TelephonyRoutesControllerSection(cb);
             VoiceMail = new TelephonyVoiceMailControllerSection(cb);
             WebRTC = new TelephonyWebRTCControllerSection(cb);
 
@@ -70,6 +71,7 @@ namespace Sufficit.Client.Controllers
         public TelephonyMusicOnHoldControllerSection MusicOnHold { get; }
         public TelephonyOutboundExperimentalControllerSection OutboundExperimental { get; }
         public TelephonyPortabilityControllerSection Portability { get; }
+        public TelephonyRoutesControllerSection Routes { get; }
         public TelephonyVoiceMailControllerSection VoiceMail { get; }
         public TelephonyWebRTCControllerSection WebRTC { get; }
 
