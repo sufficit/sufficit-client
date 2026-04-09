@@ -1,4 +1,4 @@
-using Sufficit.Net.Http;
+﻿using Sufficit.Net.Http;
 using Sufficit.Telephony;
 using Sufficit.Telephony.Outbound;
 using System;
@@ -12,51 +12,18 @@ using System.Threading.Tasks;
 namespace Sufficit.Client.Controllers.Telephony
 {
     /// <summary>
-    ///     Authenticated client wrapper for the outbound experimental telephony endpoints.
+    ///     Authenticated client wrapper for the outbound telephony endpoints.
     /// </summary>
-    /// <remarks>
-    ///     TODO: migrate callers to a canonical telephony service-management controller once the projection model is finalized.
-    /// </remarks>
-    public sealed class TelephonyOutboundExperimentalControllerSection : AuthenticatedControllerSection
+    public sealed class TelephonyOutboundControllerSection : AuthenticatedControllerSection
     {
         private const string Controller = TelephonyControllerSection.Controller;
-        private const string Prefix = "/outboundexperimental";
+        private const string Prefix = "/outbound";
         private readonly JsonSerializerOptions _json;
 
-        public TelephonyOutboundExperimentalControllerSection(IAuthenticatedControllerBase cb) : base(cb)
+        public TelephonyOutboundControllerSection(IAuthenticatedControllerBase cb) : base(cb)
         {
             _json = cb.Json;
         }
-
-        /// <summary>
-        ///     Lists customer-managed outbound trunks for one context.
-        /// </summary>
-        public Task<IEnumerable<CustomerTrunk>> GetCustomerTrunks(Guid contextId, CancellationToken cancellationToken = default)
-            => RequestMany<CustomerTrunk>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/customertrunks?contextId={contextId}", UriKind.Relative)), cancellationToken);
-
-        /// <summary>
-        ///     Gets one customer-managed outbound trunk.
-        /// </summary>
-        public Task<CustomerTrunk?> GetCustomerTrunk(Guid trunkId, CancellationToken cancellationToken = default)
-            => Request<CustomerTrunk>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/customertrunk?trunkId={trunkId}", UriKind.Relative)), cancellationToken);
-
-        /// <summary>
-        ///     Creates or updates one customer-managed outbound trunk.
-        /// </summary>
-        public Task<CustomerTrunk?> AddOrUpdateCustomerTrunk(CustomerTrunk item, CancellationToken cancellationToken = default)
-        {
-            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/customertrunk", UriKind.Relative))
-            {
-                Content = JsonContent.Create(item, null, _json)
-            };
-            return Request<CustomerTrunk>(message, cancellationToken);
-        }
-
-        /// <summary>
-        ///     Removes one customer-managed outbound trunk.
-        /// </summary>
-        public Task RemoveCustomerTrunk(Guid trunkId, CancellationToken cancellationToken = default)
-            => Request(new HttpRequestMessage(HttpMethod.Delete, new Uri($"{Controller}{Prefix}/customertrunk?trunkId={trunkId}", UriKind.Relative)), cancellationToken);
 
         /// <summary>
         ///     Lists outbound service assignments for one context.
@@ -65,7 +32,7 @@ namespace Sufficit.Client.Controllers.Telephony
             => RequestMany<OutboundServiceAssignment>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/serviceassignments?contextId={contextId}", UriKind.Relative)), cancellationToken);
 
         /// <summary>
-        ///     Imports a disabled snapshot of the legacy outbound catalog into the experimental assignment and route-rule tables.
+        ///     Imports a disabled snapshot of the legacy outbound catalog into the assignment and route-rule tables.
         /// </summary>
         public Task<OutboundLegacyImportResult?> ImportLegacyAssignments(Guid contextId, CancellationToken cancellationToken = default)
             => Request<OutboundLegacyImportResult>(new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/importlegacyassignments?contextId={contextId}", UriKind.Relative)), cancellationToken);
@@ -75,6 +42,18 @@ namespace Sufficit.Client.Controllers.Telephony
         /// </summary>
         public Task<IEnumerable<OutboundRouteRule>> GetRouteRules(Guid assignmentId, CancellationToken cancellationToken = default)
             => RequestMany<OutboundRouteRule>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/routerules?assignmentId={assignmentId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
+        ///     Creates or updates one imported outbound route rule row.
+        /// </summary>
+        public Task<OutboundRouteRule?> AddOrUpdateRouteRule(OutboundRouteRule item, CancellationToken cancellationToken = default)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/routerule", UriKind.Relative))
+            {
+                Content = JsonContent.Create(item, null, _json)
+            };
+            return Request<OutboundRouteRule>(message, cancellationToken);
+        }
 
         /// <summary>
         ///     Gets one outbound service assignment by id.
@@ -172,28 +151,6 @@ namespace Sufficit.Client.Controllers.Telephony
             return Request<OutboundServiceRoutePreview>(message, cancellationToken);
         }
 
-        /// <summary>
-        ///     Generates a provisioning preview for one customer trunk.
-        /// </summary>
-        public Task<CustomerTrunkProvisioningPreview?> ProvisioningPreview(Guid trunkId, CancellationToken cancellationToken = default)
-            => Request<CustomerTrunkProvisioningPreview>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/provisioningpreview?trunkId={trunkId}", UriKind.Relative)), cancellationToken);
-
-        /// <summary>
-        ///     Resolves the live operational state for one customer trunk.
-        /// </summary>
-        public Task<CustomerTrunkOperationalStatus?> OperationalStatus(Guid trunkId, CancellationToken cancellationToken = default)
-            => Request<CustomerTrunkOperationalStatus>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/operationalstatus?trunkId={trunkId}", UriKind.Relative)), cancellationToken);
-
-        /// <summary>
-        ///     Applies the generated realtime PJSIP objects for one customer trunk.
-        /// </summary>
-        public Task<CustomerTrunkProvisioningSyncResult?> ProvisioningSync(Guid trunkId, CancellationToken cancellationToken = default)
-            => Request<CustomerTrunkProvisioningSyncResult>(new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/provisioningsync?trunkId={trunkId}", UriKind.Relative)), cancellationToken);
-
-        /// <summary>
-        ///     Removes namespaced realtime PJSIP objects for one customer trunk.
-        /// </summary>
-        public Task<CustomerTrunkProvisioningSyncResult?> ProvisioningDeprovision(Guid trunkId, CancellationToken cancellationToken = default)
-            => Request<CustomerTrunkProvisioningSyncResult>(new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/provisioningdeprovision?trunkId={trunkId}", UriKind.Relative)), cancellationToken);
     }
 }
+

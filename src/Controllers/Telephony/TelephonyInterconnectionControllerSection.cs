@@ -1,5 +1,6 @@
 using Sufficit.Net.Http;
 using Sufficit.Telephony;
+using Sufficit.Telephony.InterConnection;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -11,28 +12,32 @@ using System.Threading.Tasks;
 namespace Sufficit.Client.Controllers.Telephony
 {
     /// <summary>
-    ///     Authenticated client wrapper for the interconnection experimental endpoints.
+    ///     Authenticated client wrapper for the canonical interconnection endpoints.
     /// </summary>
-    public sealed class TelephonyInterconnectionExperimentalControllerSection : AuthenticatedControllerSection
+    public sealed class TelephonyInterconnectionControllerSection : AuthenticatedControllerSection
     {
         private const string Controller = TelephonyControllerSection.Controller;
-        private const string Prefix = "/interconnectionexperimental";
+        private const string Prefix = "/interconnection";
         private readonly JsonSerializerOptions _json;
 
-        public TelephonyInterconnectionExperimentalControllerSection(IAuthenticatedControllerBase cb) : base(cb)
+        public TelephonyInterconnectionControllerSection(IAuthenticatedControllerBase cb) : base(cb)
         {
             _json = cb.Json;
         }
 
-        public Task<IEnumerable<Interconnection>> GetInterconnections(Guid contextId, CancellationToken cancellationToken = default)
-            => RequestMany<Interconnection>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/interconnections?contextId={contextId}", UriKind.Relative)), cancellationToken);
+        public Task<IEnumerable<Interconnection>> GetInterconnections(Guid? contextId, CancellationToken cancellationToken = default)
+            => RequestMany<Interconnection>(new HttpRequestMessage(HttpMethod.Get, new Uri(
+                contextId.HasValue && contextId.Value != Guid.Empty
+                    ? $"{Controller}{Prefix}?contextId={contextId.Value}"
+                    : $"{Controller}{Prefix}",
+                UriKind.Relative)), cancellationToken);
 
         public Task<Interconnection?> GetInterconnection(Guid interconnectionId, CancellationToken cancellationToken = default)
-            => Request<Interconnection>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/interconnection?interconnectionId={interconnectionId}", UriKind.Relative)), cancellationToken);
+            => Request<Interconnection>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/single?interconnectionId={interconnectionId}", UriKind.Relative)), cancellationToken);
 
         public Task<Interconnection?> AddOrUpdateInterconnection(Interconnection item, CancellationToken cancellationToken = default)
         {
-            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/interconnection", UriKind.Relative))
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/single", UriKind.Relative))
             {
                 Content = JsonContent.Create(item, null, _json)
             };
@@ -40,7 +45,7 @@ namespace Sufficit.Client.Controllers.Telephony
         }
 
         public Task RemoveInterconnection(Guid interconnectionId, CancellationToken cancellationToken = default)
-            => Request(new HttpRequestMessage(HttpMethod.Delete, new Uri($"{Controller}{Prefix}/interconnection?interconnectionId={interconnectionId}", UriKind.Relative)), cancellationToken);
+            => Request(new HttpRequestMessage(HttpMethod.Delete, new Uri($"{Controller}{Prefix}/single?interconnectionId={interconnectionId}", UriKind.Relative)), cancellationToken);
 
         public Task<InterconnectionProvisioningPreview?> ProvisioningPreview(Guid interconnectionId, CancellationToken cancellationToken = default)
             => Request<InterconnectionProvisioningPreview>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/provisioningpreview?interconnectionId={interconnectionId}", UriKind.Relative)), cancellationToken);

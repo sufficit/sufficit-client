@@ -1,5 +1,6 @@
 using Sufficit.Net.Http;
 using Sufficit.Telephony;
+using Sufficit.Telephony.InterConnection;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;

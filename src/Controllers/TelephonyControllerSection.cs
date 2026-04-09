@@ -34,12 +34,13 @@ namespace Sufficit.Client.Controllers
             ChromeExtension = new TelephonyChromeExtensionControllerSection(cb);
             EndPoint = new TelephonyEndPointControllerSection(cb);
             EventsPanel = new TelephonyEventsPanelControllerSection(cb);
-            InterconnectionExperimental = new TelephonyInterconnectionExperimentalControllerSection(cb);
+            Interconnection = new TelephonyInterconnectionControllerSection(cb);
             IVR = new TelephonyIVRControllerSection(cb); 
             MusicOnHold = new TelephonyMusicOnHoldControllerSection(cb);
-            OutboundExperimental = new TelephonyOutboundExperimentalControllerSection(cb);
+            Outbound = new TelephonyOutboundControllerSection(cb);
             Portability = new TelephonyPortabilityControllerSection(cb);
             Routes = new TelephonyRoutesControllerSection(cb);
+            Trunk = new TelephonyTrunkControllerSection(cb);
             VoiceMail = new TelephonyVoiceMailControllerSection(cb);
             WebRTC = new TelephonyWebRTCControllerSection(cb);
 
@@ -66,12 +67,13 @@ namespace Sufficit.Client.Controllers
         public TelephonyDIDControllerSection DID { get; }
         public TelephonyEndPointControllerSection EndPoint { get; }
         public TelephonyEventsPanelControllerSection EventsPanel { get; }
-        public TelephonyInterconnectionExperimentalControllerSection InterconnectionExperimental { get; }
+        public TelephonyInterconnectionControllerSection Interconnection { get; }
         public TelephonyIVRControllerSection IVR { get; }
         public TelephonyMusicOnHoldControllerSection MusicOnHold { get; }
-        public TelephonyOutboundExperimentalControllerSection OutboundExperimental { get; }
+        public TelephonyOutboundControllerSection Outbound { get; }
         public TelephonyPortabilityControllerSection Portability { get; }
         public TelephonyRoutesControllerSection Routes { get; }
+        public TelephonyTrunkControllerSection Trunk { get; }
         public TelephonyVoiceMailControllerSection VoiceMail { get; }
         public TelephonyWebRTCControllerSection WebRTC { get; }
 
