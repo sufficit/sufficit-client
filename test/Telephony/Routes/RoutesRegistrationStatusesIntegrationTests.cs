@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Sufficit.EndPoints.Configuration;
 using Sufficit.Telephony;
+using Sufficit.Telephony.InterConnection;
 using System;
 using System.Linq;
 using System.Threading;

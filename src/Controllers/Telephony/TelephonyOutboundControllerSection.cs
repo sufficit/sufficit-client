@@ -28,8 +28,104 @@ namespace Sufficit.Client.Controllers.Telephony
         /// <summary>
         ///     Lists outbound service assignments for one context.
         /// </summary>
-        public Task<IEnumerable<OutboundServiceAssignment>> GetAssignments(Guid contextId, CancellationToken cancellationToken = default)
-            => RequestMany<OutboundServiceAssignment>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/serviceassignments?contextId={contextId}", UriKind.Relative)), cancellationToken);
+        public Task<IEnumerable<OutboundServiceAssignment>> GetAssignments(Guid? contextId = null, CancellationToken cancellationToken = default)
+        {
+            var uri = contextId.HasValue && contextId.Value != Guid.Empty
+                ? $"{Controller}{Prefix}/serviceassignments?contextId={contextId.Value}"
+                : $"{Controller}{Prefix}/serviceassignments";
+
+            return RequestMany<OutboundServiceAssignment>(new HttpRequestMessage(HttpMethod.Get, new Uri(uri, UriKind.Relative)), cancellationToken);
+        }
+
+        /// <summary>
+        ///     Lists the canonical Sufficit-owned outbound service catalog.
+        /// </summary>
+        public Task<IEnumerable<OutboundCatalogService>> GetCatalogServices(CancellationToken cancellationToken = default)
+            => RequestMany<OutboundCatalogService>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/catalogservices", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
+        ///     Gets one canonical Sufficit-owned outbound service catalog entry.
+        /// </summary>
+        public Task<OutboundCatalogService?> GetCatalogService(Guid catalogServiceId, CancellationToken cancellationToken = default)
+            => Request<OutboundCatalogService>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/catalogservice?catalogServiceId={catalogServiceId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
+        ///     Creates or updates one canonical Sufficit-owned outbound service catalog entry.
+        /// </summary>
+        public Task<OutboundCatalogService?> AddOrUpdateCatalogService(OutboundCatalogService item, CancellationToken cancellationToken = default)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/catalogservice", UriKind.Relative))
+            {
+                Content = JsonContent.Create(item, null, _json)
+            };
+            return Request<OutboundCatalogService>(message, cancellationToken);
+        }
+
+        /// <summary>
+        ///     Removes one canonical Sufficit-owned outbound service catalog entry.
+        /// </summary>
+        public Task RemoveCatalogService(Guid catalogServiceId, CancellationToken cancellationToken = default)
+            => Request(new HttpRequestMessage(HttpMethod.Delete, new Uri($"{Controller}{Prefix}/catalogservice?catalogServiceId={catalogServiceId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
+        ///     Lists telephony-side projections of the outbound services currently owned by one customer.
+        /// </summary>
+        public Task<IEnumerable<OutboundCustomerService>> GetCustomerServices(Guid contextId, CancellationToken cancellationToken = default)
+            => RequestMany<OutboundCustomerService>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/customerservices?contextId={contextId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
+        ///     Gets one telephony-side customer service projection row.
+        /// </summary>
+        public Task<OutboundCustomerService?> GetCustomerService(Guid customerServiceId, CancellationToken cancellationToken = default)
+            => Request<OutboundCustomerService>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/customerservice?customerServiceId={customerServiceId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
+        ///     Creates or updates one telephony-side customer service projection row.
+        /// </summary>
+        public Task<OutboundCustomerService?> AddOrUpdateCustomerService(OutboundCustomerService item, CancellationToken cancellationToken = default)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/customerservice", UriKind.Relative))
+            {
+                Content = JsonContent.Create(item, null, _json)
+            };
+            return Request<OutboundCustomerService>(message, cancellationToken);
+        }
+
+        /// <summary>
+        ///     Removes one telephony-side customer service projection row.
+        /// </summary>
+        public Task RemoveCustomerService(Guid customerServiceId, CancellationToken cancellationToken = default)
+            => Request(new HttpRequestMessage(HttpMethod.Delete, new Uri($"{Controller}{Prefix}/customerservice?customerServiceId={customerServiceId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
+        ///     Lists customer-facing ordered outbound route sources for one context.
+        /// </summary>
+        public Task<IEnumerable<OutboundRouteSource>> GetRouteSources(Guid contextId, CancellationToken cancellationToken = default)
+            => RequestMany<OutboundRouteSource>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/routesources?contextId={contextId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
+        ///     Gets one customer-facing ordered outbound route source row.
+        /// </summary>
+        public Task<OutboundRouteSource?> GetRouteSource(Guid routeSourceId, CancellationToken cancellationToken = default)
+            => Request<OutboundRouteSource>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/routesource?routeSourceId={routeSourceId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
+        ///     Creates or updates one customer-facing ordered outbound route source row.
+        /// </summary>
+        public Task<OutboundRouteSource?> AddOrUpdateRouteSource(OutboundRouteSource item, CancellationToken cancellationToken = default)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/routesource", UriKind.Relative))
+            {
+                Content = JsonContent.Create(item, null, _json)
+            };
+            return Request<OutboundRouteSource>(message, cancellationToken);
+        }
+
+        /// <summary>
+        ///     Removes one customer-facing ordered outbound route source row.
+        /// </summary>
+        public Task RemoveRouteSource(Guid routeSourceId, CancellationToken cancellationToken = default)
+            => Request(new HttpRequestMessage(HttpMethod.Delete, new Uri($"{Controller}{Prefix}/routesource?routeSourceId={routeSourceId}", UriKind.Relative)), cancellationToken);
 
         /// <summary>
         ///     Imports a disabled snapshot of the legacy outbound catalog into the assignment and route-rule tables.
@@ -54,6 +150,12 @@ namespace Sufficit.Client.Controllers.Telephony
             };
             return Request<OutboundRouteRule>(message, cancellationToken);
         }
+
+        /// <summary>
+        ///     Removes one outbound route rule.
+        /// </summary>
+        public Task RemoveRouteRule(Guid routeRuleId, CancellationToken cancellationToken = default)
+            => Request(new HttpRequestMessage(HttpMethod.Delete, new Uri($"{Controller}{Prefix}/routerule?routeRuleId={routeRuleId}", UriKind.Relative)), cancellationToken);
 
         /// <summary>
         ///     Gets one outbound service assignment by id.

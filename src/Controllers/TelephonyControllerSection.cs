@@ -27,6 +27,7 @@ namespace Sufficit.Client.Controllers
             Audio = new TelephonyAudioControllerSection(cb);
             Billing = new TelephonyBillingControllerSection(cb);
             Call = new TelephonyCallControllerSection(cb);
+            CallDispatch = new TelephonyCallDispatchControllerSection(cb);
             Carrier = new TelephonyCarrierControllerSection(cb);
             CallGroup = new TelephonyCallGroupControllerSection(cb);
             Destination = new TelephonyDestinationControllerSection(cb);
@@ -60,6 +61,7 @@ namespace Sufficit.Client.Controllers
         public TelephonyAudioControllerSection Audio { get; }
         public TelephonyBillingControllerSection Billing { get; }
         public TelephonyCallControllerSection Call { get; }
+        public TelephonyCallDispatchControllerSection CallDispatch { get; }
         public TelephonyCarrierControllerSection Carrier { get; }
         public TelephonyCallGroupControllerSection CallGroup { get; }
         public TelephonyChromeExtensionControllerSection ChromeExtension { get; }
