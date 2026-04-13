@@ -45,6 +45,14 @@ namespace Sufficit.Client.Controllers.Gateway
             return Request<List<FluxTelecomPortalUserEntry>>(message, cancellationToken);
         }
 
+        public Task<List<FluxTelecomReplyEntry>?> QueryReplies(FluxTelecomReplySearchRequest request, CancellationToken cancellationToken = default)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/replies", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(request, null, _json);
+            return Request<List<FluxTelecomReplyEntry>>(message, cancellationToken);
+        }
+
         public Task<FluxTelecomPortalUserAuthorizedIpUpdateResult?> EnsureAuthorizedIps(FluxTelecomPortalUserAuthorizedIpUpdateRequest request, CancellationToken cancellationToken = default)
         {
             var uri = new Uri($"{Controller}{Prefix}/authorizedips", UriKind.Relative);

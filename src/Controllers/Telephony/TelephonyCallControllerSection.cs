@@ -74,7 +74,7 @@ namespace Sufficit.Client.Controllers.Telephony
         /// Get call records by linked ID
         /// </summary>
         [Authorize]
-        public async Task<IEnumerable<AsteriskCallDetailsRecord>?> GetRecords(Guid contextid, string linkedid, CancellationToken cancellationToken)
+        public async Task<IEnumerable<AsteriskCallDetailsRecord>> GetRecords(Guid contextid, string linkedid, CancellationToken cancellationToken)
         {
             _logger.LogTrace("getting call records: {contextid}, {linkedid}", contextid, linkedid);
 
@@ -84,7 +84,7 @@ namespace Sufficit.Client.Controllers.Telephony
 
             var uri = new Uri($"{Controller}/{Section}/records?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
-            return await RequestMany<AsteriskCallDetailsRecord>(message, cancellationToken);
+            return await RequestMany<AsteriskCallDetailsRecord>(message, cancellationToken) ?? Array.Empty<AsteriskCallDetailsRecord>();
         }
 
         #endregion

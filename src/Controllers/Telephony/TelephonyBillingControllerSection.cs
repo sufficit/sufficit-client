@@ -244,7 +244,7 @@ namespace Sufficit.Client.Controllers.Telephony
         ///     Returns recent call balance transfer history.
         ///     Filters by contextId (source) or userId; omit both to use the current user.
         /// </summary>
-        public Task<IEnumerable<BalanceTransferResult>?> GetTransfers(
+        public Task<IEnumerable<BalanceTransferResult>> GetTransfers(
             Guid? contextId = null, Guid? userId = null, int limit = 30,
             CancellationToken cancellationToken = default)
         {
