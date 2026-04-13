@@ -137,6 +137,9 @@
 		<ProjectReference Include="..\..\sufficit-base\src\Sufficit.Base.csproj" Condition="Exists('..\\..\\sufficit-base\\src\\Sufficit.Base.csproj')" />
 		<PackageReference Include="Sufficit.Base" Version="1.*" Condition="!Exists('..\\..\\sufficit-base\\src\\Sufficit.Base.csproj') " />
 
+		<ProjectReference Include="..\..\sufficit-gateway-fluxtelecom-sms\src\Sufficit.Gateway.FluxTelecom.SMS.csproj" Condition="Exists('..\\..\\sufficit-gateway-fluxtelecom-sms\\src\\Sufficit.Gateway.FluxTelecom.SMS.csproj')" />
+		<PackageReference Include="Sufficit.Gateway.FluxTelecom.SMS" Version="1.*" Condition="!Exists('..\\..\\sufficit-gateway-fluxtelecom-sms\\src\\Sufficit.Gateway.FluxTelecom.SMS.csproj') " />
+
 		<ProjectReference Include="..\..\sufficit-identity-core\src\Sufficit.Identity.Core.csproj" Condition="Exists('..\\..\\sufficit-identity-core\\src\\Sufficit.Identity.Core.csproj')" />
 		<PackageReference Include="Sufficit.Identity.Core" Version="1.*" Condition="!Exists('..\\..\\sufficit-identity-core\\src\\Sufficit.Identity.Core.csproj') " />
 

@@ -121,6 +121,15 @@ namespace Sufficit.Client.Controllers.Telephony
             return Request<DirectInwardDialing>(message, cancellationToken)!;
         }
 
+        public Task<IEnumerable<DIDCoverageByStateItem>> CoverageByStates(CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("coverage by states");
+
+            var uri = new Uri($"{Controller}{Prefix}/coverage/states", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestMany<DIDCoverageByStateItem>(message, cancellationToken);
+        }
+
         /// <summary>
         /// Update Owner information
         /// </summary>
@@ -206,5 +215,11 @@ namespace Sufficit.Client.Controllers.Telephony
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return RequestStruct<DateTime>(message, cancellationToken);
         }
+
+        protected override IReadOnlyDictionary<string, string[]>? AnonymousPathsByMethod { get; } =
+            new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
+            {
+                [$"{Controller}{Prefix}/coverage/states"] = new[] { HttpMethod.Get.Method }
+            };
     }
 }

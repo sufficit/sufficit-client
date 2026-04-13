@@ -3,6 +3,7 @@ using Sufficit.Client.Controllers.Telephony;
 using Sufficit.Contacts;
 using Sufficit.Net.Http;
 using Sufficit.Telephony;
+using Sufficit.Telephony.Dashboard;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -55,6 +56,13 @@ namespace Sufficit.Client.Controllers
             var uri = new Uri(requestEndpoint, UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return RequestStruct<Guid>(message, CancellationToken.None); 
+        }
+
+        public Task<TelephonyHomeSummary> HomeSummary(CancellationToken cancellationToken = default)
+        {
+            var uri = new Uri($"{Controller}/dashboard/summary", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<TelephonyHomeSummary>(message, cancellationToken)!;
         }
 
         public TelephonyAsteriskControllerSection Asterisk { get; }
