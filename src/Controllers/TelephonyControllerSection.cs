@@ -122,6 +122,7 @@ namespace Sufficit.Client.Controllers
 
         protected override string[]? AnonymousPaths { get; } = {
             $"{Controller}/webcallback",
+            $"{Controller}/dashboard/summary",
         };
     }
 }
