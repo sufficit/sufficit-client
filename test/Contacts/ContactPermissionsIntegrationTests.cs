@@ -309,7 +309,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
         {
             // Arrange
             var groupId = Guid.Parse(_configuration["Sufficit:TestData:Groups:KnownGroupId"] 
-                ?? "d21cfb04-9d37-473b-837c-67591a26feed"); // Sufficit group from investigation
+                ?? Sufficit.OSInformation.SufficitIdString); // Sufficit group from investigation
             
             _output.WriteLine($"Testing with known group {groupId}");
             
