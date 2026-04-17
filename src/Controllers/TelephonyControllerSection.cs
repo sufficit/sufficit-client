@@ -65,6 +65,31 @@ namespace Sufficit.Client.Controllers
             return Request<TelephonyHomeSummary>(message, cancellationToken)!;
         }
 
+        public async Task<Organization?> GetOrganization(Guid contextId, CancellationToken cancellationToken = default)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["contextid"] = contextId.ToString();
+
+            var uri = new Uri($"{Controller}/organization?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            var json = await RequestString(message, cancellationToken);
+            return !string.IsNullOrWhiteSpace(json)
+                ? Sufficit.Json.JsonSerializer.Deserialize<Organization>(json)
+                : null;
+        }
+
+        public Task<IEnumerable<PurgeReportItem>> PurgeOrganization(Guid contextId, bool testing = true, CancellationToken cancellationToken = default)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["contextid"] = contextId.ToString();
+            query["testing"] = testing.ToString();
+
+            var uri = new Uri($"{Controller}/organization?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Delete, uri);
+            return RequestMany<PurgeReportItem>(message, cancellationToken);
+        }
+
         public TelephonyAsteriskControllerSection Asterisk { get; }
         public TelephonyAudioControllerSection Audio { get; }
         public TelephonyBillingControllerSection Billing { get; }

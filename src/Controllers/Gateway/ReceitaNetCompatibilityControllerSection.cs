@@ -70,5 +70,27 @@ namespace Sufficit.Client.Controllers.Gateway
 
             return Request<ReceitaNetTokenValidationResult>(message, cancellationToken);
         }
+
+        /// <summary>
+        /// Retrieves persisted compatibility defaults for the selected gateway.
+        /// </summary>
+        public Task<ReceitaNetCompatibilityDefaults?> GetDefaults(ReceitaNetCompatibilityTestRequest request, CancellationToken cancellationToken = default)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/defaults", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri)
+            {
+                Content = JsonContent.Create(request, null, _json)
+            };
+
+            return Request<ReceitaNetCompatibilityDefaults>(message, cancellationToken);
+        }
+
+        protected override string[]? AnonymousPaths { get; } =
+        {
+            $"{Controller}{Prefix}/test",
+            $"{Controller}{Prefix}/testall",
+            $"{Controller}{Prefix}/validatetoken",
+            $"{Controller}{Prefix}/defaults",
+        };
     }
 }
