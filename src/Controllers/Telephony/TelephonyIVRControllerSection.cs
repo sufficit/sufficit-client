@@ -3,6 +3,7 @@ using Sufficit.EndPoints;
 using Sufficit.Net.Http;
 using Sufficit.Telephony;
 using Sufficit.Telephony.Asterisk;
+using Sufficit.Telephony.IVR;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -30,14 +31,14 @@ namespace Sufficit.Client.Controllers.Telephony
         /// <summary>
         /// Get single IVR by search parameters
         /// </summary>
-        public Task<IVR?> Find(IVRSearchParameters parameters, CancellationToken cancellationToken = default)
+        public Task<IVRMenu?> Find(IVRSearchParameters parameters, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("find by parameters: {?}", parameters);
 
             var uri = new Uri($"{Controller}{Prefix}/Find", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(parameters, null, _json);
-            return Request<IVR>(message, cancellationToken);
+            return Request<IVRMenu>(message, cancellationToken);
         }
 
         /// <summary>
@@ -58,28 +59,28 @@ namespace Sufficit.Client.Controllers.Telephony
         /// <summary>
         /// Add or Update an IVR
         /// </summary>
-        public async Task<IVR?> AddOrUpdate(IVR ivr, CancellationToken cancellationToken = default)
+        public async Task<IVRMenu?> AddOrUpdate(IVRMenu ivr, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("add or update ivr: {id}", ivr.Id);
 
             var uri = new Uri($"{Controller}{Prefix}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(ivr, null, _json);
-            var response = await Request<EndPointResponse<IVR>>(message, cancellationToken);
+            var response = await Request<EndPointResponse<IVRMenu>>(message, cancellationToken);
             return response?.Success ?? false ? response.Data : null;
         }
 
         /// <summary>
         /// Search IVRs with parameters
         /// </summary>
-        public Task<IEnumerable<IVR>> Search(IVRSearchParameters parameters, CancellationToken cancellationToken = default)
+        public Task<IEnumerable<IVRMenu>> Search(IVRSearchParameters parameters, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("search by parameters: {?}", parameters);
 
             var uri = new Uri($"{Controller}{Prefix}/Search", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(parameters, null, _json);
-            return RequestMany<IVR>(message, cancellationToken);
+            return RequestMany<IVRMenu>(message, cancellationToken);
         }
 
         /// <summary>
