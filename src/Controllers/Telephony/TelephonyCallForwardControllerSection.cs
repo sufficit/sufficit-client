@@ -67,5 +67,20 @@ namespace Sufficit.Client.Controllers.Telephony
             var message = new HttpRequestMessage(HttpMethod.Delete, uri);
             return Request(message, cancellationToken);
         }
+
+        /// <summary>
+        /// Returns the available outbound CallerID options (DID numbers) for a context.
+        /// </summary>
+        public Task<IEnumerable<CallForwardCallerIdOption>> GetCallerIdOptions(Guid contextId, CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("get callerid options for context: {contextId}", contextId);
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["contextid"] = contextId.ToString();
+
+            var uri = new Uri($"{Controller}{Prefix}/callerid?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestMany<CallForwardCallerIdOption>(message, cancellationToken);
+        }
     }
 }
