@@ -82,5 +82,37 @@ namespace Sufficit.Client.Controllers.Telephony
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return RequestMany<CallForwardCallerIdOption>(message, cancellationToken);
         }
+
+        /// <summary>
+        /// Returns a diagnostic snapshot for a call-forward rule.
+        /// Checks DB persistence, destination validity and expected runtime state.
+        /// </summary>
+        public Task<CallForwardDiagnosticResult?> Check(Guid id, CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("check call-forward diagnostic: {id}", id);
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query[CallForwardSearchParameters.CALLFORWARDID] = id.ToString();
+
+            var uri = new Uri($"{Controller}{Prefix}/Check?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<CallForwardDiagnosticResult>(message, cancellationToken);
+        }
+
+        /// <summary>
+        /// Probes the Asterisk dialplan via AMI to verify a call-forward rule
+        /// is registered in the <c>sufficit-app-forward</c> context.
+        /// </summary>
+        public Task<CallForwardAsteriskProbeResult?> AsteriskProbe(Guid id, CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("asterisk probe call-forward: {id}", id);
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query[CallForwardSearchParameters.CALLFORWARDID] = id.ToString();
+
+            var uri = new Uri($"{Controller}{Prefix}/AsteriskProbe?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<CallForwardAsteriskProbeResult>(message, cancellationToken);
+        }
     }
 }

@@ -387,6 +387,21 @@ namespace Sufficit.Client
             if (source.MaxRecords > 0)
                 query[nameof(source.MaxRecords).ToLower()] = source.MaxRecords.ToString();
 
+            if (!string.IsNullOrWhiteSpace(source.Protocol))
+                query[nameof(source.Protocol).ToLower()] = source.Protocol;
+
+            if (!string.IsNullOrWhiteSpace(source.UniqueId))
+                query[nameof(source.UniqueId).ToLower()] = source.UniqueId;
+
+            if (!string.IsNullOrWhiteSpace(source.Filter))
+                query[nameof(source.Filter).ToLower()] = source.Filter;
+
+            if (source.Tags != null && source.Tags.Any())
+                query[nameof(source.Tags).ToLower()] = string.Join(",", source.Tags);
+
+            if (source.TimeOut.HasValue && source.TimeOut.Value > TimeSpan.Zero)
+                query[nameof(source.TimeOut).ToLower()] = source.TimeOut.Value.ToString("c");
+
             return query.ToString() ?? string.Empty;
         }
 
