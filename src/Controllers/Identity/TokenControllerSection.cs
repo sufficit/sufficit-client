@@ -158,7 +158,14 @@ namespace Sufficit.Client.Controllers.Identity
             message.Content = JsonContent.Create(payload, null, _json);
             
             var response = await Request<EndPointResponse<TokenIntrospectionResponse>>(message, cancellationToken);
-            return response?.Data;
+            if (response?.Success != true)
+            {
+                // Surface the bridge failure message to the Blazor caller instead of silently returning null.
+                // When introspection breaks, this keeps the UI diagnostic aligned with the backend cause.
+                throw new InvalidOperationException(response?.Message ?? "Token introspection failed.");
+            }
+
+            return response.Data;
         }
 
         /// <summary>
