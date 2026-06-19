@@ -1,14 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
+using Sufficit.Client.Controllers.Contacts;
 using Sufficit.Contacts;
 using Sufficit.EndPoints;
 using Sufficit.Net.Http;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,14 +22,17 @@ namespace Sufficit.Client.Controllers
         public ContactsControllerSection(IAuthenticatedControllerBase cb) : base(cb)
         {
             _json = cb.Json;
+            Avatar = new AvatarControllerSection(cb);
+            Attribute = new AttributeControllerSection(cb);
         }
 
-        #region CONTACTS
+        public AvatarControllerSection Avatar { get; }
+
+        public AttributeControllerSection Attribute { get; }
+
         public Task<IEnumerable<ContactWithAttributes>> Search(ContactSearchParameters parameters, CancellationToken cancellationToken)
         {
-            string requestEndpoint = $"{Controller}/search";
-
-            var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
+            var uri = new Uri($"{Controller}/search", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(parameters, null, _json);
             return RequestMany<ContactWithAttributes>(message, cancellationToken);
@@ -39,7 +40,6 @@ namespace Sufficit.Client.Controllers
 
         public Task<IEnumerable<ContactWithAttributes>> Search(string filter, int results = 10, CancellationToken cancellationToken = default)
         {
-            string requestEndpoint = $"{Controller}/search";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
 
             if (!string.IsNullOrWhiteSpace(filter))
@@ -48,33 +48,30 @@ namespace Sufficit.Client.Controllers
             if (results > 0)
                 query["results"] = results.ToString();
 
-            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
+            var uri = new Uri($"{Controller}/search?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return RequestMany<ContactWithAttributes>(message, cancellationToken);
         }
 
         public Task<Contact?> GetContact(Guid contactid, CancellationToken cancellationToken = default)
         {
-            string requestEndpoint = $"{Controller}";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query[nameof(contactid)] = contactid.ToString();
 
-            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
+            var uri = new Uri($"{Controller}?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return Request<Contact>(message, cancellationToken);
         }
 
         public async Task<Guid?> Update(ContactWithAttributes item, CancellationToken cancellationToken)
         {
-            string requestEndpoint = $"{Controller}";
-
-            var uri = new Uri($"{requestEndpoint}", UriKind.Relative);
+            var uri = new Uri($"{Controller}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(item, null, _json);
 
             var response = await Request<EndPointResponse>(message, cancellationToken);
 
-            if (response?.Data is JsonElement json && json.ValueKind == JsonValueKind.String)
+            if (response?.Data is System.Text.Json.JsonElement json && json.ValueKind == System.Text.Json.JsonValueKind.String)
             {
                 var guidString = json.GetString();
                 if (Guid.TryParse(guidString, out var parsedGuid))
@@ -83,158 +80,23 @@ namespace Sufficit.Client.Controllers
             return null;
         }
 
-        #endregion
-        #region ATTRIBUTES
-
-        /// <summary>
-        /// Retrieves a collection of contact attributes based on the specified search parameters.
-        /// </summary>
-        /// <remarks>This method sends a POST request to the "attributes" endpoint of the controller to
-        /// retrieve the contact attributes. Ensure that the <paramref name="parameters"/> object contains valid keys
-        /// and criteria for the search.</remarks>
-        /// <param name="parameters">The search parameters used to filter the contact attributes. This must include the necessary keys and
-        /// criteria for the search.</param>
-        /// <param name="cancellationToken">A token that can be used to cancel the operation. If the operation is canceled, the returned task will be in
-        /// a canceled state.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains an enumerable collection of <see
-        /// cref="ContactAttribute"/> objects matching the search criteria.</returns>
-        public Task<IEnumerable<ContactAttribute>> GetAttributes (AttributeWithKeysSearchParameters parameters, CancellationToken cancellationToken)
-        {
-            var uri = new Uri($"{Controller}/attributes", UriKind.Relative);
-            var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(parameters, null, _json);
-            return RequestMany<ContactAttribute>(message, cancellationToken);
-        }
-               
-        /// <summary>
-        /// Retrieves the first contact attribute that matches the specified search parameters.
-        /// </summary>
-        /// <remarks>This method sends an HTTP GET request to retrieve the first contact attribute that
-        /// matches the  provided search parameters. The search parameters are converted to a query string and appended 
-        /// to the request URI.</remarks>
-        /// <param name="parameters">The search parameters used to filter contact attributes. Must not be <see langword="null"/>.</param>
-        /// <param name="cancellationToken">A token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains the first matching  <see
-        /// cref="ContactAttribute"/> if found; otherwise, <see langword="null"/>.</returns>
-        public Task<ContactAttribute?> GetFirstAttribute(AttributeWithKeysSearchParameters parameters, CancellationToken cancellationToken = default)
-        {
-            string requestEndpoint = $"{Controller}/attribute";
-            var query = parameters.ToQueryString();
-
-            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
-            var message = new HttpRequestMessage(HttpMethod.Get, uri);
-            return Request<ContactAttribute>(message, cancellationToken);
-        }
-
-        /// <summary>
-        /// Retrieves the value of a specified attribute for a given contact.
-        /// </summary>
-        /// <remarks>This method sends an HTTP GET request to retrieve the attribute value. Ensure that
-        /// the provided <paramref name="contactid"/>, <paramref name="key"/>, and <paramref name="description"/> are
-        /// valid and correspond to existing data in the system.</remarks>
-        /// <param name="contactid">The unique identifier of the contact whose attribute value is being retrieved.</param>
-        /// <param name="key">The key of the attribute to retrieve.</param>
-        /// <param name="description">A description or additional context for the attribute being retrieved.</param>
-        /// <param name="cancellationToken">A token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains the value of the specified
-        /// attribute as a string, or <see langword="null"/> if the attribute is not found.</returns>
-        public async Task<string?> GetAttributeValue(Guid contactid, string key, string description, CancellationToken cancellationToken = default)
-        {
-            string requestEndpoint = $"{Controller}/attribute/value";
-            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query[nameof(contactid)] = contactid.ToString();
-            query[nameof(key)] = key;
-            query[nameof(description)] = description;
-
-            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
-            var message = new HttpRequestMessage(HttpMethod.Get, uri);
-            return await RequestString(message, cancellationToken);
-        }
-
-        /// <summary>
-        /// Removes a specified attribute from a contact.
-        /// </summary>
-        /// <remarks>This method sends a DELETE request to remove the specified attribute from the
-        /// contact. Ensure that the <paramref name="contactid"/>, <paramref name="key"/>, and <paramref
-        /// name="description"/>  are valid and correspond to an existing attribute for the specified contact.</remarks>
-        /// <param name="contactid">The unique identifier of the contact from which the attribute will be removed.</param>
-        /// <param name="key">The key of the attribute to be removed.</param>
-        /// <param name="description">A description of the attribute being removed.</param>
-        /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
-        /// <returns></returns>
-        public async Task RemoveAttribute(Guid contactid, string key, string description, CancellationToken cancellationToken = default)
-        {
-            string requestEndpoint = $"{Controller}/attribute";
-            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query[nameof(contactid)] = contactid.ToString();
-            query[nameof(key)] = key;
-            query[nameof(description)] = description;
-
-            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
-            var message = new HttpRequestMessage(HttpMethod.Delete, uri);
-            await Request(message, cancellationToken);
-        }
-
-
-        public async Task CreateOrUpdateAttribute(Guid contactid, Sufficit.Contacts.Attribute attribute, CancellationToken cancellationToken = default)
-        {
-            string requestEndpoint = $"{Controller}/attribute";
-
-            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query[nameof(contactid)] = contactid.ToString();
-
-            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
-            var message = new HttpRequestMessage(HttpMethod.Post, uri);
-            message.Content = JsonContent.Create(attribute, null, _json);
-
-            await Request(message, cancellationToken);
-        }
-
-        #endregion
-
         public async Task<bool> CanUpdate(Guid contactid, CancellationToken cancellationToken)
         {
-            string requestEndpoint = $"{Controller}/canupdate";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query[nameof(contactid)] = contactid.ToString();
 
-            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
+            var uri = new Uri($"{Controller}/canupdate?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return (await RequestStruct<bool>(message, cancellationToken)) ?? false;
         }
 
-
-        public async Task<EndPointResponse?> Update (Guid contextid, Stream avatar, CancellationToken cancellationToken)
-        {
-            string requestEndpoint = $"{Controller}/avatar";
-            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            query[nameof(contextid)] = contextid.ToString();
-
-            var uri = new Uri($"{requestEndpoint}?{query}", UriKind.Relative);
-            var message = new HttpRequestMessage(HttpMethod.Post, uri);
-
-            var formData = new MultipartFormDataContent();
-            formData.Add(new StreamContent(avatar), nameof(avatar), contextid.ToString("N") + ".jpg");
-            message.Content = formData;
-
-            return await Request<EndPointResponse>(message, cancellationToken);
-        }
-
         /// <summary>
-        /// Retrieves a collection of user markers from the server.
+        /// Retrieves the list of user-defined markers available for the current context.
         /// </summary>
-        /// <remarks>This method sends an HTTP GET request to the server to fetch user markers. The
-        /// returned collection contains the markers as strings. If no markers are available,  the collection will be
-        /// empty.</remarks>
-        /// <param name="cancellationToken">A token that can be used to cancel the operation. If the operation is canceled,  the returned task will be
-        /// in a canceled state.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains  an enumerable collection of
-        /// strings representing the user markers.</returns>
         [Authorize]
         public async Task<IEnumerable<MarkerAttributeGroup>> GetUserMarkers(CancellationToken cancellationToken)
         {
-            string requestEndpoint = $"{Controller}/usermarkers";
-            var uri = new Uri(requestEndpoint, UriKind.Relative);
+            var uri = new Uri($"{Controller}/usermarkers", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
             return await RequestManyStruct<MarkerAttributeGroup>(message, cancellationToken);
         }
