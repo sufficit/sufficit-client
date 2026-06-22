@@ -68,5 +68,23 @@ namespace Sufficit.Client.Controllers.Telephony
             var message = new HttpRequestMessage(HttpMethod.Delete, uri);
             return Request(message, cancellationToken);
         }
+
+        /// <summary>
+        /// Toggle voicemail mailbox enabled state.
+        /// If enabled is null, toggles current state.
+        /// If enabled is true, ensures mailbox is enabled.
+        /// If enabled is false, ensures mailbox is disabled (suppresses recording flow, plays generic unavailable message).
+        /// </summary>
+        public Task Toggle(Guid id, bool? enabled = null, CancellationToken cancellationToken = default)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query[nameof(id)] = id.ToString();
+            if (enabled.HasValue)
+                query[nameof(enabled)] = enabled.Value.ToString().ToLowerInvariant();
+
+            var uri = $"{Controller}{Prefix}/toggle?{query}";
+            var message = new HttpRequestMessage(new HttpMethod("PATCH"), uri);
+            return Request(message, cancellationToken);
+        }
     }
 }
