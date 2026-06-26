@@ -40,6 +40,7 @@ namespace Sufficit.Client.Controllers
             IVR = new TelephonyIVRControllerSection(cb); 
             CallForward = new TelephonyCallForwardControllerSection(cb);
             MusicOnHold = new TelephonyMusicOnHoldControllerSection(cb);
+            Monitor = new TelephonyMonitorControllerSection(cb);
             Outbound = new TelephonyOutboundControllerSection(cb);
             Portability = new TelephonyPortabilityControllerSection(cb);
             Routes = new TelephonyRoutesControllerSection(cb);
@@ -107,6 +108,7 @@ namespace Sufficit.Client.Controllers
         public TelephonyIVRControllerSection IVR { get; }
         public TelephonyCallForwardControllerSection CallForward { get; }
         public TelephonyMusicOnHoldControllerSection MusicOnHold { get; }
+        public TelephonyMonitorControllerSection Monitor { get; }
         public TelephonyOutboundControllerSection Outbound { get; }
         public TelephonyPortabilityControllerSection Portability { get; }
         public TelephonyRoutesControllerSection Routes { get; }
