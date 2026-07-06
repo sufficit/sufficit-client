@@ -7,6 +7,7 @@ using Sufficit.Client.Controllers.Notification;
 using Sufficit.Client.Controllers.Reports;
 using Sufficit.Client.Controllers.Resources;
 using Sufficit.Client.Controllers.Storage;
+using Sufficit.Client.Controllers.Gateway;
 using Sufficit.EndPoints.Configuration;
 using Sufficit.Identity;
 using Sufficit.Json;
