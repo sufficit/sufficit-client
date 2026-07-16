@@ -40,5 +40,20 @@ namespace Sufficit.Client.Controllers.Gateway
             message.Content = JsonContent.Create(request, null, _json);
             return Request<WhatsAppOfficialEnableResponse>(message, cancellationToken);
         }
+
+        /// <summary>
+        /// Completes the Meta Embedded Signup flow: exchanges the callback's <c>code</c> for an
+        /// access token, resolves the client's phone number(s), and enables Calling + SIP
+        /// automatically pointing at Sufficit's Asterisk gateway.
+        /// </summary>
+        public Task<WhatsAppEmbeddedSignupResponse?> EmbeddedSignup(WhatsAppEmbeddedSignupRequest request, CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("processing whatsapp embedded signup: wabaId={wabaId} phoneNumberId={phoneNumberId}", request.WabaId, request.PhoneNumberId);
+
+            var uri = new Uri($"{Controller}{Prefix}/embedded-signup", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(request, null, _json);
+            return Request<WhatsAppEmbeddedSignupResponse>(message, cancellationToken);
+        }
     }
 }

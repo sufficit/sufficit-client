@@ -24,9 +24,11 @@ namespace Sufficit.Client.Controllers.Gateway
             _logger = cb.Logger;
             _json = cb.Json;
             Official = new WhatsAppOfficialControllerSection(cb);
+            Quepasa = new WhatsAppQuepasaControllerSection(cb);
         }
 
         public WhatsAppOfficialControllerSection Official { get; }
+        public WhatsAppQuepasaControllerSection Quepasa { get; }
 
         public Task<WhatsAppGatewayRoute?> AddOrUpdate(WhatsAppGatewayRouteRequest request, CancellationToken cancellationToken = default)
         {
