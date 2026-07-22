@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Sufficit.Gateway.WhatsApp;
 using Sufficit.Net.Http;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -54,6 +55,20 @@ namespace Sufficit.Client.Controllers.Gateway
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(request, null, _json);
             return Request<WhatsAppEmbeddedSignupResponse>(message, cancellationToken);
+        }
+
+        /// <summary>
+        /// Lists every phone number a client-provided token can see — feeds autocomplete
+        /// suggestions in the manual connect flow once the client pastes their token. Also
+        /// reports whether the token itself is even valid, checked separately from "found zero
+        /// numbers" (the two look identical otherwise, but need different fixes).
+        /// </summary>
+        public Task<WhatsAppOfficialListNumbersResponse?> ListNumbers(WhatsAppOfficialListNumbersRequest request, CancellationToken cancellationToken = default)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/list-numbers", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(request, null, _json);
+            return Request<WhatsAppOfficialListNumbersResponse>(message, cancellationToken);
         }
     }
 }
