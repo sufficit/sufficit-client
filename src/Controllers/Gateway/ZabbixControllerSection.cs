@@ -53,6 +53,32 @@ namespace Sufficit.Client.Controllers.Gateway
             return Request<ZabbixGatewayIntegration>(message, cancellationToken);
         }
 
+        public Task<ZabbixAutomationStatus?> GetAutomationStatus(Guid id, CancellationToken cancellationToken = default)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString();
+
+            var uri = new Uri($"{Controller}{Prefix}/automation?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<ZabbixAutomationStatus>(message, cancellationToken);
+        }
+
+        public Task<ZabbixAutomationStatus?> TestAutomation(ZabbixAutomationRequest request, CancellationToken cancellationToken = default)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/automation/test", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(request, null, _json);
+            return Request<ZabbixAutomationStatus>(message, cancellationToken);
+        }
+
+        public Task<ZabbixAutomationStatus?> ConfigureAutomation(ZabbixAutomationRequest request, CancellationToken cancellationToken = default)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/automation/configure", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(request, null, _json);
+            return Request<ZabbixAutomationStatus>(message, cancellationToken);
+        }
+
         public Task Delete(Guid id, CancellationToken cancellationToken = default)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
