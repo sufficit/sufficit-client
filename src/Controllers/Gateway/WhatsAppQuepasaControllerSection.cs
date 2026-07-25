@@ -82,5 +82,33 @@ namespace Sufficit.Client.Controllers.Gateway
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             return Request(message, cancellationToken);
         }
+
+        /// <summary>
+        /// Retroactively sets the session's call policy to enabled (quepasa's VoIP "master gate")
+        /// — needed for sessions paired before this was set automatically on every route save.
+        /// </summary>
+        public Task EnableCalls(string sessionId, CancellationToken cancellationToken = default)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["sessionid"] = sessionId;
+
+            var uri = new Uri($"{Controller}{Prefix}/enable-calls?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            return Request(message, cancellationToken);
+        }
+
+        /// <summary>
+        /// On-demand "why isn't this connected" diagnostic for one route — a separate call from
+        /// <see cref="States"/> so it's only fetched when someone actually asks.
+        /// </summary>
+        public Task<WhatsAppQuepasaDiagnostic?> Diagnose(string sessionId, CancellationToken cancellationToken = default)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["sessionid"] = sessionId;
+
+            var uri = new Uri($"{Controller}{Prefix}/diagnose?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<WhatsAppQuepasaDiagnostic>(message, cancellationToken);
+        }
     }
 }
