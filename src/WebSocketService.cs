@@ -13,11 +13,14 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client
 {
-    public class WebSocketService : IWebSocketService
+    public class WebSocketService : IWebSocketService, IAsyncDisposable
     {
         private readonly IOptions<EndPointsAPIOptions> _options;
         private readonly ILogger _logger;
         private readonly ITokenProvider _tokenProvider;
+        private readonly CancellationTokenSource _disposeCts = new();
+        private readonly SemaphoreSlim _connectionGate = new(1, 1);
+        private int _disposeRequested;
         public readonly HubConnection _connection;
 
         public WebSocketService(IOptions<EndPointsAPIOptions> options, ILogger<WebSocketService> logger, ITokenProvider tokenProvider)
@@ -47,41 +50,97 @@ namespace Sufficit.Client
 
         public async Task StartAsync()
         {
+            if (IsDisposed)
+                return;
+
             try
             {
-                await _connection.StartAsync();
-                OnChanged?.Invoke(this, EventArgs.Empty);
+                await _connectionGate.WaitAsync(_disposeCts.Token).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (IsDisposed)
+            {
+                return;
+            }
+
+            try
+            {
+                // A HubConnection can only be started once at a time. Components can
+                // render more than once while connecting, so make the operation idempotent.
+                if (IsDisposed || _connection.State != HubConnectionState.Disconnected)
+                    return;
+
+                await _connection.StartAsync(_disposeCts.Token).ConfigureAwait(false);
+                NotifyChanged();
+            }
+            catch (OperationCanceledException) when (IsDisposed)
+            {
+                // Disposal cancels a pending connection attempt; it is not an error.
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "error on trying to connect");
             }
+            finally
+            {
+                _connectionGate.Release();
+            }
         }
 
-        private async Task _connection_Closed(Exception? arg)
+        private Task _connection_Closed(Exception? arg)
         {
-            await Task.Yield();
             _logger.LogDebug("Closed");
-            OnChanged?.Invoke(this, EventArgs.Empty);
+            NotifyChanged();
+            return Task.CompletedTask;
         }
 
-        private async Task _connection_Reconnecting(Exception? arg)
+        private Task _connection_Reconnecting(Exception? arg)
         {
-            await Task.Yield();
             _logger.LogDebug("Reconnecting");
-            OnChanged?.Invoke(this, EventArgs.Empty);
+            NotifyChanged();
+            return Task.CompletedTask;
         }
 
-        private async Task _connection_Reconnected(string? arg)
+        private Task _connection_Reconnected(string? arg)
         {
-            await Task.Yield();
             _logger.LogDebug("Reconnected");
-            OnChanged?.Invoke(this, EventArgs.Empty);
+            NotifyChanged();
+            return Task.CompletedTask;
         }
 
         public event EventHandler? OnChanged;
 
         public HubConnectionState State => _connection.State;
+
+        private bool IsDisposed => Volatile.Read(ref _disposeRequested) != 0;
+
+        private void NotifyChanged()
+        {
+            if (!IsDisposed)
+                OnChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (Interlocked.Exchange(ref _disposeRequested, 1) != 0)
+                return;
+
+            _disposeCts.Cancel();
+            await _connectionGate.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                _connection.Reconnected -= _connection_Reconnected;
+                _connection.Reconnecting -= _connection_Reconnecting;
+                _connection.Closed -= _connection_Closed;
+                OnChanged = null;
+
+                await _connection.DisposeAsync().ConfigureAwait(false);
+            }
+            finally
+            {
+                _connectionGate.Release();
+                _disposeCts.Dispose();
+            }
+        }
 
         #region IMPLEMENTS INTERFACE CHECKUP METHODS
 
