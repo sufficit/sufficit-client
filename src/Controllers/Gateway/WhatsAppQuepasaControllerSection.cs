@@ -70,6 +70,25 @@ namespace Sufficit.Client.Controllers.Gateway
         }
 
         /// <summary>
+        /// Snapshot of the WhatsApp calls in progress right now. Pass <see cref="Guid.Empty"/> for
+        /// every context (manager only).
+        ///
+        /// Required by any live calls view: Quepasa publishes realtime call events only on state
+        /// transitions, so a call already connected when the screen opens is invisible to an
+        /// event-only client until it ends. Seed from here, then apply realtime updates.
+        /// </summary>
+        public Task<IEnumerable<WhatsAppQuepasaActiveCall>> Calls(Guid contextId, CancellationToken cancellationToken = default)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            if (contextId != Guid.Empty)
+                query["contextid"] = contextId.ToString();
+
+            var uri = new Uri($"{Controller}{Prefix}/calls?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestMany<WhatsAppQuepasaActiveCall>(message, cancellationToken);
+        }
+
+        /// <summary>
         /// Stops and reconnects one route's Quepasa session on demand (same recovery cycle
         /// Quepasa runs on itself for websocket errors) — for when a session looks stuck.
         /// </summary>
@@ -81,6 +100,44 @@ namespace Sufficit.Client.Controllers.Gateway
             var uri = new Uri($"{Controller}{Prefix}/restart?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             return Request(message, cancellationToken);
+        }
+
+        /// <summary>Deliberately parks a session — keeps the pairing, no QR/pair-code needed to bring it back with <see cref="Start"/>.</summary>
+        public Task Stop(string sessionId, CancellationToken cancellationToken = default)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["sessionid"] = sessionId;
+
+            var uri = new Uri($"{Controller}{Prefix}/stop?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            return Request(message, cancellationToken);
+        }
+
+        /// <summary>Resumes a session previously parked with <see cref="Stop"/>.</summary>
+        public Task Start(string sessionId, CancellationToken cancellationToken = default)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["sessionid"] = sessionId;
+
+            var uri = new Uri($"{Controller}{Prefix}/start?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            return Request(message, cancellationToken);
+        }
+
+        /// <summary>
+        /// Regenerates a QR code or pairing code for an EXISTING session (same SessionId) that
+        /// disconnected — recovers a route without deleting/re-pairing it from scratch. Pairing
+        /// mode reuses the route's already-saved phone number server-side, nothing to type.
+        /// </summary>
+        public Task<WhatsAppQuepasaStartResponse?> Rescan(string sessionId, string mode = "qrcode", CancellationToken cancellationToken = default)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["sessionid"] = sessionId;
+
+            var uri = new Uri($"{Controller}{Prefix}/rescan?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(new WhatsAppQuepasaRescanRequest { Mode = mode }, null, _json);
+            return Request<WhatsAppQuepasaStartResponse>(message, cancellationToken);
         }
 
         /// <summary>
