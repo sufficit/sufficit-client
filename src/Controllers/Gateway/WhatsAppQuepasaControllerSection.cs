@@ -155,6 +155,23 @@ namespace Sufficit.Client.Controllers.Gateway
         }
 
         /// <summary>
+        /// Devices WhatsApp has linked to this session's account, plus where the session sits among
+        /// them — only the first four companions receive calls, and a session past that looks
+        /// perfectly healthy while never getting one.
+        ///
+        /// Costs a live WhatsApp query server-side, so call it on demand, never per table row.
+        /// </summary>
+        public Task<WhatsAppQuepasaLinkedDevices?> Devices(string sessionId, CancellationToken cancellationToken = default)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["sessionid"] = sessionId;
+
+            var uri = new Uri($"{Controller}{Prefix}/devices?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<WhatsAppQuepasaLinkedDevices>(message, cancellationToken);
+        }
+
+        /// <summary>
         /// On-demand "why isn't this connected" diagnostic for one route — a separate call from
         /// <see cref="States"/> so it's only fetched when someone actually asks.
         /// </summary>
