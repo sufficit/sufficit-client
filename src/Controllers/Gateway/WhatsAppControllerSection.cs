@@ -70,5 +70,17 @@ namespace Sufficit.Client.Controllers.Gateway
             var message = new HttpRequestMessage(HttpMethod.Delete, uri);
             return Request(message, cancellationToken);
         }
+
+        public Task<WhatsAppDiagnosticReport?> Diagnostics(string sessionId, CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("diagnostics for session id: {sessionId}", sessionId);
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["sessionid"] = sessionId;
+
+            var uri = new Uri($"{Controller}{Prefix}/diagnostics?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return Request<WhatsAppDiagnosticReport>(message, cancellationToken);
+        }
     }
 }
