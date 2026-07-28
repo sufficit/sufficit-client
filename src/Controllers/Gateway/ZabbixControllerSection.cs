@@ -79,6 +79,15 @@ namespace Sufficit.Client.Controllers.Gateway
             return Request<ZabbixAutomationStatus>(message, cancellationToken);
         }
 
+        /// <summary>Read-only: describes existing actions in the customer's Zabbix, by name.</summary>
+        public Task<IEnumerable<ZabbixActionSummary>> ExplainAction(ZabbixActionExplainRequest request, CancellationToken cancellationToken = default)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/automation/explainaction", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(request, null, _json);
+            return RequestMany<ZabbixActionSummary>(message, cancellationToken);
+        }
+
         public Task Delete(Guid id, CancellationToken cancellationToken = default)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
