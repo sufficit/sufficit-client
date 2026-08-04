@@ -6,8 +6,6 @@ using Sufficit.EndPoints.Configuration;
 using Sufficit.Identity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,7 +19,7 @@ namespace Sufficit.Client
         private readonly CancellationTokenSource _disposeCts = new();
         private readonly SemaphoreSlim _connectionGate = new(1, 1);
         private int _disposeRequested;
-        public readonly HubConnection _connection;
+        private readonly HubConnection _connection;
 
         public WebSocketService(IOptions<EndPointsAPIOptions> options, ILogger<WebSocketService> logger, ITokenProvider tokenProvider)
         {
@@ -42,9 +40,6 @@ namespace Sufficit.Client
             _connection.Reconnected += _connection_Reconnected;
             _connection.Reconnecting += _connection_Reconnecting;
             _connection.Closed += _connection_Closed;
-
-
-
             _logger.LogTrace("WebSocketService Instantiated.");
         }
 
@@ -117,6 +112,39 @@ namespace Sufficit.Client
         {
             if (!IsDisposed)
                 OnChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        internal IDisposable On<T>(string methodName, Action<T> handler)
+        {
+            if (string.IsNullOrWhiteSpace(methodName))
+                throw new ArgumentException("A SignalR method name is required.", nameof(methodName));
+            if (handler == null)
+                throw new ArgumentNullException(nameof(handler));
+            if (IsDisposed)
+                throw new ObjectDisposedException(nameof(WebSocketService));
+
+            return _connection.On(methodName, handler);
+        }
+
+        internal async Task InvokeAsync(
+            string methodName,
+            object?[] arguments,
+            CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(methodName))
+                throw new ArgumentException("A SignalR method name is required.", nameof(methodName));
+            if (arguments == null)
+                throw new ArgumentNullException(nameof(arguments));
+            if (IsDisposed)
+                throw new ObjectDisposedException(nameof(WebSocketService));
+
+            await StartAsync().ConfigureAwait(false);
+            if (_connection.State != HubConnectionState.Connected)
+                throw new InvalidOperationException("The realtime connection is unavailable.");
+
+            await _connection
+                .InvokeCoreAsync(methodName, arguments, cancellationToken)
+                .ConfigureAwait(false);
         }
 
         public async ValueTask DisposeAsync()

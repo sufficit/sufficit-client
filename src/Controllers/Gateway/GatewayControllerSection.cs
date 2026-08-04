@@ -8,6 +8,7 @@ namespace Sufficit.Client.Controllers.Gateway
 
         public GatewayControllerSection(IAuthenticatedControllerBase cb) : base(cb)
         {
+            Diagnostics = new GatewayDiagnosticsControllerSection(cb);
             FluxTelecomSms = new FluxTelecomSmsControllerSection(cb);
             PhoneVox = new PhoneVoxControllerSection(cb);
             ReceitaFederal = new ReceitaFederalControllerSection(cb);
@@ -16,6 +17,8 @@ namespace Sufficit.Client.Controllers.Gateway
             WhatsApp = new WhatsAppControllerSection(cb);
             Zabbix = new ZabbixControllerSection(cb);
         }
+
+        public GatewayDiagnosticsControllerSection Diagnostics { get; }
 
         public FluxTelecomSmsControllerSection FluxTelecomSms { get; }
 

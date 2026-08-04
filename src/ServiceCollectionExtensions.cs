@@ -36,7 +36,9 @@ namespace Sufficit.Client
             services.TryAddScoped<ITokenProvider, HttpContextTokenProvider>();
 
             services.AddScoped<APIClientService>();
-            services.AddScoped<IWebSocketService, WebSocketService>();
+            services.AddScoped<WebSocketService>();
+            services.AddScoped<IWebSocketService>(serviceProvider =>
+                serviceProvider.GetRequiredService<WebSocketService>());
             services.TryAddScoped<IPDFTool, RemotePDFTool>();
 
             return services;

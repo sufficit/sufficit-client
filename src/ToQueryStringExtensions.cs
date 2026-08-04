@@ -1,6 +1,7 @@
 ﻿using Sufficit.Audio;
 using Sufficit.Contacts;
 using Sufficit.Exchange;
+using Sufficit.Finance;
 using Sufficit.Notification;
 using Sufficit.Provisioning;
 using Sufficit.Reports;
@@ -28,6 +29,66 @@ namespace Sufficit.Client
 
             return "?" + string.Join("&", array);
         }
+
+        #region FINANCE - BankSlipV2SearchParameters
+
+        public static string ToQueryString(this BankSlipV2SearchParameters source)
+        {
+            var query = HttpUtility.ParseQueryString(string.Empty);
+
+            if (source.ContextId.HasValue)
+                query[nameof(source.ContextId)] = source.ContextId.Value.ToString("D");
+
+            if (source.Status.HasValue)
+                query[nameof(source.Status)] = source.Status.Value.ToString();
+
+            if (!string.IsNullOrWhiteSpace(source.Provider))
+                query[nameof(source.Provider)] = source.Provider;
+
+            if (source.CreatedFromUtc.HasValue)
+                query[nameof(source.CreatedFromUtc)] = source.CreatedFromUtc.Value.ToUniversalTime().ToString("O");
+
+            if (source.CreatedToUtc.HasValue)
+                query[nameof(source.CreatedToUtc)] = source.CreatedToUtc.Value.ToUniversalTime().ToString("O");
+
+            if (source.OperationalAlertOnly)
+                query[nameof(source.OperationalAlertOnly)] = bool.TrueString.ToLowerInvariant();
+
+            query[nameof(source.Offset)] = Math.Max(0, source.Offset).ToString();
+            query[nameof(source.Limit)] = Math.Min(100, Math.Max(1, source.Limit)).ToString();
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
+        #region FINANCE - BankSlipProviderDiagnosticParameters
+
+        public static string ToQueryString(this BankSlipProviderDiagnosticParameters source)
+        {
+            var query = HttpUtility.ParseQueryString(string.Empty);
+            query[nameof(source.Provider)] = source.Provider;
+            query[nameof(source.Operation)] = source.Operation.ToString();
+
+            if (!string.IsNullOrWhiteSpace(source.ProviderChargeId))
+                query[nameof(source.ProviderChargeId)] = source.ProviderChargeId;
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
+        #region FINANCE - BankSlipV2StatisticsParameters
+
+        public static string ToQueryString(this BankSlipV2StatisticsParameters source)
+        {
+            var query = HttpUtility.ParseQueryString(string.Empty);
+
+            if (source.ContextId.HasValue)
+                query[nameof(source.ContextId)] = source.ContextId.Value.ToString("D");
+
+            query[nameof(source.WindowHours)] = Math.Min(720, Math.Max(1, source.WindowHours)).ToString();
+            return query.ToString() ?? string.Empty;
+        }
+
+        #endregion
         
         #region AUDIO - BackgroundAudioSearchParameters
 
