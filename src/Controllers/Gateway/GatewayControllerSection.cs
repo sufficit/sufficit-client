@@ -16,11 +16,14 @@ namespace Sufficit.Client.Controllers.Gateway
             Wavoip = new WavoipControllerSection(cb);
             WhatsApp = new WhatsAppControllerSection(cb);
             Zabbix = new ZabbixControllerSection(cb);
+            AbrTelecom = new AbrTelecomControllerSection(cb);
         }
 
         public GatewayDiagnosticsControllerSection Diagnostics { get; }
 
         public FluxTelecomSmsControllerSection FluxTelecomSms { get; }
+
+        public AbrTelecomControllerSection AbrTelecom { get; }
 
         public PhoneVoxControllerSection PhoneVox { get; }
 
