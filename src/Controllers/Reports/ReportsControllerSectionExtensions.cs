@@ -17,6 +17,12 @@ namespace Sufficit.Client.Controllers.Reports
             return source.GetReport<BilledCallsByDIDReportItem>(parameters, cancellationToken)!;
         }
 
+        public static Task<ReportBaseGeneric<UsageByExtensionReportItem>> UsageByExtensionReport (this ReportsControllerSection source, ReportRequestParameters parameters, CancellationToken cancellationToken = default)
+        {
+            parameters.ModelId = Guid.Parse(UsageByExtensionId);
+            return source.GetReport<UsageByExtensionReportItem>(parameters, cancellationToken)!;
+        }
+
         public static Task<ReportBaseGeneric<ComplianceReportItem>> ComplianceReport (this ReportsControllerSection source, ReportRequestParameters parameters, CancellationToken cancellationToken = default)
         {
             parameters.ModelId = Guid.Parse(ComplianceReportId);
