@@ -61,7 +61,6 @@ namespace Sufficit.Client
             Sales = new SalesControllerSection(cb);
             Statistics = new StatisticsControllerSection(cb);
             Storage = new StorageControllerSection(cb);
-            Tasks = new TasksControllerSection(cb);
             Telephony = new TelephonyControllerSection(cb);
 
             var jsonOptions = options.Value.ToJson();
@@ -84,7 +83,6 @@ namespace Sufficit.Client
         public SalesControllerSection Sales { get; }
         public StatisticsControllerSection Statistics { get; }
         public StorageControllerSection Storage { get; }
-        public TasksControllerSection Tasks { get; }
         public TelephonyControllerSection Telephony { get; }
     }
 }
