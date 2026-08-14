@@ -19,7 +19,7 @@ namespace Sufficit.Client.Controllers.Finance
         /// <summary>
         /// Raised after the server reports a change to a subscribed bank slip.
         /// </summary>
-        event EventHandler<BankSlipV2Change>? OnBankSlipChanged;
+        event EventHandler<BankSlipChange>? OnBankSlipChanged;
 
         /// <summary>
         /// Gets the current state of the shared realtime connection.

@@ -16,14 +16,14 @@ namespace Sufficit.Client.Controllers.Finance
 
         public FinanceControllerSection(IAuthenticatedControllerBase cb) : base(cb)
         {
+            LegacyBankSlip = new LegacyBankSlipControllerSection(cb);
             BankSlip = new BankSlipControllerSection(cb);
-            BankSlipV2 = new BankSlipV2ControllerSection(cb);
             ElectronicInvoice = new ElectronicInvoiceControllerSection(cb);
         }
 
-        public BankSlipControllerSection BankSlip { get; }
+        public LegacyBankSlipControllerSection LegacyBankSlip { get; }
 
-        public BankSlipV2ControllerSection BankSlipV2 { get; }
+        public BankSlipControllerSection BankSlip { get; }
 
         public ElectronicInvoiceControllerSection ElectronicInvoice { get; }
 

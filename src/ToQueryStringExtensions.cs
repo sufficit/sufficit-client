@@ -30,9 +30,9 @@ namespace Sufficit.Client
             return "?" + string.Join("&", array);
         }
 
-        #region FINANCE - BankSlipV2SearchParameters
+        #region FINANCE - BankSlipSearchParameters
 
-        public static string ToQueryString(this BankSlipV2SearchParameters source)
+        public static string ToQueryString(this BankSlipSearchParameters source)
         {
             var query = HttpUtility.ParseQueryString(string.Empty);
 
@@ -75,9 +75,9 @@ namespace Sufficit.Client
         }
 
         #endregion
-        #region FINANCE - BankSlipV2StatisticsParameters
+        #region FINANCE - BankSlipStatisticsParameters
 
-        public static string ToQueryString(this BankSlipV2StatisticsParameters source)
+        public static string ToQueryString(this BankSlipStatisticsParameters source)
         {
             var query = HttpUtility.ParseQueryString(string.Empty);
 

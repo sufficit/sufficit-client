@@ -34,12 +34,12 @@ namespace Sufficit.Client.Controllers.Finance
         {
             _webSocket = webSocket;
             _logger = logger;
-            _changeHandler = _webSocket.On<BankSlipV2Change>(ChangedMethod, HandleBankSlipChanged);
+            _changeHandler = _webSocket.On<BankSlipChange>(ChangedMethod, HandleBankSlipChanged);
             _webSocket.OnChanged += HandleConnectionChanged;
         }
 
         public event EventHandler? OnConnectionChanged;
-        public event EventHandler<BankSlipV2Change>? OnBankSlipChanged;
+        public event EventHandler<BankSlipChange>? OnBankSlipChanged;
 
         public HubConnectionState State => _webSocket.State;
 
@@ -106,7 +106,7 @@ namespace Sufficit.Client.Controllers.Finance
             }
         }
 
-        private void HandleBankSlipChanged(BankSlipV2Change change)
+        private void HandleBankSlipChanged(BankSlipChange change)
         {
             if (!IsDisposed)
                 OnBankSlipChanged?.Invoke(this, change);
