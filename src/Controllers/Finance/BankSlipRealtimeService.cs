@@ -64,9 +64,11 @@ namespace Sufficit.Client.Controllers.Finance
             await _subscriptionGate.WaitAsync(linkedCts.Token).ConfigureAwait(false);
             try
             {
-                if (_contexts.Contains(contextId))
-                    return;
-
+                // Group membership belongs to the current SignalR connection and is
+                // lost whenever that connection is recreated. Invoke the server even
+                // for a desired context we already track so callers can verify that a
+                // reconnect (or a previously rejected join) is actually subscribed.
+                // AddToGroupAsync is idempotent for the same connection/group pair.
                 await _webSocket.InvokeAsync(
                     JoinMethod,
                     new object?[] { contextId },
