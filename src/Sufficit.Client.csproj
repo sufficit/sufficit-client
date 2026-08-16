@@ -37,7 +37,7 @@
 		<PackageIconUrl>https://raw.githubusercontent.com/sufficit/sufficit-client/main/icon.ico</PackageIconUrl>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   
-		<PackageLicenseFile>license</PackageLicenseFile>
+		<PackageLicenseExpression>MIT-0</PackageLicenseExpression>
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
 		<PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
