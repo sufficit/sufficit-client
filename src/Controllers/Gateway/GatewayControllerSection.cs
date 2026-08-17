@@ -8,6 +8,7 @@ namespace Sufficit.Client.Controllers.Gateway
 
         public GatewayControllerSection(IAuthenticatedControllerBase cb) : base(cb)
         {
+            AsaasInvoices = new AsaasInvoicesControllerSection(cb);
             Diagnostics = new GatewayDiagnosticsControllerSection(cb);
             FluxTelecomSms = new FluxTelecomSmsControllerSection(cb);
             PhoneVox = new PhoneVoxControllerSection(cb);
@@ -18,6 +19,8 @@ namespace Sufficit.Client.Controllers.Gateway
             Zabbix = new ZabbixControllerSection(cb);
             AbrTelecom = new AbrTelecomControllerSection(cb);
         }
+
+        public AsaasInvoicesControllerSection AsaasInvoices { get; }
 
         public GatewayDiagnosticsControllerSection Diagnostics { get; }
 
