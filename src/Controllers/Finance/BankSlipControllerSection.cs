@@ -137,6 +137,24 @@ namespace Sufficit.Client.Controllers.Finance
                 cancellationToken);
         }
 
+        /// <summary>
+        /// Requeries selected provider charges and applies any authoritative
+        /// changes through the canonical bank-slip event pipeline.
+        /// </summary>
+        public Task<BankSlipReconciliationReprocessReport?> ReprocessProviderReconciliationAsync(
+            BankSlipReconciliationReprocessRequest request,
+            CancellationToken cancellationToken)
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            var message = new HttpRequestMessage(HttpMethod.Post, $"{Prefix}/reconciliation/reprocess")
+            {
+                Content = JsonContent.Create(request, options: _json)
+            };
+            return Request<BankSlipReconciliationReprocessReport>(message, cancellationToken);
+        }
+
         public Task<List<BankSlipProviderNotificationView>?> GetProviderNotificationHistoryAsync(
             Guid? bankSlipId,
             string? provider,
