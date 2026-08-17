@@ -2,6 +2,7 @@ using Sufficit.Finance;
 using Sufficit.Net.Http;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -112,6 +113,26 @@ namespace Sufficit.Client.Controllers.Finance
         {
             var uri = $"{Prefix}/diagnostics?{parameters.ToQueryString()}";
             return Request<BankSlipProviderDiagnosticResult>(
+                new HttpRequestMessage(HttpMethod.Get, uri),
+                cancellationToken);
+        }
+
+        public Task<BankSlipReconciliationReport?> CompareProviderInventoryAsync(
+            BankSlipReconciliationRequest request,
+            CancellationToken cancellationToken)
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            var uri = string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}/reconciliation?provider={1}&fromDate={2:yyyy-MM-dd}&toDate={3:yyyy-MM-dd}&maximumItems={4}",
+                Prefix,
+                Uri.EscapeDataString(request.Provider ?? string.Empty),
+                request.FromDate,
+                request.ToDate,
+                Math.Min(5000, Math.Max(1, request.MaximumItems)));
+            return Request<BankSlipReconciliationReport>(
                 new HttpRequestMessage(HttpMethod.Get, uri),
                 cancellationToken);
         }
