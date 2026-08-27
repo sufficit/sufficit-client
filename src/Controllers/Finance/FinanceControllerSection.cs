@@ -80,6 +80,29 @@ namespace Sufficit.Client.Controllers.Finance
             return RequestMany<Record>(new HttpRequestMessage(HttpMethod.Get, uri), cancellationToken);
         }
 
+        public Task<RecentPaymentsResult?> GetRecentPayments(
+            RecentPaymentSearchParameters parameters,
+            CancellationToken cancellationToken = default)
+        {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters));
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            if (parameters.Start.HasValue)
+                query[nameof(parameters.Start)] = ToQueryDate(parameters.Start.Value);
+            if (parameters.End.HasValue)
+                query[nameof(parameters.End)] = ToQueryDate(parameters.End.Value);
+            query[nameof(parameters.MinimumValue)] = parameters.MinimumValue.ToString(CultureInfo.InvariantCulture);
+            if (parameters.Limit.HasValue)
+                query[nameof(parameters.Limit)] = parameters.Limit.Value.ToString(CultureInfo.InvariantCulture);
+            query[nameof(parameters.IncludeBankSlip)] = parameters.IncludeBankSlip.ToString().ToLowerInvariant();
+            query[nameof(parameters.IncludeCard)] = parameters.IncludeCard.ToString().ToLowerInvariant();
+            query[nameof(parameters.IncludeMercadoPago)] = parameters.IncludeMercadoPago.ToString().ToLowerInvariant();
+
+            var uri = new Uri($"{Controller}/payment/recent?{query}", UriKind.Relative);
+            return Request<RecentPaymentsResult>(new HttpRequestMessage(HttpMethod.Get, uri), cancellationToken);
+        }
+
         public Task<IdTitlePair?> GetEntity(Guid id, CancellationToken cancellationToken = default)
         {
             var message = new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}/entity?id={id:N}", UriKind.Relative));

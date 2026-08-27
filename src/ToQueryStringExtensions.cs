@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using static Sufficit.Constants;
@@ -32,6 +33,57 @@ namespace Sufficit.Client
 
         #region FINANCE - BankSlipSearchParameters
 
+#if NETSTANDARD2_0
+        public static string ToQueryString(this BankSlipSearchParameters source)
+        {
+            var query = HttpUtility.ParseQueryString(string.Empty);
+
+            if (source.ContextId.HasValue)
+                query[nameof(source.ContextId)] = source.ContextId.Value.ToString("D");
+
+            AppendDateTimeMatch(query, nameof(source.Timestamp), source.Timestamp);
+            AppendDateTimeMatch(query, nameof(source.Expiration), source.Expiration);
+            AppendDateTimeMatch(query, nameof(source.Receipt), source.Receipt);
+
+            if (source.Value.HasValue)
+                query[nameof(source.Value)] = source.Value.Value.ToString(CultureInfo.InvariantCulture);
+
+            if (source.Active.HasValue)
+                query[nameof(source.Active)] = source.Active.Value.ToString().ToLowerInvariant();
+
+            if (source.IsExpired.HasValue)
+                query[nameof(source.IsExpired)] = source.IsExpired.Value.ToString().ToLowerInvariant();
+
+            if (source.IsReceipt.HasValue)
+                query[nameof(source.IsReceipt)] = source.IsReceipt.Value.ToString().ToLowerInvariant();
+
+            if (source.Limit.HasValue && source.Limit.Value > 0)
+                query[nameof(source.Limit)] = source.Limit.Value.ToString();
+
+            return query.ToString() ?? string.Empty;
+        }
+
+        private static void AppendDateTimeMatch(
+            NameValueCollection query,
+            string name,
+            DateTimeMatch? value)
+        {
+            if (value is null)
+                return;
+
+            if (value.Exact.HasValue)
+                query[$"{name}.exact"] = value.Exact.Value.ToString(DATETIMEFORMAT);
+
+            if (value.Start.HasValue)
+                query[$"{name}.start"] = value.Start.Value.ToString(DATETIMEFORMAT);
+
+            if (value.End.HasValue)
+                query[$"{name}.end"] = value.End.Value.ToString(DATETIMEFORMAT);
+
+            if (value.Inclusive)
+                query[$"{name}.inclusive"] = bool.TrueString.ToLowerInvariant();
+        }
+#else
         public static string ToQueryString(this BankSlipSearchParameters source)
         {
             var query = HttpUtility.ParseQueryString(string.Empty);
@@ -58,6 +110,7 @@ namespace Sufficit.Client
             query[nameof(source.Limit)] = Math.Min(100, Math.Max(1, source.Limit)).ToString();
             return query.ToString() ?? string.Empty;
         }
+#endif
 
         #endregion
         #region FINANCE - BankSlipProviderDiagnosticParameters
