@@ -14,6 +14,7 @@ namespace Sufficit.Client.Controllers
     public sealed class SalesControllerSection : AuthenticatedControllerSection
     {
         public const string Controller = "/sales";
+        private const string ManagementRoles = $"{Sufficit.Sales.SalesManagerRole.NormalizedName},{Sufficit.Identity.ManagerRole.NormalizedName},{Sufficit.Identity.AdministratorRole.NormalizedName}";
 
         private readonly JsonSerializerOptions _json;
 
@@ -40,7 +41,7 @@ namespace Sufficit.Client.Controllers
         }
 
 
-        [Authorize(Roles = Sufficit.Sales.SalesManagerRole.NormalizedName)]
+        [Authorize(Roles = ManagementRoles)]
         public Task<IEnumerable<Contract>> GetContracts(ContractSearchParameters parameters, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/contract/search";
@@ -51,7 +52,7 @@ namespace Sufficit.Client.Controllers
             return RequestMany<Contract>(message, cancellationToken);
         }
 
-        [Authorize(Roles = Sufficit.Sales.SalesManagerRole.NormalizedName)]
+        [Authorize(Roles = ManagementRoles)]
         public Task<Contract?> GetContract(Guid id, CancellationToken cancellationToken)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
@@ -62,7 +63,7 @@ namespace Sufficit.Client.Controllers
             return Request<Contract>(message, cancellationToken);
         }
 
-        [Authorize(Roles = Sufficit.Sales.SalesManagerRole.NormalizedName)]
+        [Authorize(Roles = ManagementRoles)]
         public Task<Contract?> SaveContract(Contract item, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}/contract", UriKind.Relative);
@@ -71,7 +72,82 @@ namespace Sufficit.Client.Controllers
             return Request<Contract>(message, cancellationToken);
         }
 
-        [Authorize(Roles = Sufficit.Sales.SalesManagerRole.NormalizedName)]
+        [Authorize(Roles = ManagementRoles)]
+        public Task DeleteContract(Guid id, CancellationToken cancellationToken)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString();
+
+            var uri = new Uri($"{Controller}/contract?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Delete, uri);
+            return Request(message, cancellationToken);
+        }
+
+        [Authorize(Roles = ManagementRoles)]
+        public Task<IEnumerable<ServiceCatalogItem>> SearchServiceCatalog(
+            ServiceCatalogSearchParameters parameters,
+            CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}/servicecatalog/search", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(parameters, null, _json);
+            return RequestMany<ServiceCatalogItem>(message, cancellationToken);
+        }
+
+        [Authorize(Roles = ManagementRoles)]
+        public Task<ServiceCatalogItem?> GetServiceCatalogItem(Guid id, CancellationToken cancellationToken)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString();
+            var uri = new Uri($"{Controller}/servicecatalog?{query}", UriKind.Relative);
+            return Request<ServiceCatalogItem>(new HttpRequestMessage(HttpMethod.Get, uri), cancellationToken);
+        }
+
+        [Authorize(Roles = ManagementRoles)]
+        public Task<ServiceCatalogItem?> SaveServiceCatalogItem(
+            ServiceCatalogItem item,
+            CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}/servicecatalog", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(item, null, _json);
+            return Request<ServiceCatalogItem>(message, cancellationToken);
+        }
+
+        [Authorize(Roles = ManagementRoles)]
+        public Task DeleteServiceCatalogItem(Guid id, CancellationToken cancellationToken)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString();
+            var uri = new Uri($"{Controller}/servicecatalog?{query}", UriKind.Relative);
+            return Request(new HttpRequestMessage(HttpMethod.Delete, uri), cancellationToken);
+        }
+
+        [Authorize(Roles = ManagementRoles)]
+        public Task<ContractMigrationResult?> PreviewContractMigration(
+            ContractMigrationRequest request,
+            CancellationToken cancellationToken)
+        {
+            request.DryRun = true;
+            var uri = new Uri($"{Controller}/migrate/contracts/preview", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(request, null, _json);
+            return Request<ContractMigrationResult>(message, cancellationToken);
+        }
+
+        [Authorize(Roles = ManagementRoles)]
+        public Task<ContractMigrationResult?> ApplyContractMigration(
+            ContractMigrationRequest request,
+            CancellationToken cancellationToken)
+        {
+            request.DryRun = false;
+            var uri = new Uri($"{Controller}/migrate/contracts/apply", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(request, null, _json);
+            return Request<ContractMigrationResult>(message, cancellationToken);
+        }
+
+        [Authorize(Roles = ManagementRoles)]
         public Task<IEnumerable<ContractPeriod>> GetPeriods(ContractPeriodSearchParameters parameters, CancellationToken cancellationToken)
         {
             var query = parameters.ToQueryString();
@@ -80,7 +156,7 @@ namespace Sufficit.Client.Controllers
             return RequestMany<ContractPeriod>(message, cancellationToken);
         }
 
-        [Authorize(Roles = Sufficit.Sales.SalesManagerRole.NormalizedName)]
+        [Authorize(Roles = ManagementRoles)]
         public Task<IEnumerable<ContractInterruption>> GetInterruptions(ContractInterruptionSearchParameters parameters, CancellationToken cancellationToken)
         {
             var query = parameters.ToQueryString();
@@ -89,7 +165,7 @@ namespace Sufficit.Client.Controllers
             return RequestMany<ContractInterruption>(message, cancellationToken);
         }
 
-        [Authorize(Roles = Sufficit.Sales.SalesManagerRole.NormalizedName)]
+        [Authorize(Roles = ManagementRoles)]
         public Task<IEnumerable<ContractAdjustment>> GetAdjustments(ContractAdjustmentSearchParameters parameters, CancellationToken cancellationToken)
         {
             var query = parameters.ToQueryString();
@@ -98,7 +174,7 @@ namespace Sufficit.Client.Controllers
             return RequestMany<ContractAdjustment>(message, cancellationToken);
         }
 
-        [Authorize(Roles = Sufficit.Sales.SalesManagerRole.NormalizedName)]
+        [Authorize(Roles = ManagementRoles)]
         public Task<ContractInterruption?> SaveInterruption(ContractInterruption item, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}/contract/interruption", UriKind.Relative);
@@ -107,7 +183,7 @@ namespace Sufficit.Client.Controllers
             return Request<ContractInterruption>(message, cancellationToken);
         }
 
-        [Authorize(Roles = Sufficit.Sales.SalesManagerRole.NormalizedName)]
+        [Authorize(Roles = ManagementRoles)]
         public Task DeleteInterruption(Guid id, CancellationToken cancellationToken)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
@@ -118,7 +194,7 @@ namespace Sufficit.Client.Controllers
             return Request(message, cancellationToken);
         }
 
-        [Authorize(Roles = Sufficit.Sales.SalesManagerRole.NormalizedName)]
+        [Authorize(Roles = ManagementRoles)]
         public Task<ContractPeriod?> ClosePeriod(ContractPeriodOperationRequest request, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}/contract/period/close", UriKind.Relative);
@@ -127,7 +203,7 @@ namespace Sufficit.Client.Controllers
             return Request<ContractPeriod>(message, cancellationToken);
         }
 
-        [Authorize(Roles = Sufficit.Sales.SalesManagerRole.NormalizedName)]
+        [Authorize(Roles = ManagementRoles)]
         public Task<ContractPeriod?> ReopenPeriod(ContractPeriodOperationRequest request, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}/contract/period/reopen", UriKind.Relative);
@@ -136,7 +212,7 @@ namespace Sufficit.Client.Controllers
             return Request<ContractPeriod>(message, cancellationToken);
         }
 
-        [Authorize(Roles = Sufficit.Sales.SalesManagerRole.NormalizedName)]
+        [Authorize(Roles = ManagementRoles)]
         public Task<ContractPeriod?> ForceRecalculatePeriod(ContractPeriodOperationRequest request, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}/contract/period/recalculate", UriKind.Relative);
