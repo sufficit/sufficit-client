@@ -18,9 +18,12 @@ namespace Sufficit.Client.Controllers.Gateway
             WhatsApp = new WhatsAppControllerSection(cb);
             Zabbix = new ZabbixControllerSection(cb);
             AbrTelecom = new AbrTelecomControllerSection(cb);
+            Gravatar = new GravatarControllerSection(cb);
         }
 
         public AsaasInvoicesControllerSection AsaasInvoices { get; }
+
+        public GravatarControllerSection Gravatar { get; }
 
         public GatewayDiagnosticsControllerSection Diagnostics { get; }
 

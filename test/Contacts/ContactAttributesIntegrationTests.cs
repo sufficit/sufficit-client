@@ -74,7 +74,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
             _output.WriteLine("Testing POST /contact/attributes with key filters");
             
             // Act
-            var attributes = await _apiClient.Contacts.GetAttributes(parameters, CancellationToken.None);
+            var attributes = await _apiClient.Contacts.Attribute.Search(parameters, CancellationToken.None);
             var attributeList = attributes.ToList();
             
             // Assert
@@ -137,7 +137,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
             _output.WriteLine("Testing GET /contact/attribute (first match)");
             
             // Act
-            var attribute = await _apiClient.Contacts.GetFirstAttribute(parameters, CancellationToken.None);
+            var attribute = await _apiClient.Contacts.Attribute.GetFirst(parameters, CancellationToken.None);
             
             // Assert - May or may not find a match
             if (attribute != null)
@@ -179,7 +179,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
                 Description = ""
             };
             
-            await _apiClient.Contacts.CreateOrUpdateAttribute(contactId.Value, newAttribute, CancellationToken.None);
+            await _apiClient.Contacts.Attribute.CreateOrUpdate(contactId.Value, newAttribute, CancellationToken.None);
             
             _output.WriteLine("Added email attribute via POST /contact/attribute");
             
@@ -203,7 +203,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
             _output.WriteLine($"Testing GET /contact/attribute/value for contact {testContactId}");
             
             // Act
-            var value = await _apiClient.Contacts.GetAttributeValue(
+            var value = await _apiClient.Contacts.Attribute.GetValue(
                 testContactId, 
                 Attributes.Document, 
                 "", 
@@ -241,7 +241,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
             _output.WriteLine($"Created contact {contactId} with test email attribute");
             
             // Act - Remove the attribute
-            await _apiClient.Contacts.RemoveAttribute(
+            await _apiClient.Contacts.Attribute.Remove(
                 contactId.Value, 
                 Attributes.EMail, 
                 "test-email", 

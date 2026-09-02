@@ -33,7 +33,7 @@ namespace Sufficit.Client.Controllers.Identity
         /// <param name="results">Maximum number of results to return</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Collection of directive bases</returns>
-        public Task<IEnumerable<DirectiveBase>> GetDirectives(string filter, int results = 0, CancellationToken cancellationToken = default)
+        public Task<IEnumerable<EntitlementBase>> GetDirectives(string filter, int results = 0, CancellationToken cancellationToken = default)
         {
             string requestEndpoint = $"{Controller}/directives";
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
@@ -46,7 +46,7 @@ namespace Sufficit.Client.Controllers.Identity
 
             var uri = new Uri($"{ requestEndpoint }?{ query }", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
-            return RequestMany<DirectiveBase>(message, cancellationToken);
+            return RequestMany<EntitlementBase>(message, cancellationToken);
         }
 
         protected override string[]? AnonymousPaths { get; } = { $"{Controller}/directives" };
