@@ -7,3 +7,5 @@ token.txt
 **/obj/
 **/appsettings.json
 **/appsettings.*.json
+# Worktrees (padrao): arvores de trabalho em <repo>/.worktrees/
+**/.worktrees/
