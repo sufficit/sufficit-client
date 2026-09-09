@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,8 +17,11 @@ namespace Sufficit.Client.Controllers.Finance
     {
         public const string Controller = "/finance";
 
+        private readonly JsonSerializerOptions _json;
+
         public FinanceControllerSection(IAuthenticatedControllerBase cb) : base(cb)
         {
+            _json = cb.Json;
             LegacyBankSlip = new LegacyBankSlipControllerSection(cb);
             BankSlip = new BankSlipControllerSection(cb);
             ElectronicInvoice = new ElectronicInvoiceControllerSection(cb);
@@ -102,6 +107,67 @@ namespace Sufficit.Client.Controllers.Finance
             var uri = new Uri($"{Controller}/payment/recent?{query}", UriKind.Relative);
             return Request<RecentPaymentsResult>(new HttpRequestMessage(HttpMethod.Get, uri), cancellationToken);
         }
+
+        #region TRANSFERS
+
+        /// <summary>
+        ///     Searches financial transfers between cost centers.
+        /// </summary>
+        public Task<IEnumerable<BalanceTransferExtended>> SearchTransfers(
+            FinanceTransferSearchParameters parameters,
+            CancellationToken cancellationToken = default)
+        {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters));
+
+            var uri = new Uri($"{Controller}/transfers/search", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri)
+            {
+                Content = JsonContent.Create(parameters, options: _json)
+            };
+
+            return RequestMany<BalanceTransferExtended>(message, cancellationToken);
+        }
+
+        /// <summary>
+        ///     Gets one financial transfer by its identifier.
+        /// </summary>
+        public Task<BalanceTransferExtended?> GetTransfer(Guid id, CancellationToken cancellationToken = default)
+        {
+            var uri = new Uri($"{Controller}/transfer/{id:D}", UriKind.Relative);
+            return Request<BalanceTransferExtended>(new HttpRequestMessage(HttpMethod.Get, uri), cancellationToken);
+        }
+
+        /// <summary>
+        ///     Transfers value between two financial cost centers.
+        /// </summary>
+        public Task<BalanceTransferExtended?> Transfer(
+            FinanceTransferRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            var uri = new Uri($"{Controller}/transfer", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri)
+            {
+                Content = JsonContent.Create(request, options: _json)
+            };
+
+            return Request<BalanceTransferExtended>(message, cancellationToken);
+        }
+
+        /// <summary>
+        ///     Reverts a financial transfer. Both records are kept so the audit trail survives,
+        ///     which is what separates it from the legacy cancel that deleted them.
+        /// </summary>
+        public Task<BalanceTransferExtended?> RevertTransfer(Guid id, CancellationToken cancellationToken = default)
+        {
+            var uri = new Uri($"{Controller}/transfer/{id:D}", UriKind.Relative);
+            return Request<BalanceTransferExtended>(new HttpRequestMessage(HttpMethod.Delete, uri), cancellationToken);
+        }
+
+        #endregion
 
         public Task<IdTitlePair?> GetEntity(Guid id, CancellationToken cancellationToken = default)
         {
