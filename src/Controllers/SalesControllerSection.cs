@@ -53,6 +53,32 @@ namespace Sufficit.Client.Controllers
         }
 
         [Authorize(Roles = ManagementRoles)]
+        public Task<ServiceQuotaProfile?> GetServiceQuotaProfile(Guid catalogItemId, CancellationToken cancellationToken)
+            => Request<ServiceQuotaProfile>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}/quotacheckout/profile?catalogItemId={catalogItemId:D}", UriKind.Relative)), cancellationToken);
+
+        [Authorize(Roles = ManagementRoles)]
+        public Task<ServiceQuotaProfile?> SaveServiceQuotaProfile(ServiceQuotaProfile profile, CancellationToken cancellationToken)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}/quotacheckout/profile", UriKind.Relative));
+            message.Content = JsonContent.Create(profile, null, _json);
+            return Request<ServiceQuotaProfile>(message, cancellationToken);
+        }
+
+        [Authorize(Roles = ManagementRoles)]
+        public Task<IEnumerable<RecurringQuotaChargeDto>> GetRecurringQuotaCharges(Guid contractId, CancellationToken cancellationToken)
+            => RequestMany<RecurringQuotaChargeDto>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}/quotacheckout/charges?contractId={contractId:D}", UriKind.Relative)), cancellationToken);
+
+        [Authorize(Roles = ManagementRoles)]
+        public Task<RecurringQuotaChargeDto?> CreateRecurringQuotaCharge(Guid periodId, CancellationToken cancellationToken)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}/quotacheckout/charge", UriKind.Relative));
+            message.Content = JsonContent.Create(new RecurringQuotaChargeRequest { PeriodId = periodId }, null, _json);
+            return Request<RecurringQuotaChargeDto>(message, cancellationToken);
+        }
+
+        [Authorize(Roles = ManagementRoles)]
         public Task<Contract?> GetContract(Guid id, CancellationToken cancellationToken)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
