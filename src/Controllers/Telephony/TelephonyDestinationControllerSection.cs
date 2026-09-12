@@ -59,6 +59,19 @@ namespace Sufficit.Client.Controllers.Telephony
             return await RequestMany<Destination>(message, cancellationToken);
         }
 
+        /// <summary>Searches a destination context on behalf of an application's source context.</summary>
+        public Task<IEnumerable<Destination>> SearchScoped(Guid sourceContextId, DestinationSearchParameters parameters, CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/Selector/Search?sourcecontextid={sourceContextId:D}&{parameters.ToQueryString()}", UriKind.Relative);
+            return RequestMany<Destination>(new HttpRequestMessage(HttpMethod.Get, uri), cancellationToken);
+        }
+
+        public Task<Destination?> ResolveScoped(Guid sourceContextId, string asterisk, CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/Selector/Resolve?sourcecontextid={sourceContextId:D}&asterisk={Uri.EscapeDataString(asterisk)}", UriKind.Relative);
+            return Request<Destination>(new HttpRequestMessage(HttpMethod.Get, uri), cancellationToken);
+        }
+
         /// <summary>
         /// Checks if a destination is being used across all registered modules
         /// </summary>
