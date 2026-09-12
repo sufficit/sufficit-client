@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers.Finance
 {
-    public sealed class FinanceControllerSection : AuthenticatedControllerSection
+    public sealed partial class FinanceControllerSection : AuthenticatedControllerSection
     {
         public const string Controller = "/finance";
 
