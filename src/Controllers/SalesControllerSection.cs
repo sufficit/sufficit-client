@@ -99,6 +99,19 @@ namespace Sufficit.Client.Controllers
         }
 
         [Authorize(Roles = ManagementRoles)]
+        public Task<ContractAutomationState?> GetContractAutomation(Guid id, CancellationToken cancellationToken)
+            => Request<ContractAutomationState>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}/contract/automation?id={id:D}", UriKind.Relative)), cancellationToken);
+
+        [Authorize(Roles = ManagementRoles)]
+        public Task<ContractAutomationState?> SetContractAutomation(ContractAutomationRequest request, CancellationToken cancellationToken)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}/contract/automation", UriKind.Relative));
+            message.Content = JsonContent.Create(request, null, _json);
+            return Request<ContractAutomationState>(message, cancellationToken);
+        }
+
+        [Authorize(Roles = ManagementRoles)]
         public Task DeleteContract(Guid id, CancellationToken cancellationToken)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
