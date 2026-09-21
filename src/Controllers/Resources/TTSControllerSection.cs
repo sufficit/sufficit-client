@@ -86,9 +86,5 @@ namespace Sufficit.Client.Controllers.Telephony
             return ttsresponse;
         }
 
-        protected override string[]? AnonymousPaths { get; } = {
-            $"{Controller}{Prefix}",
-            $"{Controller}{Prefix}/meta" 
-        };
     }
 }

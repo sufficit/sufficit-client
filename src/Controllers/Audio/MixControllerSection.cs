@@ -44,7 +44,5 @@ namespace Sufficit.Client.Controllers.Audio
             message.Content = JsonContent.Create(request, null, _json);
             return Request(message, cancellationToken)!;
         }
-
-        protected override string[]? AnonymousPaths { get; } = { $"{Controller}{Prefix}/fromtts" };
     }
 }
