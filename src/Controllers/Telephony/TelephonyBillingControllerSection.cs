@@ -63,6 +63,33 @@ namespace Sufficit.Client.Controllers.Telephony
         }
 
         /// <summary>
+        /// Costs of a context
+        /// </summary>
+        [Authorize(Roles = $"{TelephonyAdminRole.NormalizedName},{SalesManagerRole.NormalizedName}")]
+        public async Task<IEnumerable<BillingCost>> GetCosts(Guid contextid, CancellationToken cancellationToken)
+        {
+            _logger.LogTrace("getting costs: {contextid}", contextid);
+
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["contextid"] = contextid.ToString();
+
+            var uri = new Uri($"{Controller}/{Section}/costs?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return await RequestMany<BillingCost>(message, cancellationToken) ?? Array.Empty<BillingCost>();
+        }
+
+        /// <summary>
+        /// Destinations the current user may set on a cost: pattern -> title
+        /// </summary>
+        [Authorize(Roles = $"{TelephonyAdminRole.NormalizedName},{SalesManagerRole.NormalizedName}")]
+        public async Task<IDictionary<string, string>> GetCostDestinations(CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}/{Section}/cost/destinations", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return await Request<Dictionary<string, string>>(message, cancellationToken) ?? new Dictionary<string, string>();
+        }
+
+        /// <summary>
         /// Get record cost
         /// </summary>
         [Authorize(Roles = $"{TelephonyAdminRole.NormalizedName},{SalesManagerRole.NormalizedName}")]
