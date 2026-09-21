@@ -60,6 +60,19 @@ namespace Sufficit.Client.Controllers.Gateway
         }
 
         /// <summary>
+        /// Validates a catalog app without changing it: the Vault secret, whether Meta accepts
+        /// the app credentials and whether the WhatsApp permissions are approved.
+        /// </summary>
+        public Task<WhatsAppOfficialAppValidation?> ValidateApp(
+            string appKey,
+            CancellationToken cancellationToken = default)
+        {
+            var query = $"?appKey={Uri.EscapeDataString(appKey)}";
+            var message = new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/apps/validate{query}", UriKind.Relative));
+            return Request<WhatsAppOfficialAppValidation>(message, cancellationToken);
+        }
+
+        /// <summary>
         /// Enables Calling + SIP on the client's own WhatsApp Official phone number, pointing
         /// it at Sufficit's Asterisk gateway. Returns the number's E.164 digits for step 2.
         /// Provide either <see cref="WhatsAppOfficialEnableRequest.PhoneNumberId"/> or
