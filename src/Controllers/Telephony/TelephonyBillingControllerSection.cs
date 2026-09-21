@@ -79,6 +79,20 @@ namespace Sufficit.Client.Controllers.Telephony
         }
 
         /// <summary>
+        /// What a context pays for the most common calls, after merging its costs with the system defaults
+        /// </summary>
+        [Authorize(Roles = $"{TelephonyAdminRole.NormalizedName},{SalesManagerRole.NormalizedName}")]
+        public async Task<IEnumerable<BillingCostScenario>> GetEffectiveCosts(Guid contextid, CancellationToken cancellationToken)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["contextid"] = contextid.ToString();
+
+            var uri = new Uri($"{Controller}/{Section}/costs/effective?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return await RequestMany<BillingCostScenario>(message, cancellationToken) ?? Array.Empty<BillingCostScenario>();
+        }
+
+        /// <summary>
         /// Destinations the current user may set on a cost: pattern -> title
         /// </summary>
         [Authorize(Roles = $"{TelephonyAdminRole.NormalizedName},{SalesManagerRole.NormalizedName}")]
