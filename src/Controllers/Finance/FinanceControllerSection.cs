@@ -100,6 +100,11 @@ namespace Sufficit.Client.Controllers.Finance
             query[nameof(parameters.MinimumValue)] = parameters.MinimumValue.ToString(CultureInfo.InvariantCulture);
             if (parameters.Limit.HasValue)
                 query[nameof(parameters.Limit)] = parameters.Limit.Value.ToString(CultureInfo.InvariantCulture);
+            if (parameters.Paging != null)
+            {
+                query["Paging.Position"] = parameters.Paging.Position.ToString(CultureInfo.InvariantCulture);
+                query["Paging.Size"] = parameters.Paging.Size.ToString(CultureInfo.InvariantCulture);
+            }
             query[nameof(parameters.IncludeBankSlip)] = parameters.IncludeBankSlip.ToString().ToLowerInvariant();
             query[nameof(parameters.IncludeCard)] = parameters.IncludeCard.ToString().ToLowerInvariant();
             query[nameof(parameters.IncludeMercadoPago)] = parameters.IncludeMercadoPago.ToString().ToLowerInvariant();
