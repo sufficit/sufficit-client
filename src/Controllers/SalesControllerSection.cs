@@ -90,6 +90,20 @@ namespace Sufficit.Client.Controllers
         }
 
         [Authorize(Roles = ManagementRoles)]
+        public Task<ContractCheckoutLinkDto?> GetContractCheckoutLink(Guid contractId, CancellationToken cancellationToken)
+            => Request<ContractCheckoutLinkDto>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}/contractcheckout/link?contractId={contractId:D}", UriKind.Relative)), cancellationToken);
+
+        [Authorize(Roles = ManagementRoles)]
+        public Task<ContractCheckoutLinkDto?> SetContractCheckoutLink(Guid contractId, bool enabled, CancellationToken cancellationToken)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post,
+                new Uri($"{Controller}/contractcheckout/link", UriKind.Relative));
+            message.Content = JsonContent.Create(new { contractId, enabled }, null, _json);
+            return Request<ContractCheckoutLinkDto>(message, cancellationToken);
+        }
+
+        [Authorize(Roles = ManagementRoles)]
         public Task<Contract?> SaveContract(Contract item, CancellationToken cancellationToken)
         {
             var uri = new Uri($"{Controller}/contract", UriKind.Relative);
