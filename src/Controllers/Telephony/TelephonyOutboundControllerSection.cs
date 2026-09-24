@@ -98,10 +98,23 @@ namespace Sufficit.Client.Controllers.Telephony
             => Request(new HttpRequestMessage(HttpMethod.Delete, new Uri($"{Controller}{Prefix}/customerservice?customerServiceId={customerServiceId}", UriKind.Relative)), cancellationToken);
 
         /// <summary>
+        ///     Lists only the services and WhatsApp numbers belonging to one customer.
+        /// </summary>
+        public Task<IEnumerable<OutboundRouteSourceCandidate>> GetRouteSourceCandidates(Guid contextId, CancellationToken cancellationToken = default)
+            => RequestMany<OutboundRouteSourceCandidate>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/routesourcecandidates?contextId={contextId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
         ///     Lists customer-facing ordered outbound route sources for one context.
         /// </summary>
         public Task<IEnumerable<OutboundRouteSource>> GetRouteSources(Guid contextId, CancellationToken cancellationToken = default)
             => RequestMany<OutboundRouteSource>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/routesources?contextId={contextId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
+        ///     Lists every customer route source, including WhatsApp. Call only from clients
+        ///     compiled with the WHATSAPP route-source kind.
+        /// </summary>
+        public Task<IEnumerable<OutboundRouteSource>> GetRouteSourcesIncludingWhatsApp(Guid contextId, CancellationToken cancellationToken = default)
+            => RequestMany<OutboundRouteSource>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/routesources?contextId={contextId}&includeWhatsApp=true", UriKind.Relative)), cancellationToken);
 
         /// <summary>
         ///     Gets one customer-facing ordered outbound route source row.
@@ -126,6 +139,13 @@ namespace Sufficit.Client.Controllers.Telephony
         /// </summary>
         public Task RemoveRouteSource(Guid routeSourceId, CancellationToken cancellationToken = default)
             => Request(new HttpRequestMessage(HttpMethod.Delete, new Uri($"{Controller}{Prefix}/routesource?routeSourceId={routeSourceId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>
+        ///     Moves one customer route source to a zero-based position and returns the saved order.
+        /// </summary>
+        public Task<IEnumerable<OutboundRouteSource>> MoveRouteSource(Guid contextId, Guid routeSourceId, int targetIndex, CancellationToken cancellationToken = default)
+            => RequestMany<OutboundRouteSource>(new HttpRequestMessage(HttpMethod.Post,
+                new Uri($"{Controller}{Prefix}/routesourcemove?contextId={contextId}&routeSourceId={routeSourceId}&targetIndex={targetIndex}", UriKind.Relative)), cancellationToken);
 
         /// <summary>
         ///     Imports a disabled snapshot of the legacy outbound catalog into the assignment and route-rule tables.
@@ -255,4 +275,3 @@ namespace Sufficit.Client.Controllers.Telephony
 
     }
 }
-
