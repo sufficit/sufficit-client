@@ -54,6 +54,8 @@ namespace Sufficit.Client.Controllers.Finance
                 query[nameof(parameters.UserId)] = parameters.UserId.Value.ToString("D");
             if (parameters.Limit.HasValue)
                 query[nameof(parameters.Limit)] = parameters.Limit.Value.ToString(CultureInfo.InvariantCulture);
+            if (parameters.Skip.HasValue)
+                query[nameof(parameters.Skip)] = parameters.Skip.Value.ToString(CultureInfo.InvariantCulture);
             if (parameters.Active.HasValue)
                 query[nameof(parameters.Active)] = parameters.Active.Value.ToString().ToLowerInvariant();
             if (parameters.Start.HasValue)
