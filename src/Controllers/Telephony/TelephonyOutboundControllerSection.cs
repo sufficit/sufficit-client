@@ -115,12 +115,6 @@ namespace Sufficit.Client.Controllers.Telephony
             => RequestMany<OutboundRouteSourceCandidate>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/routesourcecandidates?contextId={contextId}", UriKind.Relative)), cancellationToken);
 
         /// <summary>
-        ///     Lists only the services and WhatsApp numbers belonging to one customer.
-        /// </summary>
-        public Task<IEnumerable<OutboundRouteSourceCandidate>> GetRouteSourceCandidates(Guid contextId, CancellationToken cancellationToken = default)
-            => RequestMany<OutboundRouteSourceCandidate>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/routesourcecandidates?contextId={contextId}", UriKind.Relative)), cancellationToken);
-
-        /// <summary>
         ///     Lists customer-facing ordered outbound route sources for one context.
         /// </summary>
         public Task<IEnumerable<OutboundRouteSource>> GetRouteSources(Guid contextId, CancellationToken cancellationToken = default)
