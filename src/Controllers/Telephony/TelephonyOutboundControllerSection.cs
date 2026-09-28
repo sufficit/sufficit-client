@@ -94,8 +94,25 @@ namespace Sufficit.Client.Controllers.Telephony
         /// <summary>
         ///     Removes one telephony-side customer service projection row.
         /// </summary>
-        public Task RemoveCustomerService(Guid customerServiceId, CancellationToken cancellationToken = default)
-            => Request(new HttpRequestMessage(HttpMethod.Delete, new Uri($"{Controller}{Prefix}/customerservice?customerServiceId={customerServiceId}", UriKind.Relative)), cancellationToken);
+        public Task RemoveCustomerService(Guid customerServiceId, long expectedRevision, CancellationToken cancellationToken = default)
+            => Request(new HttpRequestMessage(HttpMethod.Delete, new Uri($"{Controller}{Prefix}/customerservice?customerServiceId={customerServiceId}&expectedRevision={expectedRevision}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>Lists separate, versioned commercial contract lines for a customer.</summary>
+        public Task<IEnumerable<OutboundCommercialGrantLine>> GetCommercialGrantLines(Guid contextId, CancellationToken cancellationToken = default)
+            => RequestMany<OutboundCommercialGrantLine>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/commercialgrantlines?contextId={contextId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>Saves a locally owned commercial contract line with optimistic revision checking.</summary>
+        public Task<OutboundCommercialGrantLine?> SaveCommercialGrantLine(OutboundCommercialGrantLine item, CancellationToken cancellationToken = default)
+            => Request<OutboundCommercialGrantLine>(new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/commercialgrantline", UriKind.Relative))
+            {
+                Content = JsonContent.Create(item, null, _json)
+            }, cancellationToken);
+
+        /// <summary>
+        ///     Lists only the services and WhatsApp numbers belonging to one customer.
+        /// </summary>
+        public Task<IEnumerable<OutboundRouteSourceCandidate>> GetRouteSourceCandidates(Guid contextId, CancellationToken cancellationToken = default)
+            => RequestMany<OutboundRouteSourceCandidate>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/routesourcecandidates?contextId={contextId}", UriKind.Relative)), cancellationToken);
 
         /// <summary>
         ///     Lists only the services and WhatsApp numbers belonging to one customer.
@@ -137,8 +154,27 @@ namespace Sufficit.Client.Controllers.Telephony
         /// <summary>
         ///     Removes one customer-facing ordered outbound route source row.
         /// </summary>
-        public Task RemoveRouteSource(Guid routeSourceId, CancellationToken cancellationToken = default)
-            => Request(new HttpRequestMessage(HttpMethod.Delete, new Uri($"{Controller}{Prefix}/routesource?routeSourceId={routeSourceId}", UriKind.Relative)), cancellationToken);
+        public Task RemoveRouteSource(Guid routeSourceId, long expectedRevision, CancellationToken cancellationToken = default)
+            => Request(new HttpRequestMessage(HttpMethod.Delete, new Uri($"{Controller}{Prefix}/routesource?routeSourceId={routeSourceId}&expectedRevision={expectedRevision}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>Lists finite grants for customer-owned trunks and gateways.</summary>
+        public Task<IEnumerable<OutboundRouteGrant>> GetRouteGrants(Guid contextId, CancellationToken cancellationToken = default)
+            => RequestMany<OutboundRouteGrant>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/routegrants?contextId={contextId}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>Saves a locally owned trunk or gateway grant with optimistic revision checking.</summary>
+        public Task<OutboundRouteGrant?> SaveRouteGrant(OutboundRouteGrant item, CancellationToken cancellationToken = default)
+            => Request<OutboundRouteGrant>(new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/routegrant", UriKind.Relative))
+            {
+                Content = JsonContent.Create(item, null, _json)
+            }, cancellationToken);
+
+        /// <summary>
+        ///     Moves one customer route source to a zero-based position and returns the saved order.
+        /// </summary>
+        public Task<IEnumerable<OutboundRouteSource>> MoveRouteSource(Guid contextId, Guid routeSourceId, int targetIndex,
+            long expectedRevision, CancellationToken cancellationToken = default)
+            => RequestMany<OutboundRouteSource>(new HttpRequestMessage(HttpMethod.Post,
+                new Uri($"{Controller}{Prefix}/routesourcemove?contextId={contextId}&routeSourceId={routeSourceId}&targetIndex={targetIndex}&expectedRevision={expectedRevision}", UriKind.Relative)), cancellationToken);
 
         /// <summary>
         ///     Moves one customer route source to a zero-based position and returns the saved order.
