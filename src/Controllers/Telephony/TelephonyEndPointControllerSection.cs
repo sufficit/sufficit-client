@@ -62,6 +62,17 @@ namespace Sufficit.Client.Controllers.Telephony
             return Request<EndPoint>(message, cancellationToken);
         }
 
+        public Task<BilledFallbackPreference?> GetBilledFallback(Guid contextId, CancellationToken cancellationToken)
+            => Request<BilledFallbackPreference>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}{Prefix}/BilledFallback?contextId={contextId:D}", UriKind.Relative)), cancellationToken);
+
+        public Task SetBilledFallback(BilledFallbackPreference preference, CancellationToken cancellationToken)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/BilledFallback", UriKind.Relative))
+            { Content = JsonContent.Create(preference, null, _json) };
+            return Request(message, cancellationToken);
+        }
+
         #region PROPERTY
 
         [Authorize]
