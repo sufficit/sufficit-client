@@ -152,6 +152,15 @@ namespace Sufficit.Client.Controllers.Telephony
             return Request(message, cancellationToken);
         }
 
+        /// <summary>Explicit manager command: changes expiry only and rejects a stale customer/date snapshot.</summary>
+        public Task Expiration(DIDExpirationUpdateParameters parameters, CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/expiration", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(parameters, null, _json);
+            return Request(message, cancellationToken);
+        }
+
         /// <summary>
         /// Update Filter information
         /// </summary>

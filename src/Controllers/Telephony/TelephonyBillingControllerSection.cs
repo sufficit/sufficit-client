@@ -20,6 +20,21 @@ namespace Sufficit.Client.Controllers.Telephony
     /// </summary>
     public sealed class TelephonyBillingControllerSection : AuthenticatedControllerSection, BalanceControllerInterface
     {
+        public Task<Sufficit.Finance.CallCreditCommitmentDraft?> GetCommitmentDraft(Guid contextId, CancellationToken cancellationToken)
+            => Request<Sufficit.Finance.CallCreditCommitmentDraft>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}/{Section}/Commitment/Draft?contextId={contextId:D}", UriKind.Relative)), cancellationToken);
+
+        public Task<Sufficit.Finance.CallCreditCommitmentPreference?> GetCommitmentPreference(Guid contextId, CancellationToken cancellationToken)
+            => Request<Sufficit.Finance.CallCreditCommitmentPreference>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}/{Section}/Commitment/Preference?contextId={contextId:D}", UriKind.Relative)), cancellationToken);
+
+        public Task SetCommitmentPreference(Sufficit.Finance.CallCreditCommitmentPreference preference, CancellationToken cancellationToken)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}/{Section}/Commitment/Preference", UriKind.Relative))
+            { Content = JsonContent.Create(preference, null, _json) };
+            return Request(message, cancellationToken);
+        }
+
         private const string Controller = TelephonyControllerSection.Controller;
         private const string Section = "billing";
 
