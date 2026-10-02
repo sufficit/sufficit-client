@@ -155,6 +155,10 @@ namespace Sufficit.Client.Controllers.Finance
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
+            // Fill once on the caller's request; the same request can be resent after
+            // an indeterminate response without creating another ledger operation.
+            if (request.OperationId == Guid.Empty) request.OperationId = Guid.NewGuid();
+            if (!request.Timestamp.HasValue) request.Timestamp = DateTime.UtcNow;
             var uri = new Uri($"{Controller}/transfer", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri)
             {

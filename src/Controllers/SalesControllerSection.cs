@@ -79,6 +79,11 @@ namespace Sufficit.Client.Controllers
         }
 
         [Authorize(Roles = ManagementRoles)]
+        public Task<LegacyBilledRenewalAvailability?> GetBilledRenewalAvailability(Guid id, CancellationToken cancellationToken)
+            => Request<LegacyBilledRenewalAvailability>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}/contract/BilledRenewalAvailability?id={id:D}", UriKind.Relative)), cancellationToken);
+
+        [Authorize(Roles = ManagementRoles)]
         public Task<Contract?> GetContract(Guid id, CancellationToken cancellationToken)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
@@ -263,6 +268,31 @@ namespace Sufficit.Client.Controllers
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = JsonContent.Create(request, null, _json);
             return Request<ContractPeriod>(message, cancellationToken);
+        }
+
+        [Authorize(Roles = ManagementRoles)]
+        public Task<LegacyMonthlyRenewalAvailability?> GetMonthlyRenewalAvailability(Guid id, CancellationToken cancellationToken)
+            => Request<LegacyMonthlyRenewalAvailability>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}/contract/MonthlyRenewalAvailability?id={id:D}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>Returns the persisted successor ID, not confirmation of credit delivery.
+        /// On retry reuse the exact expected snapshot from the original request.</summary>
+        [Authorize(Roles = ManagementRoles)]
+        public Task<Guid?> RenewBilled(LegacyBilledRenewalRequest request, CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}/contract/RenewBilled", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Post, uri);
+            message.Content = JsonContent.Create(request, null, _json);
+            return RequestStruct<Guid>(message, cancellationToken);
+        }
+
+        /// <summary>Generic monthly renewal; retries must retain the original snapshot.</summary>
+        [Authorize(Roles = ManagementRoles)]
+        public Task<Guid?> RenewMonthly(LegacyMonthlyRenewalRequest request, CancellationToken cancellationToken)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}/contract/RenewMonthly", UriKind.Relative));
+            message.Content = JsonContent.Create(request, null, _json);
+            return RequestStruct<Guid>(message, cancellationToken);
         }
 
         [Authorize(Roles = ManagementRoles)]
