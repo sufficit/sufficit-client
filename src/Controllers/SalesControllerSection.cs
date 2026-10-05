@@ -23,6 +23,21 @@ namespace Sufficit.Client.Controllers
             _json = cb.Json;
         }
 
+        /// <summary>Reads context-scoped commercial transport evidence without private event payloads.</summary>
+        [Authorize(Roles = Sufficit.Identity.AdministratorRole.NormalizedName)]
+        public Task<SalesIntegrationAuditPage?> GetIntegrationAudit(SalesIntegrationAuditSearch parameters, CancellationToken cancellationToken)
+        {
+            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+            parameters.Validate();
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["contextId"] = parameters.ContextId.ToString("D");
+            query["afterVersion"] = parameters.AfterVersion.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            query["limit"] = parameters.Limit.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            if (parameters.CorrelationId.HasValue) query["correlationId"] = parameters.CorrelationId.Value.ToString("D");
+            return Request<SalesIntegrationAuditPage>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}/IntegrationAudit?{query}", UriKind.Relative)), cancellationToken);
+        }
+
         [Authorize]
         public Task<IEnumerable<ClientInformation>> GetClients(string? filter, uint? results, CancellationToken cancellationToken)
         {
