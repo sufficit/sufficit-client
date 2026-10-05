@@ -48,6 +48,7 @@ namespace Sufficit.Client
 
             // setting controllers sub sections
             Access = new AccessControllerSection(cb);
+            Activities = new OperationalActivitiesControllerSection(cb);
             AI = new AIControllerSection(cb);
             Audio = new AudioControllerSection(cb);
             Contacts = new ContactsControllerSection(cb);
@@ -71,6 +72,8 @@ namespace Sufficit.Client
 
         public HealthCheckController Health { get; }
         public AccessControllerSection Access { get; }
+        /// <summary>Independent collaborator work commands and immutable history.</summary>
+        public OperationalActivitiesControllerSection Activities { get; }
         public AIControllerSection AI { get; }
         public AudioControllerSection Audio { get; }
         public ContactsControllerSection Contacts { get; }
