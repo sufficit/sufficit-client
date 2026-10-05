@@ -38,6 +38,17 @@ namespace Sufficit.Client.Controllers
                 new Uri($"{Controller}/IntegrationAudit?{query}", UriKind.Relative)), cancellationToken);
         }
 
+        /// <summary>Requests a new bounded transport retry cycle; the API derives the requester identity.</summary>
+        [Authorize(Roles = Sufficit.Identity.AdministratorRole.NormalizedName)]
+        public Task<SalesIntegrationRetryReceipt?> RetryIntegrationDelivery(SalesIntegrationRetryRequest request, CancellationToken cancellationToken)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+            request.Validate();
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}/IntegrationRetry", UriKind.Relative));
+            message.Content = JsonContent.Create(request, null, _json);
+            return Request<SalesIntegrationRetryReceipt>(message, cancellationToken);
+        }
+
         [Authorize]
         public Task<IEnumerable<ClientInformation>> GetClients(string? filter, uint? results, CancellationToken cancellationToken)
         {
