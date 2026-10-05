@@ -23,8 +23,17 @@ namespace Sufficit.Client.Controllers
             _json = cb.Json;
         }
 
+        /// <summary>Reads the current API permission decision; never creates grants or business effects.</summary>
+        [Authorize]
+        public Task<SalesIntegrationAccessState?> GetIntegrationPermissions(Guid contextId, CancellationToken cancellationToken)
+        {
+            if (contextId == Guid.Empty) throw new ArgumentException("An explicit customer context is required.", nameof(contextId));
+            return Request<SalesIntegrationAccessState>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}/IntegrationAudit/Permissions?contextId={contextId:D}", UriKind.Relative)), cancellationToken);
+        }
+
         /// <summary>Reads context-scoped commercial transport evidence without private event payloads.</summary>
-        [Authorize(Roles = Sufficit.Identity.AdministratorRole.NormalizedName)]
+        [Authorize]
         public Task<SalesIntegrationAuditPage?> GetIntegrationAudit(SalesIntegrationAuditSearch parameters, CancellationToken cancellationToken)
         {
             if (parameters == null) throw new ArgumentNullException(nameof(parameters));
@@ -39,7 +48,7 @@ namespace Sufficit.Client.Controllers
         }
 
         /// <summary>Requests a new bounded transport retry cycle; the API derives the requester identity.</summary>
-        [Authorize(Roles = Sufficit.Identity.AdministratorRole.NormalizedName)]
+        [Authorize]
         public Task<SalesIntegrationRetryReceipt?> RetryIntegrationDelivery(SalesIntegrationRetryRequest request, CancellationToken cancellationToken)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
