@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Sufficit.Client.Controllers
 {
-    public sealed class SalesControllerSection : AuthenticatedControllerSection
+    public sealed partial class SalesControllerSection : AuthenticatedControllerSection
     {
         public const string Controller = "/sales";
         private const string ManagementRoles = $"{Sufficit.Sales.SalesManagerRole.NormalizedName},{Sufficit.Identity.ManagerRole.NormalizedName},{Sufficit.Identity.AdministratorRole.NormalizedName}";
