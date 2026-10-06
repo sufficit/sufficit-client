@@ -71,6 +71,20 @@ namespace Sufficit.Client.Controllers
                 new Uri($"{Controller}/Representative/Customers?representativeId={representativeId:D}", UriKind.Relative)), cancellationToken);
         }
 
+        /// <summary>
+        /// Representatives (contacts commissioned on current records) for search; <see cref="ClientInformation.Total"/>
+        /// is the number of customers of each one. Management roles only.
+        /// </summary>
+        [Authorize(Roles = ManagementRoles)]
+        public Task<IEnumerable<ClientInformation>> GetRepresentatives(string? filter, uint? results, CancellationToken cancellationToken)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            if (!string.IsNullOrWhiteSpace(filter)) query["filter"] = filter;
+            if (results.HasValue) query["results"] = results.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            return RequestMany<ClientInformation>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}/Representative/List?{query}", UriKind.Relative)), cancellationToken);
+        }
+
         [Authorize]
         public Task<IEnumerable<ClientInformation>> GetClients(string? filter, uint? results, CancellationToken cancellationToken)
         {
