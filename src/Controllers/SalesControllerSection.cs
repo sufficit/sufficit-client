@@ -85,6 +85,70 @@ namespace Sufficit.Client.Controllers
                 new Uri($"{Controller}/Representative/List?{query}", UriKind.Relative)), cancellationToken);
         }
 
+        #region REPRESENTATIVES PROGRAM (Sales/Representatives)
+
+        private const string Representatives = Controller + "/Representatives";
+
+        /// <summary>Registered representatives (management roles).</summary>
+        [Authorize(Roles = ManagementRoles)]
+        public Task<IEnumerable<SalesRepresentative>> GetRegisteredRepresentatives(bool includeInactive, CancellationToken cancellationToken)
+            => RequestMany<SalesRepresentative>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Representatives}?includeInactive={(includeInactive ? "true" : "false")}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>One registration (management roles, or the representative itself).</summary>
+        [Authorize]
+        public Task<SalesRepresentative?> GetRegisteredRepresentative(Guid id, CancellationToken cancellationToken)
+            => Request<SalesRepresentative>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Representatives}/ById?id={id:D}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>Creates or updates a registration (identifier = contact).</summary>
+        [Authorize(Roles = ManagementRoles)]
+        public Task<SalesRepresentative?> SaveRepresentative(SalesRepresentative item, CancellationToken cancellationToken)
+            => Request<SalesRepresentative>(new HttpRequestMessage(HttpMethod.Put, new Uri(Representatives, UriKind.Relative))
+                { Content = JsonContent.Create(item, null, _json) }, cancellationToken);
+
+        /// <summary>Portfolio entries by customer and/or representative.</summary>
+        [Authorize]
+        public Task<IEnumerable<RepresentativeAssignment>> GetRepresentativeAssignments(Guid? customerId, Guid? representativeId, bool includeEnded, CancellationToken cancellationToken)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            if (customerId.HasValue) query["customerId"] = customerId.Value.ToString("D");
+            if (representativeId.HasValue) query["representativeId"] = representativeId.Value.ToString("D");
+            query["includeEnded"] = includeEnded ? "true" : "false";
+            return RequestMany<RepresentativeAssignment>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Representatives}/Assignments?{query}", UriKind.Relative)), cancellationToken);
+        }
+
+        /// <summary>Assigns or replaces a representative (replacing requires the in-progress decision).</summary>
+        [Authorize(Roles = ManagementRoles)]
+        public Task<RepresentativeAssignment?> ChangeRepresentativeAssignment(RepresentativeAssignmentChange change, CancellationToken cancellationToken)
+            => Request<RepresentativeAssignment>(new HttpRequestMessage(HttpMethod.Post, new Uri($"{Representatives}/Assignments", UriKind.Relative))
+                { Content = JsonContent.Create(change, null, _json) }, cancellationToken);
+
+        /// <summary>Ends an assignment without replacement (history is kept).</summary>
+        [Authorize(Roles = ManagementRoles)]
+        public Task<RepresentativeAssignment?> EndRepresentativeAssignment(Guid id, string? reason, CancellationToken cancellationToken)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["id"] = id.ToString("D");
+            if (!string.IsNullOrWhiteSpace(reason)) query["reason"] = reason;
+            return Request<RepresentativeAssignment>(new HttpRequestMessage(HttpMethod.Delete,
+                new Uri($"{Representatives}/Assignments?{query}", UriKind.Relative)), cancellationToken);
+        }
+
+        /// <summary>Commission policies.</summary>
+        [Authorize(Roles = ManagementRoles)]
+        public Task<IEnumerable<CommissionPolicy>> GetCommissionPolicies(bool includeInactive, CancellationToken cancellationToken)
+            => RequestMany<CommissionPolicy>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Representatives}/Policies?includeInactive={(includeInactive ? "true" : "false")}", UriKind.Relative)), cancellationToken);
+
+        [Authorize(Roles = ManagementRoles)]
+        public Task<CommissionPolicy?> SaveCommissionPolicy(CommissionPolicy item, CancellationToken cancellationToken)
+            => Request<CommissionPolicy>(new HttpRequestMessage(HttpMethod.Put, new Uri($"{Representatives}/Policies", UriKind.Relative))
+                { Content = JsonContent.Create(item, null, _json) }, cancellationToken);
+
+        #endregion
+
         [Authorize]
         public Task<IEnumerable<ClientInformation>> GetClients(string? filter, uint? results, CancellationToken cancellationToken)
         {
