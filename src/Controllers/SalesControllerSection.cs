@@ -58,6 +58,19 @@ namespace Sufficit.Client.Controllers
             return Request<SalesIntegrationRetryReceipt>(message, cancellationToken);
         }
 
+        /// <summary>
+        /// Sales representative panel: the representative and its commissioned customers with
+        /// balance, commitment, active services and inbound entries (aggregates only).
+        /// </summary>
+        /// <remarks>Requires the representative's balanceview entitlement.</remarks>
+        [Authorize]
+        public Task<IEnumerable<RepresentativeCustomer>> GetRepresentativeCustomers(Guid representativeId, CancellationToken cancellationToken)
+        {
+            if (representativeId == Guid.Empty) throw new ArgumentException("A representative is required.", nameof(representativeId));
+            return RequestMany<RepresentativeCustomer>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}/Representative/Customers?representativeId={representativeId:D}", UriKind.Relative)), cancellationToken);
+        }
+
         [Authorize]
         public Task<IEnumerable<ClientInformation>> GetClients(string? filter, uint? results, CancellationToken cancellationToken)
         {
