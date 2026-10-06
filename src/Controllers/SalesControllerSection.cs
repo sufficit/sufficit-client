@@ -147,6 +147,35 @@ namespace Sufficit.Client.Controllers
             => Request<CommissionPolicy>(new HttpRequestMessage(HttpMethod.Put, new Uri($"{Representatives}/Policies", UriKind.Relative))
                 { Content = JsonContent.Create(item, null, _json) }, cancellationToken);
 
+        /// <summary>Commission statement lines; a representative may read its own.</summary>
+        [Authorize]
+        public Task<IEnumerable<CommissionEntry>> GetCommissionEntries(Guid? representativeId, Guid? customerId, CommissionEntryStatus? status, CancellationToken cancellationToken)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            if (representativeId.HasValue) query["representativeId"] = representativeId.Value.ToString("D");
+            if (customerId.HasValue) query["customerId"] = customerId.Value.ToString("D");
+            if (status.HasValue) query["status"] = status.Value.ToString();
+            return RequestMany<CommissionEntry>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Representatives}/Entries?{query}", UriKind.Relative)), cancellationToken);
+        }
+
+        /// <summary>Commission payouts; a representative may read its own.</summary>
+        [Authorize]
+        public Task<IEnumerable<CommissionPayout>> GetCommissionPayouts(Guid? representativeId, CommissionPayoutStatus? status, CancellationToken cancellationToken)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            if (representativeId.HasValue) query["representativeId"] = representativeId.Value.ToString("D");
+            if (status.HasValue) query["status"] = status.Value.ToString();
+            return RequestMany<CommissionPayout>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Representatives}/Payouts?{query}", UriKind.Relative)), cancellationToken);
+        }
+
+        /// <summary>Pays released lines by balance credit or PIX (PIX requires the RPA and proof storage objects).</summary>
+        [Authorize(Roles = ManagementRoles)]
+        public Task<CommissionPayout?> PayCommissions(CommissionPayoutRequest request, CancellationToken cancellationToken)
+            => Request<CommissionPayout>(new HttpRequestMessage(HttpMethod.Post, new Uri($"{Representatives}/Payouts", UriKind.Relative))
+                { Content = JsonContent.Create(request, null, _json) }, cancellationToken);
+
         #endregion
 
         [Authorize]
