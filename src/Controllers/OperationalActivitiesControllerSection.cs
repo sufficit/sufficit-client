@@ -27,6 +27,19 @@ namespace Sufficit.Client.Controllers
             return Request<OperationalActivityHistory>(message, token);
         }
 
+        /// <summary>
+        /// Opens collaborator work from an explicit stable source event. Retrying the
+        /// same event preserves its original receipt and does not overwrite operator edits.
+        /// </summary>
+        public Task<OperationalActivityHistory?> OpenFromEvent(OperationalActivityRequestedEvent source, CancellationToken token)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            source.ToCommand();
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri(Endpoint + "/SourceEvents", UriKind.Relative));
+            message.Content = JsonContent.Create(source, null, _json);
+            return Request<OperationalActivityHistory>(message, token);
+        }
+
         /// <summary>Reads a bounded stable page including work without an assignee.</summary>
         public Task<IEnumerable<OperationalActivity>> Search(Guid contextId, Guid? afterId, int limit, CancellationToken token)
         {
