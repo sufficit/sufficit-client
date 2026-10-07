@@ -136,7 +136,7 @@
 	
 	<ItemGroup Label="Sufficit Dependencies">
 		<ProjectReference Include="..\..\sufficit-base\src\Sufficit.Base.csproj" Condition="Exists('..\\..\\sufficit-base\\src\\Sufficit.Base.csproj')" />
-		<PackageReference Include="Sufficit.Base" Version="[1.26.1007.1337,2.0.0)" Condition="!Exists('..\\..\\sufficit-base\\src\\Sufficit.Base.csproj') " />
+		<PackageReference Include="Sufficit.Base" Version="[1.26.1007.1427,2.0.0)" Condition="!Exists('..\\..\\sufficit-base\\src\\Sufficit.Base.csproj') " />
 
 		<ProjectReference Include="..\..\sufficit-gateway-fluxtelecom-sms\src\Sufficit.Gateway.FluxTelecom.SMS.csproj" Condition="Exists('..\\..\\sufficit-gateway-fluxtelecom-sms\\src\\Sufficit.Gateway.FluxTelecom.SMS.csproj')" />
 		<PackageReference Include="Sufficit.Gateway.FluxTelecom.SMS" Version="1.*" Condition="!Exists('..\\..\\sufficit-gateway-fluxtelecom-sms\\src\\Sufficit.Gateway.FluxTelecom.SMS.csproj') " />
@@ -145,7 +145,7 @@
 		<PackageReference Include="Sufficit.Gateway.Zabbix" Version="1.*" Condition="!Exists('..\\..\\sufficit-gateway-zabbix\\src\\Sufficit.Gateway.Zabbix.csproj') " />
 
 		<ProjectReference Include="..\..\sufficit-identity-core\src\Sufficit.Identity.Core.csproj" Condition="Exists('..\\..\\sufficit-identity-core\\src\\Sufficit.Identity.Core.csproj')" />
-		<PackageReference Include="Sufficit.Identity.Core" Version="1.*" Condition="!Exists('..\\..\\sufficit-identity-core\\src\\Sufficit.Identity.Core.csproj') " />
+		<PackageReference Include="Sufficit.Identity.Core" Version="[1.26.1007.1427,2.0.0)" Condition="!Exists('..\\..\\sufficit-identity-core\\src\\Sufficit.Identity.Core.csproj') " />
 
 		<ProjectReference Include="..\..\sufficit-net-http\src\Sufficit.Net.Http.csproj" Condition="Exists('..\\..\\sufficit-net-http\\src\\Sufficit.Net.Http.csproj')" />
 		<PackageReference Include="Sufficit.Net.Http" Version="1.*" Condition="!Exists('..\\..\\sufficit-net-http\\src\\Sufficit.Net.Http.csproj') " />
