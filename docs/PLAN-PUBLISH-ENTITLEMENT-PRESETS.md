@@ -13,3 +13,5 @@ Autorização: usuário solicitou em 07/10/2026 merge de tudo pendente na main e
 ## Evidência de aceitação
 
 Main remota com commits integrados, dependências disponíveis, tabelas e dois presets com balanceview, serviços saudáveis e versão correspondente ao artefato publicado. Não remover trabalho nem branches com alterações não enviadas. Preservar claims existentes. Revalidar o build completo antes do deploy.
+
+Checkpoint de validação: build API 33 projetos e Blazor Server 22 projetos aprovados; 763 testes API, 719 EFData, 417 Standard, 41 Identity.Core, 29 pré-pago/roteamento e 53 Blazor focados. Blazor completo: 873 aprovados, 23 ignorados e três falhas estáticas preexistentes (assets SUI transitivos, botão monitor e wrapper de seção em representantes). Arquivos dessa condição não alterados pelo lote. Backup real intranet: /root/sufficit-migration-audit/20261007-before-entitlement-presets-root.sql.gz (111031238 bytes, 0600, gzip válido). Tentativa via usuário padrão do mysqldump não tinha acesso às tabelas; não é usada como backup. Publicação de pacotes aceita pelo NuGet, aguardando processamento/indexação antes de reexecutar consumidores.
