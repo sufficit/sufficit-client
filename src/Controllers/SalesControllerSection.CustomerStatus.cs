@@ -36,4 +36,23 @@ public sealed partial class SalesControllerSection
         message.Content = JsonContent.Create(request, null, _json);
         return Request<CustomerStatusHistory>(message, token);
     }
+    /// <summary>Reads current scoped permission and server readiness for operator changes.</summary>
+    public Task<CustomerStatusCapabilities?> GetCustomerStatusCapabilities(Guid contextId, CancellationToken token)
+    {
+        if (contextId == Guid.Empty) throw new ArgumentException("An explicit customer context is required.");
+        return Request<CustomerStatusCapabilities>(new HttpRequestMessage(HttpMethod.Get,
+            new Uri($"{Controller}/Customers/{contextId:D}/Status/Capabilities", UriKind.Relative)), token);
+    }
+
+    /// <summary>Changes an operator-owned state with exact revision and stable command identity.</summary>
+    public Task<CustomerStatusHistory?> ChangeCustomerStatus(CustomerStatusTransitionRequest request, CancellationToken token)
+    {
+        if (request == null) throw new ArgumentNullException(nameof(request));
+        request.Validate();
+        if (request.Origin != CustomerStatusOrigin.Operator) throw new ArgumentException("An operator command is required.");
+        var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}/Customers/{request.ContextId:D}/Status/Change", UriKind.Relative));
+        message.Content = JsonContent.Create(request, null, _json);
+        return Request<CustomerStatusHistory>(message, token);
+    }
+
 }
