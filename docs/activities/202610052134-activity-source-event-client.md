@@ -5,3 +5,5 @@ Added OperationalActivities.OpenFromEvent for the administrator-only API source-
 All configured Client targets built. Two focused synthetic HTTP tests passed: authenticated exact-payload retries and rejection before transport for invalid source identity. No real credentials, operator session or production business mutation were used.
 
 Publication is tracked in PLAN-ACTIVITY-SOURCE-EVENTS.md; source module mappings, reminders and queue UI remain separate pending work.
+
+Publication and three-host API installation completed; final CI, package and installed verification evidence is recorded in PLAN-ACTIVITY-SOURCE-EVENTS.md. The broader module event mappings, reminders and queue UI remain pending.
