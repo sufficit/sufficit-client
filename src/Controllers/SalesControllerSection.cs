@@ -170,6 +170,12 @@ namespace Sufficit.Client.Controllers
                 new Uri($"{Representatives}/Payouts?{query}", UriKind.Relative)), cancellationToken);
         }
 
+        /// <summary>Whether the customer's services may be cancelled with a retroactive date (financial responsible courtesy).</summary>
+        [Authorize(Roles = ManagementRoles)]
+        public Task<RetroactiveCancellationEligibility?> GetRetroactiveCancellation(Guid customerId, CancellationToken cancellationToken)
+            => Request<RetroactiveCancellationEligibility>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Representatives}/RetroactiveCancellation?customerId={customerId:D}", UriKind.Relative)), cancellationToken);
+
         /// <summary>Pays released lines by balance credit or PIX (PIX requires the RPA and proof storage objects).</summary>
         [Authorize(Roles = ManagementRoles)]
         public Task<CommissionPayout?> PayCommissions(CommissionPayoutRequest request, CancellationToken cancellationToken)
