@@ -145,7 +145,7 @@
 		<PackageReference Include="Sufficit.Gateway.Zabbix" Version="1.*" Condition="!Exists('..\\..\\sufficit-gateway-zabbix\\src\\Sufficit.Gateway.Zabbix.csproj') " />
 
 		<ProjectReference Include="..\..\sufficit-identity-core\src\Sufficit.Identity.Core.csproj" Condition="Exists('..\\..\\sufficit-identity-core\\src\\Sufficit.Identity.Core.csproj')" />
-		<PackageReference Include="Sufficit.Identity.Core" Version="[1.26.1007.1704,2.0.0)" Condition="!Exists('..\\..\\sufficit-identity-core\\src\\Sufficit.Identity.Core.csproj') " />
+		<PackageReference Include="Sufficit.Identity.Core" Version="[1.26.1007.1427,2.0.0)" Condition="!Exists('..\\..\\sufficit-identity-core\\src\\Sufficit.Identity.Core.csproj') " />
 
 		<ProjectReference Include="..\..\sufficit-net-http\src\Sufficit.Net.Http.csproj" Condition="Exists('..\\..\\sufficit-net-http\\src\\Sufficit.Net.Http.csproj')" />
 		<PackageReference Include="Sufficit.Net.Http" Version="1.*" Condition="!Exists('..\\..\\sufficit-net-http\\src\\Sufficit.Net.Http.csproj') " />
