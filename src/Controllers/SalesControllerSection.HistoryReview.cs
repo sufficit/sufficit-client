@@ -15,6 +15,11 @@ public sealed partial class SalesControllerSection
         => Request<ServiceHistoryReviewSession>(new HttpRequestMessage(HttpMethod.Get,
             new Uri(Controller + "/LegacyService/Session", UriKind.Relative)), token);
 
+    /// <summary>Reads bounded monthly suggestions without selecting a customer; requires global finance read access.</summary>
+    public Task<ServiceHistorySuggestions?> GetServiceHistorySuggestions(string month, ServiceHistoryReviewSession session, CancellationToken token)
+        => Request<ServiceHistorySuggestions>(HistoryMessage(HttpMethod.Get,
+            Controller + "/LegacyService/Suggestions?month=" + Uri.EscapeDataString(month), session), token);
+
     /// <summary>Reads customer-scoped historical rows with the existing finance read entitlement.</summary>
     public Task<IEnumerable<SalesRecord>> GetServiceHistory(RecordSearchParameters search, ServiceHistoryReviewSession session, CancellationToken token)
     {
