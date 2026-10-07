@@ -48,6 +48,11 @@ namespace Sufficit.Client.Controllers.Gateway
         }
 
         /// <summary>Returns billing details to the trusted checkout server only.</summary>
+        public Task<CheckoutPaymentRouteView?> GetPaymentRequirementsAsync(Guid sessionId, CancellationToken cancellationToken)
+            => Request<CheckoutPaymentRouteView>(new HttpRequestMessage(HttpMethod.Get,
+                Prefix + "/Payments/Requirements?sessionId=" + sessionId.ToString("D")), cancellationToken);
+
+        /// <summary>Returns billing details to the trusted checkout server only.</summary>
         public Task<CheckoutPaymentPayerRequest?> GetRegisteredPayerAsync(
             Guid customerId,
             CancellationToken cancellationToken)
@@ -97,12 +102,14 @@ namespace Sufficit.Client.Controllers.Gateway
         /// </summary>
         public Task<CheckoutPaymentView?> GetPaymentAsync(
             string providerChargeId,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            Guid? paymentId = null)
         {
             if (string.IsNullOrWhiteSpace(providerChargeId))
                 throw new ArgumentException("A provider charge identifier is required.", nameof(providerChargeId));
 
             var uri = Prefix + "/Payments/" + Uri.EscapeDataString(providerChargeId.Trim());
+            if (paymentId.HasValue) uri += "?paymentId=" + paymentId.Value.ToString("D");
             return Request<CheckoutPaymentView>(
                 new HttpRequestMessage(HttpMethod.Get, uri),
                 cancellationToken);

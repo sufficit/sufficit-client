@@ -12,7 +12,9 @@ namespace Sufficit.Client.Controllers
     {
         public const string Controller = "/access";
 
-        public AccessControllerSection (IAuthenticatedControllerBase cb) : base(cb) { }   
+        public AccessControllerSection (IAuthenticatedControllerBase cb) : base(cb) { EntitlementPresets = new EntitlementPresetsControllerSection(cb); }
+
+        public EntitlementPresetsControllerSection EntitlementPresets { get; }
 
         public Task<IEnumerable<UserPolicyBase>> GetUserPolicies(Guid id, CancellationToken cancellationToken = default)
         {
