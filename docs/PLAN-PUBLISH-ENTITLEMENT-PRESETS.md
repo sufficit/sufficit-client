@@ -5,8 +5,8 @@ Autorização: usuário solicitou em 07/10/2026 merge de tudo pendente na main e
 ## Checkpoints (ordem de execução)
 
 1. CONCLUÍDO — Inventariar branches/PRs e alterações, conferir regras e scripts oficiais, resolver dependências de publicação.
-2. EM ANDAMENTO — Validar o conjunto autorizado e integrar todas as alterações pendentes na main, preservando os checkouts originais.
-3. PENDENTE — Publicar pacotes na ordem de dependências e verificar os workflows.
+2. CONCLUÍDO — Consolidar o conjunto autorizado na main local; branches conciliadas e backups dos checkouts preservados. API: 763 testes; pré-pago: 29; Blazor focados: 53.
+3. EM ANDAMENTO — Integrar na main remota, publicar pacotes na ordem de dependências e verificar os workflows. Base/Identity.Core publicados .1427; Client aguarda indexação NuGet; EFData CI em execução. Validar regressões restantes do Blazor antes do push/deploy.
 4. PENDENTE — Aplicar migração de presets com backup e executar deploy oficial de endpoints e Blazor.
 5. PENDENTE — Verificar saúde/versões e catálogo publicado; registrar entrega e concluir planos anteriores.
 

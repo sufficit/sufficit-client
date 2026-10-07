@@ -78,7 +78,7 @@ jobs:
 
     - name: Install dependencies
       working-directory: ${{ env.SRC_DIR }}
-      run: dotnet restore
+      run: dotnet restore --no-cache --force-evaluate
       
     - name: Build
       working-directory: ${{ env.SRC_DIR }}
