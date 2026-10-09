@@ -9,6 +9,11 @@ namespace Sufficit.Client.Controllers;
 
 public partial class SalesControllerSection
 {
+    /// <summary>Reads authoritative prepaid renewal and awarded resources for a single authorized contract.</summary>
+    public Task<ServicePrepaidDetails?> GetServicePrepaidDetails(Guid contractId, CancellationToken token)
+        => Request<ServicePrepaidDetails>(new HttpRequestMessage(HttpMethod.Get,
+            Controller + "/ServiceCollections/PrepaidDetails?contractId=" + contractId.ToString("D")), token);
+
     /// <summary>Reads a bounded collection portfolio. A missing context does not imply an authorization grant.</summary>
     public Task<ServiceCollectionPage?> GetServiceCollections(string referenceDate, int leadDays, Guid? contextId, int offset, CancellationToken token, Guid? responsibleContextId = null)
     {
@@ -28,6 +33,13 @@ public partial class SalesControllerSection
             Controller + "/ServiceCollections/Followup?contractId=" + contractId.ToString("D") + "&afterRevision=" + afterRevision), token);
     public Task<ServiceCollectionFollowupReceipt?> SetServiceCollectionFollowup(ServiceCollectionFollowupCommand command, CancellationToken token)
         => CollectionCommand<ServiceCollectionFollowupReceipt>("Followup", command, token);
+    public Task<ServicePrepaidPlanQuote?> PreviewServicePlan(ServicePrepaidPlanCommand command, CancellationToken token)
+        => CollectionCommand<ServicePrepaidPlanQuote>("PlanPreview", command, token);
+    public Task<ServicePrepaidPlanOperation?> SubmitServicePlan(ServicePrepaidPlanCommand command, CancellationToken token)
+        => CollectionCommand<ServicePrepaidPlanOperation>("PlanCommand", command, token);
+    public Task<ServicePrepaidPlanOperation?> GetServicePlanOperation(Guid contractId, Guid operationId, CancellationToken token)
+        => Request<ServicePrepaidPlanOperation>(new HttpRequestMessage(HttpMethod.Get,
+            Controller + "/ServiceCollections/PlanOperation?contractId=" + contractId.ToString("D") + "&operationId=" + operationId.ToString("D")), token);
     private Task<T?> CollectionCommand<T>(string path, object command, CancellationToken token) where T : class, new()
     {
         var message = new HttpRequestMessage(HttpMethod.Post, Controller + "/ServiceCollections/" + path)
