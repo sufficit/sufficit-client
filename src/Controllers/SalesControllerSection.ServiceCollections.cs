@@ -40,6 +40,19 @@ public partial class SalesControllerSection
     public Task<ServicePrepaidPlanOperation?> GetServicePlanOperation(Guid contractId, Guid operationId, CancellationToken token)
         => Request<ServicePrepaidPlanOperation>(new HttpRequestMessage(HttpMethod.Get,
             Controller + "/ServiceCollections/PlanOperation?contractId=" + contractId.ToString("D") + "&operationId=" + operationId.ToString("D")), token);
+    public Task<ServiceCollectionPage?> GetServiceCollectionPeriods(string referenceDate, int leadDays, int groupDays, Guid? contextId, int offset, CancellationToken token, Guid? responsibleContextId = null)
+    {
+        var uri = Controller + "/ServiceCollections?consolidate=true&referenceDate=" + Uri.EscapeDataString(referenceDate)
+            + "&leadDays=" + leadDays + "&groupDays=" + groupDays + "&offset=" + offset
+            + (contextId.HasValue ? "&contextId=" + contextId.Value.ToString("D") : "")
+            + (responsibleContextId.HasValue ? "&responsibleContextId=" + responsibleContextId.Value.ToString("D") : "");
+        return Request<ServiceCollectionPage>(new HttpRequestMessage(HttpMethod.Get, uri), token);
+    }
+    public Task<ServiceCollectionPeriodHistory?> GetServiceCollectionPeriodHistory(Guid contextId, Guid recipientId, string month, long afterRevision, CancellationToken token)
+        => Request<ServiceCollectionPeriodHistory>(new HttpRequestMessage(HttpMethod.Get, Controller + "/ServiceCollections/PeriodHistory?contextId=" + contextId.ToString("D")
+            + "&responsibleContextId=" + recipientId.ToString("D") + "&month=" + Uri.EscapeDataString(month) + "&afterRevision=" + afterRevision), token);
+    public Task<ServiceCollectionPeriodReceipt?> SetServiceCollectionPeriodContact(ServiceCollectionPeriodCommand command, CancellationToken token)
+        => CollectionCommand<ServiceCollectionPeriodReceipt>("PeriodContact", command, token);
     private Task<T?> CollectionCommand<T>(string path, object command, CancellationToken token) where T : class, new()
     {
         var message = new HttpRequestMessage(HttpMethod.Post, Controller + "/ServiceCollections/" + path)
