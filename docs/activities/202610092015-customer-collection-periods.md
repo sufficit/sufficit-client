@@ -27,3 +27,5 @@ Nenhum push, merge ou deploy realizado para esta funcionalidade. Preparar integr
 Plano e evidência detalhada pertencem a esta sessão: 01a0e328-33b8-78c0-9864-2ed58f77d221. Registro central em sufficit-blazor-collections-layout/docs/PLAN-COLLECTION-PERIODS.md e COLLECTION-PERIODS-HERMES.md.
 
 Repositório: client.
+
+Integração/deploy autorizados em 09/10. Base publicado oficialmente no run 38004134937, pacote 1.26.1009.2323; mínimo NuGet atualizado para conter os contratos de períodos, sem mudar a versão própria do projeto.
