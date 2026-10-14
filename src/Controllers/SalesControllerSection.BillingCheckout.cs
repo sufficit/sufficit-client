@@ -9,7 +9,7 @@ using Sufficit.Sales;
 
 namespace Sufficit.Client.Controllers;
 
-public sealed class BillingInvoiceItemDto
+public sealed class BillingChargeItemDto
 {
     public Guid ContractId { get; set; }
     public string Title { get; set; } = string.Empty;
@@ -18,16 +18,27 @@ public sealed class BillingInvoiceItemDto
     public DateTime PeriodEnd { get; set; }
     public IReadOnlyList<ServiceCheckoutDetail> Details { get; set; } = Array.Empty<ServiceCheckoutDetail>();
 }
-public sealed class BillingInvoiceDto
+public sealed class ChargePaymentDto
+{
+    public Guid Id { get; set; }
+    public decimal Amount { get; set; }
+    public int Method { get; set; }
+    public string Status { get; set; } = string.Empty;
+    public DateTime CreatedAtUtc { get; set; }
+    public DateTime? ConfirmedReceiptUtc { get; set; }
+}
+public sealed class BillingChargeDto
 {
     public Guid Id { get; set; }
     public DateTime DueDate { get; set; }
     public decimal Amount { get; set; }
     public string Status { get; set; } = string.Empty;
+    public decimal PaidAmount { get; set; }
+    public IReadOnlyList<ChargePaymentDto>? Payments { get; set; }
     public bool Legacy { get; set; }
     public string? CheckoutUrl { get; set; }
     public DateTime? ConfirmedReceiptUtc { get; set; }
-    public IReadOnlyList<BillingInvoiceItemDto> Items { get; set; } = Array.Empty<BillingInvoiceItemDto>();
+    public IReadOnlyList<BillingChargeItemDto> Items { get; set; } = Array.Empty<BillingChargeItemDto>();
 }
 public sealed class BillingCheckoutLinkDto
 {
@@ -38,7 +49,7 @@ public sealed class BillingCheckoutLinkDto
     public bool RecurringCardEnabled { get; set; }
     public bool RecurringLocked { get; set; }
     public string? Url { get; set; }
-    public IReadOnlyList<BillingInvoiceDto> Charges { get; set; } = Array.Empty<BillingInvoiceDto>();
+    public IReadOnlyList<BillingChargeDto> Charges { get; set; } = Array.Empty<BillingChargeDto>();
 }
 public sealed partial class SalesControllerSection
 {
