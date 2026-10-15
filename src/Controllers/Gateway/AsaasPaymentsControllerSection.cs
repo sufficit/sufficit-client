@@ -115,6 +115,12 @@ namespace Sufficit.Client.Controllers.Gateway
                 cancellationToken);
         }
 
+        /// <summary>Cancels an unpaid one-off charge before choosing another payment method.</summary>
+        public Task<CheckoutPaymentView?> CancelPaymentAsync(string providerChargeId, Guid paymentId, Guid sessionId, CancellationToken cancellationToken)
+            => Request<CheckoutPaymentView>(new HttpRequestMessage(HttpMethod.Post,
+                Prefix + "/Payments/" + Uri.EscapeDataString(providerChargeId) + "/Cancel?paymentId=" + paymentId.ToString("D")
+                + "&sessionId=" + sessionId.ToString("D")), cancellationToken);
+
         /// <summary>
         /// Verifies that the configured Asaas credential belongs to the
         /// expected Sufficit beneficiary before taking payments.
