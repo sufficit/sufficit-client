@@ -42,6 +42,7 @@ public sealed class BillingChargeDto
 }
 public sealed class BillingCheckoutLinkDto
 {
+    public int? PreferredPaymentMethod { get; set; }
     public Guid ContextId { get; set; }
     public Guid? ContractId { get; set; }
     public bool Enabled { get; set; }
@@ -59,10 +60,10 @@ public sealed partial class SalesControllerSection
             new Uri($"{Controller}/billingcheckout/link?contextId={contextId:D}" + (contractId.HasValue ? $"&contractId={contractId:D}" : ""), UriKind.Relative)), ct);
 
     [Authorize(Roles = ManagementRoles)]
-    public Task<BillingCheckoutLinkDto?> SetBillingCheckoutLink(Guid contextId, Guid? contractId, bool enabled, int dueDay, bool recurringCardEnabled, CancellationToken ct)
+    public Task<BillingCheckoutLinkDto?> SetBillingCheckoutLink(Guid contextId, Guid? contractId, bool enabled, int dueDay, bool recurringCardEnabled, CancellationToken ct, int? preferredPaymentMethod = null)
     {
         var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}/billingcheckout/link", UriKind.Relative));
-        message.Content = JsonContent.Create(new { contextId, contractId, enabled, dueDay, recurringCardEnabled }, null, _json);
+        message.Content = JsonContent.Create(new { contextId, contractId, enabled, dueDay, recurringCardEnabled, preferredPaymentMethod }, null, _json);
         return Request<BillingCheckoutLinkDto>(message, ct);
     }
 }
