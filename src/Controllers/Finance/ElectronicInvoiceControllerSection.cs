@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Sufficit.Finance;
 using Sufficit.EndPoints;
@@ -80,6 +80,19 @@ namespace Sufficit.Client.Controllers.Finance
             var message = new HttpRequestMessage(HttpMethod.Delete, uri);
             var response = await Request<EndPointResponse>(message, cancellationToken);
             return response?.Success ?? false ? 1 : 0;
+        }
+
+        public Task<InvoiceRecipientSettings?> GetRecipients(Guid invoiceId, CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/{invoiceId:D}/Recipients", UriKind.Relative);
+            return Request<InvoiceRecipientSettings>(new HttpRequestMessage(HttpMethod.Get, uri), cancellationToken);
+        }
+
+        public Task<InvoiceRecipientSettings?> SaveRecipients(Guid invoiceId, InvoiceRecipientUpdate update, CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/{invoiceId:D}/Recipients", UriKind.Relative);
+            return Request<InvoiceRecipientSettings>(new HttpRequestMessage(HttpMethod.Put, uri)
+            { Content = JsonContent.Create(update, null, _json) }, cancellationToken);
         }
 
         protected override string[]? AnonymousPaths { get; } = { $"{Controller}{Prefix}/{nameof(ById)}" };
