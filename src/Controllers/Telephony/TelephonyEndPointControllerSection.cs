@@ -73,6 +73,18 @@ namespace Sufficit.Client.Controllers.Telephony
             return Request(message, cancellationToken);
         }
 
+        public Task<System.Collections.Generic.List<string>?> GetTagCatalog(Guid contextId, CancellationToken cancellationToken)
+            => Request<System.Collections.Generic.List<string>>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}{Prefix}/Tags/Catalog?contextId={contextId:D}", UriKind.Relative)), cancellationToken);
+
+        public Task<EndPointSupportAccess?> GetSupportAccess(Guid contextId, Guid endPointId, CancellationToken cancellationToken)
+            => Request<EndPointSupportAccess>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}{Prefix}/Tags?contextId={contextId:D}&endPointId={endPointId:D}", UriKind.Relative)), cancellationToken);
+
+        public Task SetSupportAccess(EndPointSupportAccessChange change, CancellationToken cancellationToken)
+            => Request(new HttpRequestMessage(HttpMethod.Put, new Uri($"{Controller}{Prefix}/Tags", UriKind.Relative))
+                { Content = JsonContent.Create(change, null, _json) }, cancellationToken);
+
         #region PROPERTY
 
         [Authorize]

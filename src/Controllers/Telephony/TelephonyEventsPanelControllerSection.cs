@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using Sufficit.Net.Http;
 using Sufficit.Telephony;
 using Sufficit.Telephony.Asterisk.Manager;
-using Sufficit.Telephony.EventsPanel;
+using Sufficit.Telephony.Panel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
