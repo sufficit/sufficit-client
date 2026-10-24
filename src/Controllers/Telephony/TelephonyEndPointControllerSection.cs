@@ -73,6 +73,14 @@ namespace Sufficit.Client.Controllers.Telephony
             return Request(message, cancellationToken);
         }
 
+        /// <summary>Turns call recording on or off for one extension; the change is audited by the API.</summary>
+        public Task SetRecording(EndPointRecordingChange change, CancellationToken cancellationToken)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/Recording", UriKind.Relative))
+            { Content = JsonContent.Create(change, null, _json) };
+            return Request(message, cancellationToken);
+        }
+
         public Task<System.Collections.Generic.List<string>?> GetTagCatalog(Guid contextId, CancellationToken cancellationToken)
             => Request<System.Collections.Generic.List<string>>(new HttpRequestMessage(HttpMethod.Get,
                 new Uri($"{Controller}{Prefix}/Tags/Catalog?contextId={contextId:D}", UriKind.Relative)), cancellationToken);
