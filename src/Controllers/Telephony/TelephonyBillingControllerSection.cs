@@ -64,6 +64,23 @@ namespace Sufficit.Client.Controllers.Telephony
             => Request<Sufficit.Finance.CallCreditCommitmentDraft>(new HttpRequestMessage(HttpMethod.Post,
                 new Uri($"{Controller}/{Section}/Commitment/Draft/Discard?contextId={contextId:D}", UriKind.Relative)), cancellationToken);
 
+        /// <summary>Ends the customer's active agreement (kept as history). Returns the agreement before ending.</summary>
+        public Task<Sufficit.Finance.CallCreditCommitmentPolicy?> EndCommitment(Guid contextId, string reason, CancellationToken cancellationToken)
+            => Request<Sufficit.Finance.CallCreditCommitmentPolicy>(new HttpRequestMessage(HttpMethod.Post,
+                new Uri($"{Controller}/{Section}/Commitment/End?contextId={contextId:D}&reason={Uri.EscapeDataString(reason ?? string.Empty)}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>[last completed cycle, current cycle-to-date] of the customer's active agreement; empty without one.</summary>
+        public async Task<IEnumerable<Sufficit.Finance.CallCreditCommitmentAssessment>> GetCommitmentAssessment(Guid contextId, CancellationToken cancellationToken)
+            => await RequestMany<Sufficit.Finance.CallCreditCommitmentAssessment>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}/{Section}/Commitment/Assessment?contextId={contextId:D}", UriKind.Relative)), cancellationToken)
+                ?? Array.Empty<Sufficit.Finance.CallCreditCommitmentAssessment>();
+
+        /// <summary>Compliance of every active agreement, two items per customer (last completed, current).</summary>
+        public async Task<IEnumerable<Sufficit.Finance.CallCreditCommitmentAssessment>> GetCommitmentAssessments(CancellationToken cancellationToken)
+            => await RequestMany<Sufficit.Finance.CallCreditCommitmentAssessment>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}/{Section}/Commitment/Assessments", UriKind.Relative)), cancellationToken)
+                ?? Array.Empty<Sufficit.Finance.CallCreditCommitmentAssessment>();
+
         private const string Controller = TelephonyControllerSection.Controller;
         private const string Section = "billing";
 
