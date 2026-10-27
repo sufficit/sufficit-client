@@ -35,6 +35,35 @@ namespace Sufficit.Client.Controllers.Telephony
             return Request(message, cancellationToken);
         }
 
+        /// <summary>Confirmed recharge agreement of the customer, or null when none was confirmed.</summary>
+        public Task<Sufficit.Finance.CallCreditCommitmentPolicy?> GetCommitment(Guid contextId, CancellationToken cancellationToken)
+            => Request<Sufficit.Finance.CallCreditCommitmentPolicy>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}/{Section}/Commitment?contextId={contextId:D}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>Confirmed agreements of every customer, or of one when <paramref name="contextId"/> is set.</summary>
+        public async Task<IEnumerable<Sufficit.Finance.CallCreditCommitmentPolicy>> GetConfirmedCommitments(Guid? contextId, CancellationToken cancellationToken)
+        {
+            var path = contextId is { } id && id != Guid.Empty
+                ? $"{Controller}/{Section}/Commitment/Confirmed?contextId={id:D}"
+                : $"{Controller}/{Section}/Commitment/Confirmed";
+            var message = new HttpRequestMessage(HttpMethod.Get, new Uri(path, UriKind.Relative));
+            return await RequestMany<Sufficit.Finance.CallCreditCommitmentPolicy>(message, cancellationToken)
+                ?? Array.Empty<Sufficit.Finance.CallCreditCommitmentPolicy>();
+        }
+
+        /// <summary>Confirms (or edits) the customer's agreement from its detected draft.</summary>
+        public Task<Sufficit.Finance.CallCreditCommitmentPolicy?> ConfirmCommitment(Sufficit.Finance.CallCreditCommitmentPolicy request, CancellationToken cancellationToken)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}/{Section}/Commitment/Confirm", UriKind.Relative))
+            { Content = JsonContent.Create(request, null, _json) };
+            return Request<Sufficit.Finance.CallCreditCommitmentPolicy>(message, cancellationToken);
+        }
+
+        /// <summary>Discards the customer's pending draft.</summary>
+        public Task<Sufficit.Finance.CallCreditCommitmentDraft?> DiscardCommitmentDraft(Guid contextId, CancellationToken cancellationToken)
+            => Request<Sufficit.Finance.CallCreditCommitmentDraft>(new HttpRequestMessage(HttpMethod.Post,
+                new Uri($"{Controller}/{Section}/Commitment/Draft/Discard?contextId={contextId:D}", UriKind.Relative)), cancellationToken);
+
         private const string Controller = TelephonyControllerSection.Controller;
         private const string Section = "billing";
 
