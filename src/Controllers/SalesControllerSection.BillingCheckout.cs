@@ -43,6 +43,9 @@ public sealed class BillingChargeDto
 public sealed class BillingCheckoutLinkDto
 {
     public int? PreferredPaymentMethod { get; set; }
+    public IReadOnlyList<int>? AllowedPaymentMethods { get; set; }
+    public IReadOnlyList<int>? AvailablePaymentMethods { get; set; }
+    public string? BankSlipUnavailableReason { get; set; }
     public Guid ContextId { get; set; }
     public Guid? ContractId { get; set; }
     public bool Enabled { get; set; }
@@ -60,10 +63,10 @@ public sealed partial class SalesControllerSection
             new Uri($"{Controller}/billingcheckout/link?contextId={contextId:D}" + (contractId.HasValue ? $"&contractId={contractId:D}" : ""), UriKind.Relative)), ct);
 
     [Authorize(Roles = ManagementRoles)]
-    public Task<BillingCheckoutLinkDto?> SetBillingCheckoutLink(Guid contextId, Guid? contractId, bool enabled, int dueDay, bool recurringCardEnabled, CancellationToken ct, int? preferredPaymentMethod = null)
+    public Task<BillingCheckoutLinkDto?> SetBillingCheckoutLink(Guid contextId, Guid? contractId, bool enabled, int dueDay, bool recurringCardEnabled, CancellationToken ct, int? preferredPaymentMethod = null, IReadOnlyList<int>? allowedPaymentMethods = null)
     {
         var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}/billingcheckout/link", UriKind.Relative));
-        message.Content = JsonContent.Create(new { contextId, contractId, enabled, dueDay, recurringCardEnabled, preferredPaymentMethod }, null, _json);
+        message.Content = JsonContent.Create(new { contextId, contractId, enabled, dueDay, recurringCardEnabled, preferredPaymentMethod, allowedPaymentMethods }, null, _json);
         return Request<BillingCheckoutLinkDto>(message, ct);
     }
 }
