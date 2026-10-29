@@ -119,7 +119,7 @@ namespace Sufficit.Client.Controllers.Gateway
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["sessionid"] = sessionId;
 
-            var uri = new Uri($"{Controller}{Prefix}/start?{query}", UriKind.Relative);
+            var uri = new Uri($"{Controller}{Prefix}/resume?{query}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Post, uri);
             return Request(message, cancellationToken);
         }
