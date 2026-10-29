@@ -177,6 +177,37 @@ namespace Sufficit.Client.Controllers.Finance
                 cancellationToken);
         }
 
+        /// <summary>
+        /// Paid provider charges that no Sufficit system owns; null state lists every state.
+        /// </summary>
+        public Task<List<BankSlipUnownedReceiptView>?> GetUnownedReceiptsAsync(
+            BankSlipUnownedReceiptState? state,
+            int limit,
+            CancellationToken cancellationToken)
+        {
+            var uri = $"{Prefix}/unownedreceipt?limit={Math.Min(200, Math.Max(1, limit))}";
+            if (state.HasValue)
+                uri += $"&state={(byte)state.Value}";
+
+            return Request<List<BankSlipUnownedReceiptView>>(
+                new HttpRequestMessage(HttpMethod.Get, uri),
+                cancellationToken);
+        }
+
+        public Task<BankSlipUnownedReceiptView?> ResolveUnownedReceiptAsync(
+            BankSlipUnownedReceiptResolution resolution,
+            CancellationToken cancellationToken)
+        {
+            if (resolution == null)
+                throw new ArgumentNullException(nameof(resolution));
+
+            var message = new HttpRequestMessage(HttpMethod.Post, $"{Prefix}/unownedreceipt/resolution")
+            {
+                Content = JsonContent.Create(resolution, options: _json)
+            };
+            return Request<BankSlipUnownedReceiptView>(message, cancellationToken);
+        }
+
         public Task<BankSlipSettingsView?> GetSettingsAsync(
             CancellationToken cancellationToken)
             => Request<BankSlipSettingsView>(
