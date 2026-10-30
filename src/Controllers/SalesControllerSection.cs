@@ -456,6 +456,23 @@ namespace Sufficit.Client.Controllers
             return RequestStruct<Guid>(message, cancellationToken);
         }
 
+        /// <summary>Migrates one legacy contract to native management in place (same ID, periods and charges).
+        /// Irreversible. Reuse the same operation id on retry; the server replays the receipt.</summary>
+        [Authorize(Roles = "manager,administrator")]
+        public Task<Contract?> AdoptNative(Guid contractId, Guid operationId, Guid catalogItemId, DateTime expectedUpdatedAtUtc,
+            string reason, CancellationToken cancellationToken)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}/contract/{contractId:D}/AdoptNative", UriKind.Relative));
+            message.Content = JsonContent.Create(new
+            {
+                OperationId = operationId,
+                CatalogItemId = catalogItemId,
+                ExpectedUpdatedAtUtc = expectedUpdatedAtUtc,
+                Reason = reason
+            }, null, _json);
+            return Request<Contract>(message, cancellationToken);
+        }
+
         [Authorize(Roles = ManagementRoles)]
         public Task<ContractPeriod?> ForceRecalculatePeriod(ContractPeriodOperationRequest request, CancellationToken cancellationToken)
         {
