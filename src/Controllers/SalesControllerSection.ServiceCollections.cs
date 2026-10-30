@@ -53,6 +53,15 @@ public partial class SalesControllerSection
             + "&responsibleContextId=" + recipientId.ToString("D") + "&month=" + Uri.EscapeDataString(month) + "&afterRevision=" + afterRevision), token);
     public Task<ServiceCollectionPeriodReceipt?> SetServiceCollectionPeriodContact(ServiceCollectionPeriodCommand command, CancellationToken token)
         => CollectionCommand<ServiceCollectionPeriodReceipt>("PeriodContact", command, token);
+    /// <summary>Team queue of collection notices: open ones to send, or the ones handled in the last <paramref name="days"/>.</summary>
+    public Task<ServiceCollectionNoticePage?> GetServiceCollectionNotices(bool open, int days, CancellationToken token)
+        => Request<ServiceCollectionNoticePage>(new HttpRequestMessage(HttpMethod.Get,
+            Controller + "/ServiceCollections/Notices?open=" + (open ? "true" : "false") + "&days=" + days), token);
+    /// <summary>Records that the signed-in user sent the notice.</summary>
+    public Task<ServiceCollectionNotice?> SetServiceCollectionNoticeSent(ServiceCollectionNoticeSentCommand command, CancellationToken token)
+        => CollectionCommand<ServiceCollectionNotice>("Notices/Sent", command, token);
+    public Task<ServiceCollectionNotice?> CancelServiceCollectionNotice(ServiceCollectionNoticeCancelCommand command, CancellationToken token)
+        => CollectionCommand<ServiceCollectionNotice>("Notices/Cancel", command, token);
     private Task<T?> CollectionCommand<T>(string path, object command, CancellationToken token) where T : class, new()
     {
         var message = new HttpRequestMessage(HttpMethod.Post, Controller + "/ServiceCollections/" + path)
