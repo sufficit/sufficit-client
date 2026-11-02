@@ -52,6 +52,7 @@ namespace Sufficit.Client
             AI = new AIControllerSection(cb);
             Cadences = new CadencesControllerSection(cb);
             Audio = new AudioControllerSection(cb);
+            Campaigns = new Controllers.Campaigns.CampaignsControllerSection(cb);
             Contacts = new ContactsControllerSection(cb);
             Exchange = new ExchangeControllerSection(cb);
             Finance = new FinanceControllerSection(cb);
@@ -77,6 +78,7 @@ namespace Sufficit.Client
         public OperationalActivitiesControllerSection Activities { get; }
         public AIControllerSection AI { get; }
         public AudioControllerSection Audio { get; }
+        public Controllers.Campaigns.CampaignsControllerSection Campaigns { get; }
         /// <summary>Cadences ("réguas") shared by every module.</summary>
         public CadencesControllerSection Cadences { get; }
         public ContactsControllerSection Contacts { get; }
