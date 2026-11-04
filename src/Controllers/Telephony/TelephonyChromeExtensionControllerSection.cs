@@ -69,6 +69,34 @@ namespace Sufficit.Client.Controllers.Telephony
         }
 
         /// <summary>
+        /// Extensions the user may register in the softphone, without credentials. With
+        /// <paramref name="selectedOnly"/>, the current selection across every customer;
+        /// otherwise the user's own plus those of <paramref name="contextId"/>.
+        /// </summary>
+        [Authorize]
+        public Task<IEnumerable<ChromeExtensionAvailableLine>> GetAvailableLines(CancellationToken cancellationToken, Guid? contextId = null, bool selectedOnly = false)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            if (contextId.HasValue && contextId.Value != Guid.Empty) query["contextId"] = contextId.Value.ToString();
+            if (selectedOnly) query["selectedOnly"] = "true";
+            var uri = new Uri($"{Controller}{Prefix}/Available?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Get, uri);
+            return RequestMany<ChromeExtensionAvailableLine>(message, cancellationToken);
+        }
+
+        /// <summary>Replaces the extensions the softphone registers and sets the primary one.</summary>
+        [Authorize]
+        public Task SetLines(ChromeExtensionLinesRequest request, CancellationToken cancellationToken)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/Lines", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Put, uri)
+            {
+                Content = System.Net.Http.Json.JsonContent.Create(request)
+            };
+            return Request(message, cancellationToken);
+        }
+
+        /// <summary>
         /// Returns all softphone settings for the authenticated user
         /// </summary>
         [Authorize]
