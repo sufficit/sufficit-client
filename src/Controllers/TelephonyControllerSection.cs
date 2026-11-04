@@ -43,6 +43,7 @@ namespace Sufficit.Client.Controllers
             Monitor = new TelephonyMonitorControllerSection(cb);
             Outbound = new TelephonyOutboundControllerSection(cb);
             Portability = new TelephonyPortabilityControllerSection(cb);
+            DIDTest = new TelephonyDIDTestControllerSection(cb);
             Routes = new TelephonyRoutesControllerSection(cb);
             Trunk = new TelephonyTrunkControllerSection(cb);
             VoiceMail = new TelephonyVoiceMailControllerSection(cb);
@@ -111,6 +112,8 @@ namespace Sufficit.Client.Controllers
         public TelephonyMonitorControllerSection Monitor { get; }
         public TelephonyOutboundControllerSection Outbound { get; }
         public TelephonyPortabilityControllerSection Portability { get; }
+
+        public TelephonyDIDTestControllerSection DIDTest { get; }
         public TelephonyRoutesControllerSection Routes { get; }
         public TelephonyTrunkControllerSection Trunk { get; }
         public TelephonyVoiceMailControllerSection VoiceMail { get; }
