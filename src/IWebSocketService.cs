@@ -12,5 +12,7 @@ namespace Sufficit.Client
         HubConnectionState State { get; }
 
         Task StartAsync();
+        System.Collections.Generic.IAsyncEnumerable<CustomerChecklistEvent> CustomerChecklist(
+            Guid contextId, string kind, string key, Guid? batchId, System.Threading.CancellationToken cancellationToken);
     }
 }

@@ -175,6 +175,10 @@ namespace Sufficit.Client
         public IAsyncEnumerable<CheckUpStepInfo> CheckUpOutBoundRoutes(Guid ContextId, CancellationToken cancellationToken)
             => _connection.StreamAsync<CheckUpStepInfo>("CheckUpOutBoundRoutes", ContextId, cancellationToken);
 
+        public IAsyncEnumerable<CustomerChecklistEvent> CustomerChecklist(Guid contextId, string kind, string key,
+            Guid? batchId, CancellationToken cancellationToken)
+            => _connection.StreamAsync<CustomerChecklistEvent>("CustomerChecklist", contextId, kind, key, batchId, cancellationToken);
+
         #endregion
     }
 }
