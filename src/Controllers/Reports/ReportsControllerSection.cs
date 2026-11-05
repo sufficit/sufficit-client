@@ -45,6 +45,19 @@ namespace Sufficit.Client.Controllers.Reports
             return Request<ReportProgress>(message, cancellationToken)!;
         }
 
+        /// <summary>Discover customer-scoped telephony report capabilities.</summary>
+        public Task<System.Collections.Generic.List<Sufficit.Telephony.Reports.TelephonyReportModel>> TelephonyCatalog(CancellationToken ct = default)
+            => Request<System.Collections.Generic.List<Sufficit.Telephony.Reports.TelephonyReportModel>>(
+                new HttpRequestMessage(HttpMethod.Get, "/Telephony/Reports/Catalog"), ct)!;
+
+        /// <summary>Complete snapshot; cancellation ends the HTTP request. Excel is optional on the same snapshot.</summary>
+        public Task<Sufficit.Telephony.Reports.TelephonyReportResult> TelephonyReport(string model, Sufficit.Telephony.Reports.TelephonyReportRequest parameters, CancellationToken ct = default)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, "/Telephony/Reports/" + Uri.EscapeDataString(model));
+            message.Content = JsonContent.Create(parameters, null, _json);
+            return Request<Sufficit.Telephony.Reports.TelephonyReportResult>(message, ct)!;
+        }
+
         protected override string[]? AnonymousPaths { get; } = { $"{Controller}/progress" };
     }
 }
