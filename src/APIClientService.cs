@@ -22,10 +22,11 @@ namespace Sufficit.Client
     /// Scoped implementation of default API Client <br />
     /// With Transient Http Client (Authenticated)
     /// </summary>
-    public class APIClientService
+    public class APIClientService : IDisposable
     {
         private readonly ILogger _logger;
         private readonly HttpClient _client;
+        private readonly HttpClient _reportsClient;
 
         /// <summary>
         ///     Status changed
@@ -61,7 +62,10 @@ namespace Sufficit.Client
             Logging = new LoggingControllerSection(cb);
             Notification = new NotificationControllerSection(cb);
             Provisioning = new ProvisioningControllerSection(cb);
-            Reports = new ReportsControllerSection(cb);
+            // Report generation is bounded by the API at three minutes. Do not inherit
+            // the interactive API timeout (typically 30 seconds) or change other sections.
+            _reportsClient = new PreConfiguredHttpClient(options.Value) { Timeout = TimeSpan.FromSeconds(200) };
+            Reports = new ReportsControllerSection(new AuthenticatedControllerBase(tokens, _reportsClient, Sufficit.Json.JsonSerializer.Options, logger) { Healthy = Health.Healthy });
             Resources = new ResourcesControllerSection(cb);
             Sales = new SalesControllerSection(cb);
             Statistics = new StatisticsControllerSection(cb);
@@ -70,6 +74,13 @@ namespace Sufficit.Client
 
             var jsonOptions = options.Value.ToJson();
             _logger.LogTrace("Sufficit API Client Service instantiated with options: {options}", jsonOptions);
+        }
+
+        public void Dispose()
+        {
+            Health.OnChanged -= OnHealthChanged;
+            _reportsClient.Dispose();
+            _client.Dispose();
         }
 
         public HealthCheckController Health { get; }
