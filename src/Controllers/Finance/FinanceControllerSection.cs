@@ -25,6 +25,7 @@ namespace Sufficit.Client.Controllers.Finance
             LegacyBankSlip = new LegacyBankSlipControllerSection(cb);
             BankSlip = new BankSlipControllerSection(cb);
             ElectronicInvoice = new ElectronicInvoiceControllerSection(cb);
+            Fiscal = new FiscalControllerSection(cb);
         }
 
         public LegacyBankSlipControllerSection LegacyBankSlip { get; }
@@ -32,6 +33,9 @@ namespace Sufficit.Client.Controllers.Finance
         public BankSlipControllerSection BankSlip { get; }
 
         public ElectronicInvoiceControllerSection ElectronicInvoice { get; }
+
+        /// <summary>Fiscal consolidation and NFS-e issuing.</summary>
+        public FiscalControllerSection Fiscal { get; }
 
         public Task<decimal?> GetBalance(Guid contextId, CancellationToken cancellationToken = default)
         {
