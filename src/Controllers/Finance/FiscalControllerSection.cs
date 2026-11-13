@@ -38,6 +38,13 @@ namespace Sufficit.Client.Controllers.Finance
             return Request<FiscalReceiptsView>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Prefix}/receipts?{query}", UriKind.Relative)), cancellationToken);
         }
 
+        /// <summary>Fiscal work queue across all customers (1–90 days).</summary>
+        public Task<FiscalPendingView?> Pending(int? days = null, CancellationToken cancellationToken = default)
+        {
+            var query = days.HasValue ? $"?days={days.Value}" : string.Empty;
+            return Request<FiscalPendingView>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Prefix}/pending{query}", UriKind.Relative)), cancellationToken);
+        }
+
         /// <summary>Taker registration at the fiscal provider.</summary>
         public Task<FiscalTakerView?> Taker(Guid contextId, CancellationToken cancellationToken = default)
             => Request<FiscalTakerView>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Prefix}/takers/{contextId:D}", UriKind.Relative)), cancellationToken);
