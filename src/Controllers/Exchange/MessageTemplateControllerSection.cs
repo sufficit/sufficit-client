@@ -15,7 +15,7 @@ namespace Sufficit.Client.Controllers.Exchange
     public sealed class MessageTemplateControllerSection : AuthenticatedControllerSection
     {
         private const string Controller = ExchangeControllerSection.Controller;
-        private const string Prefix = "/templates";
+        private const string Prefix = "/template"; // Exchange/Template (TemplateController)
 
         private readonly JsonSerializerOptions _json;
 
