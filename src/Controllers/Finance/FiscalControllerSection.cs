@@ -53,6 +53,17 @@ namespace Sufficit.Client.Controllers.Finance
         public Task<FiscalTakerView?> SyncTaker(Guid contextId, CancellationToken cancellationToken = default)
             => Request<FiscalTakerView>(new HttpRequestMessage(HttpMethod.Post, new Uri($"{Prefix}/takers/{contextId:D}/sync", UriKind.Relative)), cancellationToken);
 
+        /// <summary>Cancels an invoice of the customer (reason kept in the audit trail).</summary>
+        public Task<FiscalIssueResult?> Cancel(Guid contextId, string providerId, string reason, CancellationToken cancellationToken = default)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post,
+                new Uri($"{Prefix}/invoices/{Uri.EscapeDataString(providerId)}/cancel?contextId={contextId:D}", UriKind.Relative))
+            {
+                Content = JsonContent.Create(new FiscalCancelRequest { Reason = reason }, null, _json)
+            };
+            return Request<FiscalIssueResult>(message, cancellationToken);
+        }
+
         /// <summary>Schedules one NFS-e (idempotent by reference or payment).</summary>
         public Task<FiscalIssueResult?> Issue(FiscalIssueRequest request, CancellationToken cancellationToken = default)
         {
