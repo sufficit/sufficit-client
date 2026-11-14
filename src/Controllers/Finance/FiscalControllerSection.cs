@@ -64,6 +64,21 @@ namespace Sufficit.Client.Controllers.Finance
             return Request<FiscalIssueResult>(message, cancellationToken);
         }
 
+        /// <summary>Decides not to issue the invoice of a receipt line (reason required).</summary>
+        public Task<FiscalLineDismissal?> Dismiss(FiscalDismissRequest request, CancellationToken cancellationToken = default)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Prefix}/dismiss", UriKind.Relative))
+            {
+                Content = JsonContent.Create(request, null, _json)
+            };
+            return Request<FiscalLineDismissal>(message, cancellationToken);
+        }
+
+        /// <summary>Puts a dismissed receipt line back in the queue.</summary>
+        public Task<FiscalDismissRequest?> Restore(Guid contextId, string reference, CancellationToken cancellationToken = default)
+            => Request<FiscalDismissRequest>(new HttpRequestMessage(HttpMethod.Delete,
+                new Uri($"{Prefix}/dismiss?contextId={contextId:D}&reference={Uri.EscapeDataString(reference)}", UriKind.Relative)), cancellationToken);
+
         /// <summary>Schedules one NFS-e (idempotent by reference or payment).</summary>
         public Task<FiscalIssueResult?> Issue(FiscalIssueRequest request, CancellationToken cancellationToken = default)
         {
