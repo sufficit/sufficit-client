@@ -170,6 +170,50 @@ namespace Sufficit.Client.Controllers
                 new Uri($"{Representatives}/Payouts?{query}", UriKind.Relative)), cancellationToken);
         }
 
+        private static string DocumentQuery(CommissionDocumentParameters parameters)
+        {
+            if (parameters == null || parameters.RepresentativeId == Guid.Empty) throw new ArgumentException("A representative is required.", nameof(parameters));
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["representativeId"] = parameters.RepresentativeId.ToString("D");
+            if (!string.IsNullOrWhiteSpace(parameters.Competence)) query["competence"] = parameters.Competence;
+            if (parameters.Inss != 0) query["inss"] = parameters.Inss.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            if (parameters.Irrf != 0) query["irrf"] = parameters.Irrf.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            if (parameters.Iss != 0) query["iss"] = parameters.Iss.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            if (!string.IsNullOrWhiteSpace(parameters.Number)) query["number"] = parameters.Number;
+            if (parameters.Date.HasValue) query["date"] = parameters.Date.Value.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            return query.ToString() ?? string.Empty;
+        }
+
+        /// <summary>Pre-filled RPA of an individual representative's PIX withdrawal; the representative may read its own.</summary>
+        [Authorize]
+        public Task<CommissionRpaView?> GetCommissionRpa(CommissionDocumentParameters parameters, CancellationToken cancellationToken)
+            => Request<CommissionRpaView>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Representatives}/Documents/Rpa?{DocumentQuery(parameters)}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>The same RPA as a PDF, ready to be signed with GOV.br.</summary>
+        [Authorize]
+        public Task<byte[]?> GetCommissionRpaPdf(CommissionDocumentParameters parameters, CancellationToken cancellationToken)
+            => RequestBytes(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Representatives}/Documents/Rpa/Pdf?{DocumentQuery(parameters)}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>What a company representative must write on the NFS-e it issues to Sufficit.</summary>
+        [Authorize]
+        public Task<CommissionInvoiceGuide?> GetCommissionInvoiceGuide(CommissionDocumentParameters parameters, CancellationToken cancellationToken)
+            => Request<CommissionInvoiceGuide>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Representatives}/Documents/Invoice?{DocumentQuery(parameters)}", UriKind.Relative)), cancellationToken);
+
+        /// <summary>Saves RG and NIT/PIS of the representative contact (data the RPA needs).</summary>
+        [Authorize(Roles = ManagementRoles)]
+        public async Task<bool> SaveCommissionPayee(Guid representativeId, string? rg, string? nit, CancellationToken cancellationToken)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query["representativeId"] = representativeId.ToString("D");
+            if (!string.IsNullOrWhiteSpace(rg)) query["rg"] = rg;
+            if (!string.IsNullOrWhiteSpace(nit)) query["nit"] = nit;
+            return await RequestStruct<bool>(new HttpRequestMessage(HttpMethod.Put,
+                new Uri($"{Representatives}/Documents/Payee?{query}", UriKind.Relative)), cancellationToken) ?? false;
+        }
+
         /// <summary>Whether the customer's services may be cancelled with a retroactive date (financial responsible courtesy).</summary>
         [Authorize(Roles = ManagementRoles)]
         public Task<RetroactiveCancellationEligibility?> GetRetroactiveCancellation(Guid customerId, CancellationToken cancellationToken)
