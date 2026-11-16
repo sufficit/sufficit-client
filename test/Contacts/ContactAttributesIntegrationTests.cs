@@ -25,8 +25,19 @@ namespace Sufficit.Client.IntegrationTests.Contacts
     /// </summary>
     [Trait("Category", "Integration")]
     [Trait("Database", "Transactional")]
-    public class ContactAttributesIntegrationTests
+    public class ContactAttributesIntegrationTests : IAsyncLifetime
     {
+        private readonly IntegrationTestContacts _testContacts = new();
+
+        public Task InitializeAsync() => Task.CompletedTask;
+
+        /// <summary>Removes every contact this class created, even after failures.</summary>
+        public async Task DisposeAsync()
+        {
+            foreach (var failure in await _testContacts.CleanupAsync())
+                _output.WriteLine("Cleanup failed: " + failure);
+        }
+
         private readonly ITestOutputHelper _output;
         private readonly APIClientService _apiClient;
         private readonly IConfiguration _configuration;
@@ -166,7 +177,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
                 }
             };
             
-            var contactId = await _apiClient.Contacts.Update(testContact, CancellationToken.None);
+            var contactId = await _testContacts.Save(_apiClient, testContact);
             Assert.NotNull(contactId);
             
             _output.WriteLine($"Created test contact {contactId} for attribute operations");
@@ -235,7 +246,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
                 }
             };
             
-            var contactId = await _apiClient.Contacts.Update(testContact, CancellationToken.None);
+            var contactId = await _testContacts.Save(_apiClient, testContact);
             Assert.NotNull(contactId);
             
             _output.WriteLine($"Created contact {contactId} with test email attribute");
@@ -273,7 +284,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
                 }
             };
             
-            var contactId = await _apiClient.Contacts.Update(testContact, CancellationToken.None);
+            var contactId = await _testContacts.Save(_apiClient, testContact);
             Assert.NotNull(contactId);
             
             _output.WriteLine($"Created contact {contactId} with markers");

@@ -80,6 +80,18 @@ namespace Sufficit.Client.Controllers
             return null;
         }
 
+        /// <summary>Permanently deletes a contact (owner or administrator only).</summary>
+        public async Task<bool> Delete(Guid contactid, CancellationToken cancellationToken = default)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            query[nameof(contactid)] = contactid.ToString();
+
+            var uri = new Uri($"{Controller}?{query}", UriKind.Relative);
+            var message = new HttpRequestMessage(HttpMethod.Delete, uri);
+            var response = await Request<EndPointResponse>(message, cancellationToken);
+            return response?.Success ?? false;
+        }
+
         public async Task<bool> CanUpdate(Guid contactid, CancellationToken cancellationToken)
         {
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);

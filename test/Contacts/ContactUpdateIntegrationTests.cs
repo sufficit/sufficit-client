@@ -23,8 +23,19 @@ namespace Sufficit.Client.IntegrationTests.Contacts
     /// </summary>
     [Trait("Category", "Integration")]
     [Trait("Database", "Transactional")]
-    public class ContactUpdateIntegrationTests : IDisposable
+    public class ContactUpdateIntegrationTests : IDisposable, IAsyncLifetime
     {
+        private readonly IntegrationTestContacts _testContacts = new();
+
+        public Task InitializeAsync() => Task.CompletedTask;
+
+        /// <summary>Removes every contact this class created, even after failures.</summary>
+        public async Task DisposeAsync()
+        {
+            foreach (var failure in await _testContacts.CleanupAsync())
+                _output.WriteLine("Cleanup failed: " + failure);
+        }
+
         private readonly ITestOutputHelper _output;
         private readonly APIClientService _apiClient;
         private readonly Guid _testContactId = Guid.NewGuid();
@@ -77,7 +88,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
             _output.WriteLine("Creating new contact via POST /Contact");
             
             // Act
-            var result = await _apiClient.Contacts.Update(newContact, CancellationToken.None);
+            var result = await _testContacts.Save(_apiClient, newContact);
             
             // Assert
             Assert.NotNull(result);
@@ -118,7 +129,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
                 }
             };
             
-            var contactId = await _apiClient.Contacts.Update(newContact, CancellationToken.None);
+            var contactId = await _testContacts.Save(_apiClient, newContact);
             Assert.NotNull(contactId);
             
             _output.WriteLine($"Created contact {contactId} for update test");
@@ -134,7 +145,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
                 }
             };
             
-            var updateResult = await _apiClient.Contacts.Update(updateContact, CancellationToken.None);
+            var updateResult = await _testContacts.Save(_apiClient, updateContact);
             
             _output.WriteLine($"Updated contact, result: {updateResult}");
             
@@ -175,7 +186,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
             _output.WriteLine("Creating contact - API should auto-add OwnerId");
             
             // Act
-            var contactId = await _apiClient.Contacts.Update(newContact, CancellationToken.None);
+            var contactId = await _testContacts.Save(_apiClient, newContact);
             Assert.NotNull(contactId);
             
             // Assert - Verify contact has OwnerId attribute
@@ -224,7 +235,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
             _output.WriteLine("Creating contact with multiple attributes");
             
             // Act
-            var result = await _apiClient.Contacts.Update(contact, CancellationToken.None);
+            var result = await _testContacts.Save(_apiClient, contact);
             
             // Assert
             Assert.NotNull(result);

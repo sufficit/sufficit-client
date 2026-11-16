@@ -27,8 +27,19 @@ namespace Sufficit.Client.IntegrationTests.Contacts
     /// </summary>
     [Trait("Category", "Integration")]
     [Trait("Database", "Transactional")]
-    public class ContactPermissionsIntegrationTests
+    public class ContactPermissionsIntegrationTests : IAsyncLifetime
     {
+        private readonly IntegrationTestContacts _testContacts = new();
+
+        public Task InitializeAsync() => Task.CompletedTask;
+
+        /// <summary>Removes every contact this class created, even after failures.</summary>
+        public async Task DisposeAsync()
+        {
+            foreach (var failure in await _testContacts.CleanupAsync())
+                _output.WriteLine("Cleanup failed: " + failure);
+        }
+
         private readonly ITestOutputHelper _output;
         private readonly APIClientService _managerClient;
         private readonly APIClientService _userClient;
@@ -88,7 +99,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
                 }
             };
             
-            var contactId = await _managerClient.Contacts.Update(testContact, CancellationToken.None);
+            var contactId = await _testContacts.Save(_managerClient, testContact);
             Assert.NotNull(contactId);
             
             _output.WriteLine($"Manager created contact {contactId}");
@@ -142,7 +153,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
                 }
             };
             
-            var contactId = await _managerClient.Contacts.Update(testContact, CancellationToken.None);
+            var contactId = await _testContacts.Save(_managerClient, testContact);
             Assert.NotNull(contactId);
             
             _output.WriteLine($"Manager created contact {contactId} (user does NOT own)");
@@ -187,7 +198,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
                 }
             };
             
-            var groupId = await _managerClient.Contacts.Update(groupContact, CancellationToken.None);
+            var groupId = await _testContacts.Save(_managerClient, groupContact);
             Assert.NotNull(groupId);
             
             _output.WriteLine($"Created group contact {groupId}");
@@ -204,7 +215,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
                 }
             };
             
-            var contactId = await _managerClient.Contacts.Update(memberContact, CancellationToken.None);
+            var contactId = await _testContacts.Save(_managerClient, memberContact);
             Assert.NotNull(contactId);
             
             _output.WriteLine($"Created contact {contactId} belonging to group {groupId}");
@@ -248,7 +259,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
                 }
             };
             
-            var groupId = await _managerClient.Contacts.Update(groupContact, CancellationToken.None);
+            var groupId = await _testContacts.Save(_managerClient, groupContact);
             Assert.NotNull(groupId);
             
             _output.WriteLine($"Created group {groupId}");
@@ -267,7 +278,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
                 }
             };
             
-            await _managerClient.Contacts.Update(addMemberUpdate, CancellationToken.None);
+            await _testContacts.Save(_managerClient, addMemberUpdate);
             
             _output.WriteLine($"Added manager as member of group (userId in description field)");
             
@@ -283,7 +294,7 @@ namespace Sufficit.Client.IntegrationTests.Contacts
                 }
             };
             
-            var contactId = await _managerClient.Contacts.Update(testContact, CancellationToken.None);
+            var contactId = await _testContacts.Save(_managerClient, testContact);
             Assert.NotNull(contactId);
             
             _output.WriteLine($"Created contact {contactId} owned by group {groupId}");
