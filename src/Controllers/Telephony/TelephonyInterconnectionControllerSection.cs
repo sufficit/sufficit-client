@@ -71,6 +71,22 @@ namespace Sufficit.Client.Controllers.Telephony
             return Request<InterconnectionRegistrationTestResult>(message, cancellationToken);
         }
 
+        public Task<InterconnectionRegistrationTestJob?> StartRegistrationTest(
+            InterconnectionRegistrationTestRequest request, Guid idempotencyKey, CancellationToken cancellationToken = default)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/registration-test?async=true", UriKind.Relative))
+            {
+                Content = JsonContent.Create(request, null, _json)
+            };
+            message.Headers.Add("Idempotency-Key", idempotencyKey.ToString("D"));
+            return Request<InterconnectionRegistrationTestJob>(message, cancellationToken);
+        }
+
+        public Task<InterconnectionRegistrationTestJob?> GetRegistrationTestStatus(
+            Guid contextId, Guid id, CancellationToken cancellationToken = default)
+            => Request<InterconnectionRegistrationTestJob>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}{Prefix}/registration-test/{id:D}?contextId={contextId:D}", UriKind.Relative)), cancellationToken);
+
         public Task<InterconnectionTestCallSession?> TestCallStart(InterconnectionTestCallRequest request, CancellationToken cancellationToken = default)
         {
             var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/testcallstart", UriKind.Relative))
