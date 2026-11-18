@@ -114,6 +114,10 @@ namespace Sufficit.Client
                 OnChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>Listens for changes to reports requested by the authenticated user.</summary>
+        public IDisposable OnTelephonyReportJobChanged(Action<Guid> handler)
+            => On("TelephonyReportJobChanged", handler);
+
         internal IDisposable On<T>(string methodName, Action<T> handler)
         {
             if (string.IsNullOrWhiteSpace(methodName))
