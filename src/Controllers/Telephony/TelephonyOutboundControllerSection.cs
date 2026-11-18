@@ -145,6 +145,15 @@ namespace Sufficit.Client.Controllers.Telephony
             return Request<OutboundRouteSource>(message, cancellationToken);
         }
 
+        public Task<OutboundRouteSource?> SaveRouteGroup(OutboundRouteGroupUpdate update, CancellationToken cancellationToken = default)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/routegroup", UriKind.Relative))
+            {
+                Content = JsonContent.Create(update, null, _json)
+            };
+            return Request<OutboundRouteSource>(message, cancellationToken);
+        }
+
         /// <summary>
         ///     Removes one customer-facing ordered outbound route source row.
         /// </summary>
