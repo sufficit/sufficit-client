@@ -56,6 +56,21 @@ namespace Sufficit.Client.Controllers.Telephony
         public Task<InterconnectionProvisioningSyncResult?> ProvisioningDeprovision(Guid interconnectionId, CancellationToken cancellationToken = default)
             => Request<InterconnectionProvisioningSyncResult>(new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/provisioningdeprovision?interconnectionId={interconnectionId}", UriKind.Relative)), cancellationToken);
 
+        public Task<IEnumerable<InterconnectionRegistrationTestTarget>> GetRegistrationTestTargets(
+            Guid contextId, Guid interconnectionId, CancellationToken cancellationToken = default)
+            => RequestMany<InterconnectionRegistrationTestTarget>(new HttpRequestMessage(HttpMethod.Get,
+                new Uri($"{Controller}{Prefix}/registration-test/targets?contextId={contextId}&interconnectionId={interconnectionId}", UriKind.Relative)), cancellationToken);
+
+        public Task<InterconnectionRegistrationTestResult?> TestRegistration(
+            InterconnectionRegistrationTestRequest request, CancellationToken cancellationToken = default)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/registration-test", UriKind.Relative))
+            {
+                Content = JsonContent.Create(request, null, _json)
+            };
+            return Request<InterconnectionRegistrationTestResult>(message, cancellationToken);
+        }
+
         public Task<InterconnectionTestCallSession?> TestCallStart(InterconnectionTestCallRequest request, CancellationToken cancellationToken = default)
         {
             var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}{Prefix}/testcallstart", UriKind.Relative))
