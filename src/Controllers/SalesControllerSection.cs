@@ -247,6 +247,15 @@ namespace Sufficit.Client.Controllers
 
 
         [Authorize(Roles = ManagementRoles)]
+        /// <summary>Financial evidence of each primary service of the customer, computed by the server.</summary>
+        public async Task<IReadOnlyList<Sufficit.Client.Sales.ServiceFinancialNoticesView>> GetServiceFinancialNotices(Guid contextId, CancellationToken cancellationToken)
+        {
+            if (contextId == Guid.Empty) throw new ArgumentException("An explicit customer context is required.", nameof(contextId));
+            var message = new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}/contract/financialnotices?contextId={contextId:D}", UriKind.Relative));
+            return (IReadOnlyList<Sufficit.Client.Sales.ServiceFinancialNoticesView>?)await Request<List<Sufficit.Client.Sales.ServiceFinancialNoticesView>>(message, cancellationToken)
+                ?? Array.Empty<Sufficit.Client.Sales.ServiceFinancialNoticesView>();
+        }
+
         /// <summary>Contract id → owner id for every contract of the customer presented inside another service's
         /// history (server rule). Contracts absent from the answer are primary services.</summary>
         public async Task<IReadOnlyDictionary<Guid, Guid>> GetHistoryOwners(Guid? contextId, CancellationToken cancellationToken)
