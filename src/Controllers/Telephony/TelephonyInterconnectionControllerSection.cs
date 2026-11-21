@@ -29,8 +29,20 @@ namespace Sufficit.Client.Controllers.Telephony
             => RequestMany<Interconnection>(new HttpRequestMessage(HttpMethod.Get, new Uri(
                 contextId.HasValue && contextId.Value != Guid.Empty
                     ? $"{Controller}{Prefix}?contextId={contextId.Value}"
-                    : $"{Controller}{Prefix}",
+                    : $"{Controller}{Prefix}?system=true",
                 UriKind.Relative)), cancellationToken);
+
+        public Task<IEnumerable<Interconnection>> GetCatalog(Guid? contextId, CancellationToken cancellationToken = default)
+            => RequestMany<Interconnection>(new HttpRequestMessage(HttpMethod.Get, new Uri(
+                contextId.HasValue && contextId.Value != Guid.Empty
+                    ? $"{Controller}{Prefix}/catalog?contextId={contextId.Value}"
+                    : $"{Controller}{Prefix}/catalog?system=true", UriKind.Relative)), cancellationToken);
+
+        public Task<IEnumerable<Interconnection>> GetRoutingOptions(Guid? contextId, CancellationToken cancellationToken = default)
+            => RequestMany<Interconnection>(new HttpRequestMessage(HttpMethod.Get, new Uri(
+                contextId.HasValue && contextId.Value != Guid.Empty
+                    ? $"{Controller}{Prefix}/catalog?contextId={contextId.Value}&routingOptions=true"
+                    : $"{Controller}{Prefix}/catalog?system=true&routingOptions=true", UriKind.Relative)), cancellationToken);
 
         public Task<Interconnection?> GetInterconnection(Guid interconnectionId, CancellationToken cancellationToken = default)
             => Request<Interconnection>(new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}{Prefix}/single?interconnectionId={interconnectionId}", UriKind.Relative)), cancellationToken);
