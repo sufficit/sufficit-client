@@ -247,6 +247,14 @@ namespace Sufficit.Client.Controllers
 
 
         [Authorize(Roles = ManagementRoles)]
+        /// <summary>Reconciliation rows of one service, evaluated by the server.</summary>
+        public Task<Sufficit.Client.Sales.ServiceReconciliationView?> GetServiceReconciliation(Guid contractId, bool full, int page, CancellationToken cancellationToken)
+        {
+            if (contractId == Guid.Empty) throw new ArgumentException("An explicit service is required.", nameof(contractId));
+            var message = new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}/contract/reconciliation?contractId={contractId:D}&full={(full ? "true" : "false")}&page={page}", UriKind.Relative));
+            return Request<Sufficit.Client.Sales.ServiceReconciliationView>(message, cancellationToken);
+        }
+
         /// <summary>Financial evidence of each primary service of the customer, computed by the server.</summary>
         public async Task<IReadOnlyList<Sufficit.Client.Sales.ServiceFinancialNoticesView>> GetServiceFinancialNotices(Guid contextId, CancellationToken cancellationToken)
         {
