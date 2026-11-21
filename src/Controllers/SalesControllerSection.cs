@@ -247,6 +247,15 @@ namespace Sufficit.Client.Controllers
 
 
         [Authorize(Roles = ManagementRoles)]
+        /// <summary>Contract id → owner id for every contract of the customer presented inside another service's
+        /// history (server rule). Contracts absent from the answer are primary services.</summary>
+        public async Task<IReadOnlyDictionary<Guid, Guid>> GetHistoryOwners(Guid? contextId, CancellationToken cancellationToken)
+        {
+            var query = contextId.HasValue && contextId != Guid.Empty ? $"?contextId={contextId:D}" : string.Empty;
+            var message = new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}/contract/historyowners{query}", UriKind.Relative));
+            return (IReadOnlyDictionary<Guid, Guid>?)await Request<Dictionary<Guid, Guid>>(message, cancellationToken) ?? new Dictionary<Guid, Guid>();
+        }
+
         public Task<IEnumerable<Contract>> GetContracts(ContractSearchParameters parameters, CancellationToken cancellationToken)
         {
             string requestEndpoint = $"{Controller}/contract/search";
