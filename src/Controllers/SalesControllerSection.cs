@@ -247,6 +247,23 @@ namespace Sufficit.Client.Controllers
 
 
         [Authorize(Roles = ManagementRoles)]
+        /// <summary>Service identity → current service label (server rule), for statement debits.</summary>
+        public async Task<IReadOnlyDictionary<Guid, string>> GetServiceLabels(Guid contextId, CancellationToken cancellationToken)
+        {
+            if (contextId == Guid.Empty) throw new ArgumentException("An explicit customer context is required.", nameof(contextId));
+            var message = new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}/contract/servicelabels?contextId={contextId:D}", UriKind.Relative));
+            return (IReadOnlyDictionary<Guid, string>?)await Request<Dictionary<Guid, string>>(message, cancellationToken) ?? new Dictionary<Guid, string>();
+        }
+
+        /// <summary>Contract id → displayed validity start (server rule). Pass a customer, one service or none (every customer).</summary>
+        public async Task<IReadOnlyDictionary<Guid, DateTime?>> GetValidityStarts(Guid? contextId, Guid? contractId, CancellationToken cancellationToken)
+        {
+            var query = contractId.HasValue && contractId != Guid.Empty ? $"?contractId={contractId:D}"
+                : contextId.HasValue && contextId != Guid.Empty ? $"?contextId={contextId:D}" : string.Empty;
+            var message = new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}/contract/validitystarts{query}", UriKind.Relative));
+            return (IReadOnlyDictionary<Guid, DateTime?>?)await Request<Dictionary<Guid, DateTime?>>(message, cancellationToken) ?? new Dictionary<Guid, DateTime?>();
+        }
+
         /// <summary>Reconciliation rows of one service, evaluated by the server.</summary>
         public Task<Sufficit.Client.Sales.ServiceReconciliationView?> GetServiceReconciliation(Guid contractId, bool full, int page, CancellationToken cancellationToken)
         {
