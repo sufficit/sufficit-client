@@ -106,6 +106,17 @@ namespace Sufficit.Client.Controllers.Telephony
             return Request<EndPointProperty>(message, cancellationToken);
         }
 
+        /// <summary>Properties of one extension (managers); <paramref name="prefix"/> filters the keys, e.g. "pjsip.".</summary>
+        [Authorize(Roles = Sufficit.Identity.ManagerRole.NormalizedName)]
+        public Task<IEnumerable<EndPointProperty>> GetEndPointProperties(Guid contextId, Guid endPointId, string? prefix, CancellationToken cancellationToken)
+        {
+            var query = $"contextid={contextId:D}&endpointid={endPointId:D}";
+            if (!string.IsNullOrWhiteSpace(prefix)) query += "&prefix=" + Uri.EscapeDataString(prefix);
+            var uri = new Uri($"{Controller}{Prefix}/Properties?{query}", UriKind.Relative);
+            return RequestMany<EndPointProperty>(new HttpRequestMessage(HttpMethod.Get, uri), cancellationToken);
+        }
+
+        /// <summary>Creates or updates a property; a null <see cref="EndPointProperty.Value"/> removes it.</summary>
         [Authorize]
         public Task PostEndPointProperty(EndPointProperty parameters, CancellationToken cancellationToken)
         {
