@@ -62,6 +62,10 @@ public partial class SalesControllerSection
         => CollectionCommand<ServiceCollectionNotice>("Notices/Sent", command, token);
     public Task<ServiceCollectionNotice?> CancelServiceCollectionNotice(ServiceCollectionNoticeCancelCommand command, CancellationToken token)
         => CollectionCommand<ServiceCollectionNotice>("Notices/Cancel", command, token);
+    public Task<ServiceReactivationResult?> ReactivateServices(ServiceReactivation agreement, bool confirm, CancellationToken token)
+        => Request<ServiceReactivationResult>(new HttpRequestMessage(HttpMethod.Post, Controller + "/Contract/Reactivation?confirm=" + (confirm ? "true" : "false"))
+            { Content = JsonContent.Create(agreement, null, _json) }, token);
+
     private Task<T?> CollectionCommand<T>(string path, object command, CancellationToken token) where T : class, new()
     {
         var message = new HttpRequestMessage(HttpMethod.Post, Controller + "/ServiceCollections/" + path)
