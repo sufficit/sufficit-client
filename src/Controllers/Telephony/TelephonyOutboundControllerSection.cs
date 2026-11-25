@@ -25,6 +25,14 @@ namespace Sufficit.Client.Controllers.Telephony
             _json = cb.Json;
         }
 
+        public Task<CustomerCallerIdPreference?> GetCallerId(Guid contextId, CancellationToken ct = default)
+            => Request<CustomerCallerIdPreference>(new HttpRequestMessage(HttpMethod.Get,
+                $"{Controller}{Prefix}/callerId?contextId={contextId:D}"), ct);
+
+        public Task SetCallerId(CustomerCallerIdPreference preference, CancellationToken ct = default)
+            => Request(new HttpRequestMessage(HttpMethod.Put, $"{Controller}{Prefix}/callerId")
+                { Content = JsonContent.Create(preference, options: _json) }, ct);
+
         /// <summary>
         ///     Lists outbound service assignments for one context.
         /// </summary>
