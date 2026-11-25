@@ -42,6 +42,9 @@ namespace Sufficit.Client.Sales
         public string Financial { get; set; } = string.Empty;
         public DateTime? CoverageStart { get; set; }
         public bool PostingDateDifference { get; set; }
+        /// <summary>Tariffed purchase that waited for the customer's money: the day it was actually bought (debit and
+        /// credit), later than the planned posting date. Null when bought on its planned day.</summary>
+        public DateTime? PurchasedAt { get; set; }
         public List<ServiceReconciliationRecordView> Records { get; set; } = new List<ServiceReconciliationRecordView>();
         public string? Error { get; set; }
         public ServiceReconciliationGapView? Gap { get; set; }
