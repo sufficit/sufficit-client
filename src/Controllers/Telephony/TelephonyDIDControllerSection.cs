@@ -197,6 +197,26 @@ namespace Sufficit.Client.Controllers.Telephony
             return Request(message, cancellationToken);
         }
 
+        public Task<QueueDidRouteSnapshot?> GetDestination(Guid id, Guid contextId, CancellationToken cancellationToken = default)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/destination?id={id:D}&contextId={contextId:D}", UriKind.Relative);
+            return Request<QueueDidRouteSnapshot>(new HttpRequestMessage(HttpMethod.Get, uri), cancellationToken);
+        }
+
+        public Task RemoveDestination(QueueDidRouteSnapshot expected, CancellationToken cancellationToken = default)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/destination", UriKind.Relative);
+            var request = new HttpRequestMessage(HttpMethod.Delete, uri) { Content = JsonContent.Create(expected, options: _json) };
+            return Request(request, cancellationToken);
+        }
+
+        public Task SetQueueDestination(Guid id, QueueDidRouteChange change, CancellationToken cancellationToken = default)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/queueDestination?id={id:D}", UriKind.Relative);
+            var request = new HttpRequestMessage(HttpMethod.Post, uri) { Content = JsonContent.Create(change, options: _json) };
+            return Request(request, cancellationToken);
+        }
+
         /// <summary>
         /// Update basic properties
         /// </summary>
@@ -211,13 +231,13 @@ namespace Sufficit.Client.Controllers.Telephony
             return Request(message, cancellationToken);
         }
 
-        public Task<DateTime?> Activity(string extension, int days = 0, CancellationToken cancellationToken = default)
+        public Task<DateTime?> Activity(string extension, int days = 30, CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("activity: {extension}, {days}", extension, days);
 
             var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
             query["extension"] = extension;
-            if (days > 0)
+            if (days != 30)
                 query["days"] = days.ToString();
 
             var uri = new Uri($"{Controller}{Prefix}/activity?{query}", UriKind.Relative);

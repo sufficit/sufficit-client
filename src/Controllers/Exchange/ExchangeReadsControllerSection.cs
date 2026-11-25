@@ -21,27 +21,35 @@ namespace Sufficit.Client.Controllers.Exchange
             _json = cb.Json;
         }
 
+        private sealed class ReadReceipt : IReadReceipt
+        {
+            public DateTime Timestamp { get; set; }
+            public string Description { get; set; } = string.Empty;
+        }
+
         /// <summary>
         /// Get read receipts by reference ID
         /// </summary>
         [Authorize(Roles = $"{Sufficit.Identity.ManagerRole.NormalizedName},{Sufficit.Identity.AdministratorRole.NormalizedName}")]
         public async IAsyncEnumerable<IReadReceipt> GetByReferenceId(Guid id, [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            var uri = new Uri($"{Controller}{Prefix}/ByReferenceId/{id}", UriKind.Relative);
+            var uri = new Uri($"{Controller}{Prefix}/ByReferenceId?id={id:D}", UriKind.Relative);
             var message = new HttpRequestMessage(HttpMethod.Get, uri);
 
             // Since this returns IAsyncEnumerable, we need to handle streaming response
-            var response = await SendAsync(message, cancellationToken);
+            using var response = await SendAsync(message, cancellationToken);
             response.EnsureSuccessStatusCode();
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent) yield break;
 
             // Conditional compilation for .NET Standard 2.0 compatibility
 #if NETSTANDARD2_0
-            var stream = await response.Content.ReadAsStreamAsync();
+            using var stream = await response.Content.ReadAsStreamAsync();
 #else
-            var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+            using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
 #endif
 
-            await foreach (var item in JsonSerializer.DeserializeAsyncEnumerable<IReadReceipt>(stream, _json, cancellationToken))
+            await foreach (var item in JsonSerializer.DeserializeAsyncEnumerable<ReadReceipt>(stream, _json, cancellationToken))
             {
                 if (item != null)
                     yield return item;

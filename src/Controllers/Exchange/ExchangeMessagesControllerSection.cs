@@ -57,9 +57,8 @@ namespace Sufficit.Client.Controllers.Exchange
         [Authorize(Roles = $"{Sufficit.Identity.ManagerRole.NormalizedName},{Sufficit.Identity.AdministratorRole.NormalizedName}")]
         public Task<IEnumerable<MessageDetails>> GetByReferenceId(Guid id, CancellationToken cancellationToken)
         {
-            var uri = new Uri($"{Controller}{Prefix}/ByReferenceId/{id}", UriKind.Relative);
-            var message = new HttpRequestMessage(HttpMethod.Get, uri);
-            return RequestMany<MessageDetails>(message, cancellationToken);
+            if (id == Guid.Empty) throw new ArgumentException("A reference ID is required.", nameof(id));
+            return GetDetails(new MessageDetailsSearchParameters { ReferenceId = id }, cancellationToken);
         }
     }
 }
