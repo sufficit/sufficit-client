@@ -264,6 +264,27 @@ namespace Sufficit.Client.Controllers
             return (IReadOnlyDictionary<Guid, DateTime?>?)await Request<Dictionary<Guid, DateTime?>>(message, cancellationToken) ?? new Dictionary<Guid, DateTime?>();
         }
 
+        /// <summary>"+ Recarga": tariffed trunk, balances and payer of the customer before asking the amount.</summary>
+        [Authorize(Roles = ManagementRoles)]
+        public Task<Sufficit.Client.Sales.QuickRechargeOverview?> GetQuickRecharge(Guid customerId, CancellationToken cancellationToken)
+        {
+            if (customerId == Guid.Empty) throw new ArgumentException("An explicit customer is required.", nameof(customerId));
+            var message = new HttpRequestMessage(HttpMethod.Get, new Uri($"{Controller}/quickrecharge?customerId={customerId:D}", UriKind.Relative));
+            return Request<Sufficit.Client.Sales.QuickRechargeOverview>(message, cancellationToken);
+        }
+
+        /// <summary>Buys call credit of the informed amount; a refusal (no trunk, no balance) throws with the server message.</summary>
+        [Authorize(Roles = ManagementRoles)]
+        public Task<Sufficit.Client.Sales.QuickRechargeResult?> QuickRecharge(Sufficit.Client.Sales.QuickRechargeRequest request, CancellationToken cancellationToken)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+            if (request.CustomerId == Guid.Empty || request.OperationId == Guid.Empty || request.Amount <= 0)
+                throw new ArgumentException("Customer, operation and a positive amount are required.", nameof(request));
+            var message = new HttpRequestMessage(HttpMethod.Post, new Uri($"{Controller}/quickrecharge", UriKind.Relative));
+            message.Content = JsonContent.Create(request, null, _json);
+            return Request<Sufficit.Client.Sales.QuickRechargeResult>(message, cancellationToken);
+        }
+
         /// <summary>Reconciliation rows of one service, evaluated by the server.</summary>
         public Task<Sufficit.Client.Sales.ServiceReconciliationView?> GetServiceReconciliation(Guid contractId, bool full, int page, CancellationToken cancellationToken)
         {
