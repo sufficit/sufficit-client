@@ -152,6 +152,16 @@ namespace Sufficit.Client.Controllers.Telephony
             return Request(message, cancellationToken);
         }
 
+        /// <summary>Assign an inventory line, checking its observed customer before writing.</summary>
+        public Task AssignContext(Guid id, Guid contextId, Guid expectedContextId,
+            string? approvalMessageId = null, CancellationToken cancellationToken = default)
+        {
+            var uri = new Uri($"{Controller}{Prefix}/context", UriKind.Relative);
+            var body = new { id, contextId, expectedContextId = (Guid?)expectedContextId, approvalMessageId };
+            return Request(new HttpRequestMessage(HttpMethod.Put, uri)
+                { Content = JsonContent.Create(body, options: _json) }, cancellationToken);
+        }
+
         /// <summary>Explicit manager command: changes expiry only and rejects a stale customer/date snapshot.</summary>
         public Task Expiration(DIDExpirationUpdateParameters parameters, CancellationToken cancellationToken)
         {
