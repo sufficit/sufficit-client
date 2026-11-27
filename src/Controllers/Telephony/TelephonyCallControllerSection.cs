@@ -18,7 +18,7 @@ namespace Sufficit.Client.Controllers.Telephony
     /// <summary>
     ///     Telephony Call
     /// </summary>
-    public sealed class TelephonyCallControllerSection : AuthenticatedControllerSection
+    public sealed partial class TelephonyCallControllerSection : AuthenticatedControllerSection
     {
         private const string Controller = TelephonyControllerSection.Controller;
         private const string Section = "calls";
